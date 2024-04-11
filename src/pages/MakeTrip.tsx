@@ -16,6 +16,7 @@ const MakeTrip: React.FC = () => {
                 <Modal onClose={toggleModal}>
                     <h2>Modal Content</h2>
                     <p>This is the content of the modal.</p>
+                    <p>test</p>
                 </Modal>
             )}
         </div>
