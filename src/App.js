@@ -9,7 +9,7 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <Navbar />
-        <Main />
+          <Route path="/" exact component={Main} />
       </BrowserRouter>
     </div>
   );

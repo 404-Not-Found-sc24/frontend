@@ -25,3 +25,9 @@
   font-weight: normal;
   font-style: normal;
 }
+
+/* popup */
+.bpopup{display:none;border:8px solid #7b79ff;border-radius:14px;background:#fff;padding:50px;box-sizing:border-box;}
+.bpopup.pop_mid{width:600px}
+.bpopup.pop_big{width:1200px;}
+.bpopup .pop_close{position:absolute;top:0;right:0;transform:translate(50%, -50%);display:block;width:54px;height:54px;border-radius:100%;background:#7b79ff url(../public/image/ico_close.png) no-repeat center;z-index:1;}
