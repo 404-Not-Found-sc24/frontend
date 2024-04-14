@@ -3,7 +3,6 @@ import './App.css';
 import { Route, Routes } from 'react-router-dom';
 import Main from './pages/main';
 import NavBar from './components/navbar';
-import MakeTrip from './pages/MakeTrip';
 import { BrowserRouter } from 'react-router-dom';
 import Travledes from './pages/TravelDes';
 
@@ -13,8 +12,7 @@ function App() {
       <NavBar />
       <Routes>
         <Route path="/" element={<Main />} />
-        <Route path="/traveldes" element={<Travledes />}></Route>
-        <Route path="/maketrip" element={<MakeTrip />} />
+        <Route path="/traveldes" element={<Travledes />} />
       </Routes>
     </BrowserRouter>
   );

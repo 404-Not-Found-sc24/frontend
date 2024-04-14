@@ -1,7 +1,26 @@
-import React from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import { Link } from 'react-router-dom';
+import MakeTrip from "./MakeTrip";
 
 const Travledes: React.FC = () => {
+
+  const [isOpen, setIsOpen] = useState(false);
+  const [city, setCity] = useState('');
+
+  const handleOpenModal = useCallback(
+      (city:string) => {
+        setIsOpen(true);
+        setCity(city);
+      },[]
+  );
+
+  const handleCloseModal = useCallback(
+      () => {
+        setIsOpen(false);
+        setCity("");
+      },[]
+  );
+
   return (
     <div>
       <form className="flex items-center max-w-2xl mx-auto mt-24">
@@ -41,7 +60,7 @@ const Travledes: React.FC = () => {
         </button>
       </form>
       <div className="container mx-auto mt-24 mb-24 grid grid-cols-2 md:grid-cols-4 gap-8">
-        <Link to="/" className="relative flex flex-col">
+        <button className="relative flex flex-col" onClick={() => handleOpenModal("서울")}>
           <img
             src={process.env.PUBLIC_URL + '/image/image 15.png'}
             alt="서울 이미지"
@@ -50,7 +69,7 @@ const Travledes: React.FC = () => {
           <div className="absolute bottom-0 right-0 text-4xl font-['BMHANNApro'] text-white bg-black bg-opacity-50 p-2 rounded-tl rounded-br">
             서울
           </div>
-        </Link>
+        </button>
         <Link to="/" className="relative flex flex-col">
           <img
             src={process.env.PUBLIC_URL + '/image/image 15.png'}
@@ -122,6 +141,7 @@ const Travledes: React.FC = () => {
           </div>
         </Link>
       </div>
+      <MakeTrip isOpen={isOpen} city={city} handleCloseModal={handleCloseModal}/>
     </div>
   );
 };
