@@ -30,10 +30,7 @@ const SignUp: React.FC = () => {
       .matches(
         /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])[^\s]*$/,
         '알파벳, 숫자, 공백을 제외한 특수문자를 모두 포함해야 합니다!',
-      ),
-    password2: Yup.string()
-      .oneOf([Yup.ref('password'), null], '비밀번호가 일치하지 않습니다!')
-      .required('필수 입력 값입니다!'),
+      )
   });
 
   const submit = async (values: {
