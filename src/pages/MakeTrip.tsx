@@ -1,9 +1,10 @@
 import * as React from 'react';
 import {useState, useEffect, useCallback} from 'react';
 import Modal from '../components/modal';
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
+import MakePlan from "./MakePlan";
 
 interface props {
     isOpen: boolean;
@@ -16,6 +17,7 @@ const MakeTrip = ({isOpen, city, handleCloseModal}:props) => {
     const [step, setStep] = useState(1);
     const [startDate, setStartDate] = useState<Date | null>(null);
     const [endDate, setEndDate] = useState<Date | null>(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         // externalParameter에 변화가 있을 때만 modalOpen 상태를 변경
@@ -78,6 +80,17 @@ const MakeTrip = ({isOpen, city, handleCloseModal}:props) => {
         setStep(prevStep => prevStep + 1);
     }, []);
 
+    const naviPage = () => {
+        console.log(startDate, endDate, city);
+      navigate('/makeplan', {
+          state: {
+              startDate: startDate,
+              endDate: endDate,
+              city: city,
+          }
+          });
+    };
+
     return (
         <>
             {modalOpen && (
@@ -85,9 +98,7 @@ const MakeTrip = ({isOpen, city, handleCloseModal}:props) => {
                     <>
                         {step === 1 && (
                             <>
-                                <div className="font-['Nanum Gothic'] text-3xl font-semibold text-black mb-5">{city} |
-                                    Seoul
-                                </div>
+                                <div className="font-['Nanum Gothic'] text-3xl font-semibold text-black mb-5">{city}</div>
                                 <div className="flex justify-between items-center">
                                     <div>서울은 ~~</div>
                                     <img src="" width="400px" alt="지역소개사진"></img>
@@ -129,8 +140,9 @@ const MakeTrip = ({isOpen, city, handleCloseModal}:props) => {
                                     <button className="border-2 border-[#FF9A9A] bg-white rounded-md px-10 py-2 text-xl font-['BMJUA']"
                                             onClick={handlePrevStep}>이전
                                     </button>
-                                    <Link to="/" className="border-4 border-[#FF9A9A] bg-[#FF9A9A] rounded-md px-10 py-2 text-xl font-['BMJUA']">다음
-                                    </Link>
+                                    <button className="border-4 border-[#FF9A9A] bg-[#FF9A9A] rounded-md px-10 py-2 text-xl font-['BMJUA']"
+                                            onClick={naviPage}>다음
+                                    </button>
                                 </div>
                             </div>
                         )}

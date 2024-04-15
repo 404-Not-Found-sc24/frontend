@@ -5,6 +5,7 @@ import Main from './pages/main';
 import NavBar from './components/navbar';
 import { BrowserRouter } from 'react-router-dom';
 import Travledes from './pages/TravelDes';
+import MakePlan from './pages/MakePlan';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Main />} />
         <Route path="/traveldes" element={<Travledes />} />
+        <Route path="/makeplan" element={<MakePlan />} />
       </Routes>
     </BrowserRouter>
   );

@@ -70,7 +70,7 @@ const Travledes: React.FC = () => {
             서울
           </div>
         </button>
-        <Link to="/" className="relative flex flex-col">
+        <button className="relative flex flex-col" onClick={() => handleOpenModal("인천")}>
           <img
             src={process.env.PUBLIC_URL + '/image/image 15.png'}
             alt="인천 이미지"
@@ -79,8 +79,8 @@ const Travledes: React.FC = () => {
           <div className="absolute bottom-0 right-0 text-4xl font-['BMHANNApro'] text-white bg-black bg-opacity-50 p-2 rounded-tl rounded-br">
             인천
           </div>
-        </Link>
-        <Link to="/" className="relative flex flex-col">
+        </button>
+        <button className="relative flex flex-col" onClick={() => handleOpenModal("강릉")}>
           <img
             src={process.env.PUBLIC_URL + '/image/image 15.png'}
             alt="강릉 이미지"
@@ -89,8 +89,8 @@ const Travledes: React.FC = () => {
           <div className="absolute bottom-0 right-0 text-4xl font-['BMHANNApro'] text-white bg-black bg-opacity-50 p-2 rounded-tl rounded-br">
             강릉
           </div>
-        </Link>
-        <Link to="/" className="relative flex flex-col">
+        </button>
+        <button className="relative flex flex-col" onClick={() => handleOpenModal("제주")}>
           <img
             src={process.env.PUBLIC_URL + '/image/image 15.png'}
             alt="제주 이미지"
@@ -99,8 +99,8 @@ const Travledes: React.FC = () => {
           <div className="absolute bottom-0 right-0 text-4xl font-['BMHANNApro'] text-white bg-black bg-opacity-50 p-2 rounded-tl rounded-br">
             제주
           </div>
-        </Link>
-        <Link to="/" className="relative flex flex-col">
+        </button>
+        <button className="relative flex flex-col" onClick={() => handleOpenModal("부산")}>
           <img
             src={process.env.PUBLIC_URL + '/image/image 15.png'}
             alt="부산 이미지"
@@ -109,8 +109,8 @@ const Travledes: React.FC = () => {
           <div className="absolute bottom-0 right-0 text-4xl font-['BMHANNApro'] text-white bg-black bg-opacity-50 p-2 rounded-tl rounded-br">
             부산
           </div>
-        </Link>
-        <Link to="/" className="relative flex flex-col">
+        </button>
+        <button className="relative flex flex-col" onClick={() => handleOpenModal("대전")}>
           <img
             src={process.env.PUBLIC_URL + '/image/image 15.png'}
             alt="대전 이미지"
@@ -119,8 +119,8 @@ const Travledes: React.FC = () => {
           <div className="absolute bottom-0 right-0 text-4xl font-['BMHANNApro'] text-white bg-black bg-opacity-50 p-2 rounded-tl rounded-br">
             대전
           </div>
-        </Link>
-        <Link to="/" className="relative flex flex-col">
+        </button>
+        <button className="relative flex flex-col" onClick={() => handleOpenModal("광주")}>
           <img
             src={process.env.PUBLIC_URL + '/image/image 15.png'}
             alt="광주 이미지"
@@ -129,8 +129,8 @@ const Travledes: React.FC = () => {
           <div className="absolute bottom-0 right-0 text-4xl font-['BMHANNApro'] text-white bg-black bg-opacity-50 p-2 rounded-tl rounded-br">
             광주
           </div>
-        </Link>
-        <Link to="/" className="relative flex flex-col">
+        </button>
+        <button className="relative flex flex-col" onClick={() => handleOpenModal("대구")}>
           <img
             src={process.env.PUBLIC_URL + '/image/image 15.png'}
             alt="대구 이미지"
@@ -139,7 +139,7 @@ const Travledes: React.FC = () => {
           <div className="absolute bottom-0 right-0 text-4xl font-['BMHANNApro'] text-white bg-black bg-opacity-50 p-2 rounded-tl rounded-br">
             대구
           </div>
-        </Link>
+        </button>
       </div>
       <MakeTrip isOpen={isOpen} city={city} handleCloseModal={handleCloseModal}/>
     </div>

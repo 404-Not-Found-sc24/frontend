@@ -77,3 +77,21 @@ code {
 .bpopup.popMid{width:600px}
 .bpopup.popBig{width:1000px;}
 .bpopup .popClose{position:absolute;top:0;right:0;transform:translate(50%, -50%);display:block;width:54px;height:54px;border-radius:100%;background:#FF9A9A url(../public/image/ico_close.png) no-repeat center;z-index:1;}
+
+.backArrow{width:54px;height:54px; background:white url(../public/image/arrow-left-line.png) no-repeat center;z-index:1;}
+.plus{width:35px;height:35px; background:rgba(0, 0, 0, 0.5) url(../public/image/add-line.png) no-repeat center; z-index:10;}
+
+.tabs {
+  display: flex;
+  flex-direction: column; /* 세로 방향으로 탭을 배치합니다. */
+}
+
+.tab {
+  padding: 10px;
+  border-bottom: 1px solid #ccc; /* 탭 간 구분선을 생성합니다. */
+  cursor: pointer; /* 마우스 커서를 포인터로 변경합니다. */
+}
+
+.tab:hover {
+  background-color: #f0f0f0; /* 마우스를 올렸을 때 배경색을 변경합니다. */
+}
