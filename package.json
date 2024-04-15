@@ -20,7 +20,7 @@
     "react-toastify": "^10.0.5",
     "web-vitals": "^2.1.4",
     "yup": "^1.4.0",
-    "remixicon": "^4.2.0",
+    "remixicon": "^4.2.0"
   },
   "scripts": {
     "start": "react-scripts start",
