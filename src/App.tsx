@@ -5,8 +5,8 @@ import Main from './pages/Main';
 import NavBar from './components/navbar';
 import { BrowserRouter } from 'react-router-dom';
 import Travledes from './pages/TravelDes';
-import MakeTrip from './pages/MakeTrip';
 import SignUp from './pages/SignUp';
+import MakePlan from './pages/MakePlan';
 
 function App() {
   return (
@@ -15,8 +15,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Main />}></Route>
         <Route path="/signup" element={<SignUp />}></Route>
-        <Route path="/maketrip" element={<MakeTrip />} />
         <Route path="/traveldes" element={<Travledes />}></Route>
+        <Route path="/makeplan" element={<MakePlan />} />
       </Routes>
     </BrowserRouter>
   );
