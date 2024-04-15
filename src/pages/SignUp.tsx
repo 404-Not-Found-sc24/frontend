@@ -10,12 +10,20 @@ import { useState } from 'react';
 const SignUp: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [data, setData] = useState({
+    name: '',
+    nickname: '',
+    email: '',
+    phone: '',
+    password: '',
+  });
 
   const validationSchema = Yup.object().shape({
+    name: Yup.string().required('이름을 입력하세요!'),
     email: Yup.string()
       .email('올바른 이메일 형식이 아닙니다!')
       .required('이메일을 입력하세요!'),
-    username: Yup.string()
+    nickname: Yup.string()
       .min(2, '닉네임은 최소 2글자 이상입니다!')
       .max(10, '닉네임은 최대 10글자입니다!')
       .matches(
@@ -23,6 +31,7 @@ const SignUp: React.FC = () => {
         '닉네임에 특수문자가 포함되면 안되고 숫자로 시작하면 안됩니다!',
       )
       .required('닉네임을 입력하세요!'),
+    phone: Yup.string().required('전화번호를 입력하세요!'),
     password: Yup.string()
       .min(8, '비밀번호는 최소 8자리 이상입니다')
       .max(16, '비밀번호는 최대 16자리입니다!')
@@ -30,20 +39,29 @@ const SignUp: React.FC = () => {
       .matches(
         /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])[^\s]*$/,
         '알파벳, 숫자, 공백을 제외한 특수문자를 모두 포함해야 합니다!',
-      )
+      ),
   });
 
   const submit = async (values: {
+    name: string;
+    nickname: string;
     email: string;
-    username: string;
+    phone: string;
     password: string;
   }) => {
-    const { email, username, password } = values;
+    const { name, nickname, email, phone, password } = values;
+    setData({
+      name: name,
+      nickname: nickname,
+      email: email,
+      phone: phone,
+      password: password,
+    });
     try {
-      await axios.post('/api/auth/signup', {
-        email,
-        username,
-        password,
+      await axios.post('/api/auth/sign-up', JSON.stringify(data), {
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
       toast.success(
         <h3>
@@ -57,10 +75,9 @@ const SignUp: React.FC = () => {
         },
       );
       setTimeout(() => {
-        navigate('/login');
+        navigate('/');
       }, 2000);
     } catch (e: any) {
-      // 서버에서 받은 에러 메시지 출력
       toast.error(e.response.data.message + '😭', {
         position: 'top-center',
       });
@@ -70,10 +87,11 @@ const SignUp: React.FC = () => {
   return (
     <Formik
       initialValues={{
+        name: '',
+        phone: '',
         email: '',
-        username: '',
+        nickname: '',
         password: '',
-        password2: '',
       }}
       validationSchema={validationSchema}
       onSubmit={submit}
@@ -83,6 +101,34 @@ const SignUp: React.FC = () => {
         <div className="max-w-sm mx-auto mt-8">
           <ToastContainer />
           <form onSubmit={handleSubmit} autoComplete="off">
+            <div className="mb-4">
+              <label htmlFor="name" className="block mb-1">
+                이름
+              </label>
+              <input
+                id="name"
+                name="name"
+                type="name"
+                value={values.name}
+                onChange={handleChange}
+                className="w-full p-2 border rounded"
+              />
+              <div className="text-red-500">{errors.name}</div>
+            </div>
+            <div className="mb-4">
+              <label htmlFor="nickname" className="block mb-1">
+                닉네임
+              </label>
+              <input
+                id="nickname"
+                name="nickname"
+                type="text"
+                value={values.nickname}
+                onChange={handleChange}
+                className="w-full p-2 border rounded"
+              />
+              <div className="text-red-500">{errors.nickname}</div>
+            </div>
             <div className="mb-4">
               <label htmlFor="email" className="block mb-1">
                 이메일
@@ -98,18 +144,18 @@ const SignUp: React.FC = () => {
               <div className="text-red-500">{errors.email}</div>
             </div>
             <div className="mb-4">
-              <label htmlFor="username" className="block mb-1">
-                닉네임
+              <label htmlFor="phone" className="block mb-1">
+                전화번호
               </label>
               <input
-                id="username"
-                name="username"
-                type="text"
-                value={values.username}
+                id="phone"
+                name="phone"
+                type="phone"
+                value={values.phone}
                 onChange={handleChange}
                 className="w-full p-2 border rounded"
               />
-              <div className="text-red-500">{errors.username}</div>
+              <div className="text-red-500">{errors.phone}</div>
             </div>
             <div className="mb-4">
               <label htmlFor="password" className="block mb-1">
@@ -124,20 +170,6 @@ const SignUp: React.FC = () => {
                 className="w-full p-2 border rounded"
               />
               <div className="text-red-500">{errors.password}</div>
-            </div>
-            <div className="mb-4">
-              <label htmlFor="password2" className="block mb-1">
-                비밀번호 확인
-              </label>
-              <input
-                id="password2"
-                name="password2"
-                type="password"
-                value={values.password2}
-                onChange={handleChange}
-                className="w-full p-2 border rounded"
-              />
-              <div className="text-red-500">{errors.password2}</div>
             </div>
             <button
               type="submit"
