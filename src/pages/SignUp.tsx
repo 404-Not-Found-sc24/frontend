@@ -58,7 +58,7 @@ const SignUp: React.FC = () => {
       password: password,
     });
     try {
-      await axios.post('/api/auth/sign-up', JSON.stringify(data), {
+      await axios.post('/api/auth/sign-up', values, {
         headers: {
           'Content-Type': 'application/json',
         },
