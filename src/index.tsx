@@ -8,7 +8,7 @@ import axios from 'axios';
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
 );
-axios.defaults.baseURL = 'http://api.nadueli.com';
+axios.defaults.baseURL = 'https://api.nadueli.com';
 
 root.render(
   <React.StrictMode>
