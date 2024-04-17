@@ -10,6 +10,7 @@ const root = ReactDOM.createRoot(
 );
 axios.defaults.baseURL = 'https://api.nadueli.com';
 
+
 root.render(
   <React.StrictMode>
     <App />
