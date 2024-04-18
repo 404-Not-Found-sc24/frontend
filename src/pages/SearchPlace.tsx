@@ -6,8 +6,12 @@ import plandata from '../plandata'; // 일정 데이터 파일
 import SearchBar from '../components/searchbar';
 
 interface PlaceData {
-  city: string;
-  keyword: string;
+  locationId: number;
+  name: string;
+  address: string;
+  latitude: number;
+  longitude: number;
+  imageUrl: string;
 }
 
 interface PlanData {
@@ -37,8 +41,11 @@ const SearchPlace: React.FC = () => {
     const searchTerm = queryParams.get('q');
     if (searchTerm) {
       // 장소 데이터에서 검색
-      const filteredPlaceData = placedata.filter((place) =>
-        place.keyword.toLowerCase().includes(searchTerm.toLowerCase()),
+      const filteredPlaceData = placedata.filter(
+        (place) =>
+          (place.name &&
+            place.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          place.address.toLowerCase().includes(searchTerm.toLowerCase()),
       );
       setPlaceSearchResults(filteredPlaceData);
 
