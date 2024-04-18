@@ -1,9 +1,11 @@
 import * as React from 'react';
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {useLocation, useNavigate} from "react-router-dom";
 import '../index.css';
 import PlaceBox from "../components/PlaceBox";
 import DayPlace from "../components/DayPlace";
+import axios from "axios";
+import Place from "../../types/Place";
 
 declare global {
     interface Window {
@@ -16,7 +18,23 @@ const MakePlan = () => {
     const tripInfo = { ...location.state };
     const navigate = useNavigate();
     const [tripDays, setTripDays] = useState<number>(0);
-    const [activeTab, setActiveTab] = useState<number>(1); // 활성화된 탭의 인덱스를 관리하는 상태
+    const [keyword, setKeyword] = useState('');
+    const [activeTab, setActiveTab] = useState<number>(1);
+    const [res, setRes] = useState([
+        {
+            locationId: 1,
+            name: "경복궁",
+            address: "서울특별시 종로구 사직로 161",
+            latitude: 37.579617,
+            longitude: 126.977041
+        },
+        {
+            locationId: 2,
+            name: "남산서울타워",
+            address: "서울특별시 용산구 남산공원길 105",
+            latitude: 37.551169,
+            longitude: 126.988227
+        }]);
 
     const generateTabs = (days: number) => {
         const tabs = [];
@@ -32,12 +50,43 @@ const MakePlan = () => {
         return tabs;
     };
 
+    const getData = async() => {
+        try {
+            await axios.get('/tour/locations?city="'+ tripInfo.city +'"&keyword="'+ keyword +'"', {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }).then((response) => {
+                console.log(response.data);
+                setRes(response.data);
+            });;
+        } catch (e: any) {
+            console.error(e)
+            return [
+                {
+                    locationId: 1,
+                    name: "경복궁",
+                    address: "서울특별시 종로구 사직로 161",
+                    latitude: 37.579617,
+                    longitude: 126.977041
+                },
+                {
+                    locationId: 2,
+                    name: "남산서울타워",
+                    address: "서울특별시 용산구 남산공원길 105",
+                    latitude: 37.551169,
+                    longitude: 126.988227
+                }];
+        }
+    }
+
     const handleTabClick = (index: number) => {
         console.log(index);
         setActiveTab(index); // 클릭한 탭의 인덱스를 상태로 설정
     };
 
     useEffect(() => {
+        getData();
         if (tripInfo.startDate && tripInfo.endDate) {
             const differenceInTime = tripInfo.endDate.getTime() - tripInfo.startDate.getTime();
             const differenceInDays = Math.floor(differenceInTime / (1000 * 3600 * 24));
@@ -64,6 +113,7 @@ const MakePlan = () => {
                 latlng: new window.kakao.maps.LatLng(37.2785, 127.0428)
             }
         ];
+
         for (var i = 0; i < positions.length; i++) {
             const marker = new window.kakao.maps.Marker({
                 map: map,
@@ -123,27 +173,37 @@ const MakePlan = () => {
                             <span className="sr-only">Search</span>
                         </button>
                     </form>
-                    <div className="grid grid-cols-2 justify-items-center items-center gap-3 mt-4">
-                        {/*{cityList.map((tripInfo.city, index: number) => (
-                            <PlaceBox key={index} city={tripInfo.city} />
-                        ))}*/}
-                        <PlaceBox />
+                    <div className="w-full flex justify-center">
+                        <div className="w-11/12 grid grid-cols-2 justify-items-center items-center gap-1 mt-4">
+                            {res.map((place: Place, index: number) => (
+                                <PlaceBox key={index} place={place}/>
+                            ))}
+                        </div>
                     </div>
                 </div>
                 <div className="w-1/2 h-full flex">
                     <div className="tabs w-[40px]">
                         {generateTabs(tripDays)}
                     </div>
-                    <div className="tab-content w-full h-full border-4 border-[#FF9A9A]">
-                        {Array.from({length: tripDays}, (_, index) => (
-                            <div key={index + 1} id={`content${index + 1}`} className={`content ${activeTab === index + 1 ? 'active' : ''}`}>
-                                <div className="contentBox">
-                                    <div className="w-full h-full flex flex-col items-center pt-3">
-                                        <DayPlace />
+                    <div className="flex flex-col w-full h-full border-4 border-[#FF9A9A] justify-between">
+                        <div className="tab-content">
+                            {Array.from({ length: tripDays }, (_, tabIndex) => (
+                                <div
+                                    key={tabIndex + 1}
+                                    id={`content${tabIndex + 1}`}
+                                    className={`content ${activeTab === tabIndex + 1 ? 'active' : ''}`}
+                                >
+                                    <div className="contentBox">
+                                        <div className="w-full h-full flex flex-col items-center pt-3">
+                                            <DayPlace/>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
+                        <div className="h-[100px] w-full flex justify-center items-center">
+                            <button className="h-1/2 bg-black text-white px-10 rounded-md text-xl font-['BMJUA']">생성</button>
+                        </div>
                     </div>
                 </div>
             </div>

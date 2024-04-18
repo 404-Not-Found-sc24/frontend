@@ -80,6 +80,7 @@ code {
 
 .backArrow{width:54px;height:54px; background:white url(../public/image/arrow-left-line.png) no-repeat center;z-index:1;}
 .plus{width:35px;height:35px; background:rgba(0, 0, 0, 0.5) url(../public/image/add-line.png) no-repeat center; z-index:10;}
+.check{width:35px;height:35px; background:rgba(140, 211, 255, 0.5) url(../public/image/check-line.png) no-repeat center; z-index:10;}
 .delete{width:24px;height:24px; background:white url(../public/image/close-circle-fill.png) no-repeat center; z-index:10;}
 
 .tabs {
