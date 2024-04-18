@@ -4,8 +4,12 @@ import SearchBar from '../components/SearchBar';
 const Main: React.FC = () => {
   return (
     <div>
-      <SearchBar />
-      <div className="container flex flex-row justify-between mx-auto mt-auto">
+      <div className="w-full flex justify-center my-10">
+        <div className="w-1/2">
+          <SearchBar />
+        </div>
+      </div>
+      <div className="container flex flex-row justify-between mx-auto mt-12">
         <div className="flex flex-col justify-center w-1/2 text-left text-6xl font-['BMHANNAPro']">
           <p className="text-main-red-color ">국내 여행을</p>
           <p>한손에서 간편하게</p>
