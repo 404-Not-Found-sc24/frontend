@@ -18,6 +18,7 @@ const PlaceBox: React.FC<PlaceBoxProps> = () => {
                     <div className="font-extrabold text-lg font-['Nanum Gothic']">장소 이름</div>
                     <div className="text-sm font-['Nanum Gothic']">주소</div>
                 </div>
+                <div className="menu relative right-5"></div>
             </div>
         </div>
     );
