@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom'; // useLocation을 이용하여 �
 import SearchResults from '../components/searchresults';
 import placedata from '../placedata'; // 추가된 장소 데이터 파일
 import plandata from '../plandata'; // 일정 데이터 파일
-import SearchBar from '../components/searchbar';
+import SearchBar from '../components/SearchBar';
 
 interface PlaceData {
   city: string;
