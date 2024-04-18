@@ -73,42 +73,46 @@ const SearchPlace: React.FC = () => {
   };
 
   return (
-    <div className="flex">
-      <div className="w-1/2">
-        <SearchBar />
-        <div className="flex max-w-2xl mx-auto pt-4">
-          <div
-            className={`mx-auto justify-center py-2 text-center w-1/2 border-main-red-color font-BMJUA text-2xl cursor-pointer ${
-              activeTab === '장소 보기'
-                ? 'border-x-2 border-t-2 rounded-t-lg text-main-red-color'
-                : 'border-b-2'
-            }`}
-            onClick={() => handleTabClick('장소 보기')}
-          >
-            장소 보기
+      <div className="flex w-full h-[864px]">
+        <div className="w-1/2 h-full">
+          <div className="w-full flex justify-center my-5">
+            <div className="w-5/6">
+              <SearchBar/>
+            </div>
           </div>
-          <div
-            className={`mx-auto justify-center py-2 text-center w-1/2 border-main-red-color font-BMJUA text-2xl cursor-pointer ${
-              activeTab === '일정 보기'
-                ? 'border-x-2 border-t-2 rounded-t-lg text-main-red-color'
-                : 'border-b-2'
-            }`}
-            onClick={() => handleTabClick('일정 보기')}
-          >
-            일정 보기
+          <div className="flex max-w-2xl mx-auto pt-4">
+            <div
+                className={`mx-auto justify-center py-2 text-center w-1/2 border-main-red-color font-BMJUA text-2xl cursor-pointer ${
+                    activeTab === '장소 보기'
+                        ? 'border-x-2 border-t-2 rounded-t-lg text-main-red-color'
+                        : 'border-b-2'
+                }`}
+                onClick={() => handleTabClick('장소 보기')}
+            >
+              장소 보기
+            </div>
+            <div
+                className={`mx-auto justify-center py-2 text-center w-1/2 border-main-red-color font-BMJUA text-2xl cursor-pointer ${
+                    activeTab === '일정 보기'
+                        ? 'border-x-2 border-t-2 rounded-t-lg text-main-red-color'
+                        : 'border-b-2'
+                }`}
+                onClick={() => handleTabClick('일정 보기')}
+            >
+              일정 보기
+            </div>
+          </div>
+          <div className="tab-content">
+            {activeTab === '장소 보기' && (
+                <SearchResults data={placeSearchResults} searchTerm={searchTerm}/>
+            )}
+            {activeTab === '일정 보기' && (
+                <SearchResults data={planSearchResults} searchTerm={searchTerm}/>
+            )}
           </div>
         </div>
-        <div className="tab-content">
-          {activeTab === '장소 보기' && (
-            <SearchResults data={placeSearchResults} searchTerm={searchTerm} />
-          )}
-          {activeTab === '일정 보기' && (
-            <SearchResults data={planSearchResults} searchTerm={searchTerm} />
-          )}
-        </div>
+        <div id="map" className="w-1/2"></div>
       </div>
-      <div id="map" style={{ width: '50vw', height: '100vh' }}></div>
-    </div>
   );
 };
 
