@@ -15,7 +15,7 @@ declare global {
 
 const MakePlan = () => {
     const location = useLocation();
-    const tripInfo = { ...location.state };
+    const tripInfo = {...location.state};
     const navigate = useNavigate();
     const [tripDays, setTripDays] = useState<number>(0);
     const [keyword, setKeyword] = useState('');
@@ -50,16 +50,17 @@ const MakePlan = () => {
         return tabs;
     };
 
-    const getData = async() => {
+    const getData = async () => {
         try {
-            await axios.get('/tour/locations?city="'+ tripInfo.city +'"&keyword="'+ keyword +'"', {
+            await axios.get('/tour/locations?city="' + tripInfo.city + '"&keyword="' + keyword + '"', {
                 headers: {
                     'Content-Type': 'application/json',
                 },
             }).then((response) => {
                 console.log(response.data);
                 setRes(response.data);
-            });;
+            });
+            ;
         } catch (e: any) {
             console.error(e)
             return [
@@ -79,6 +80,15 @@ const MakePlan = () => {
                 }];
         }
     }
+
+    useEffect(() => {
+        if (tripInfo.startDate && tripInfo.endDate) {
+            const differenceInTime = tripInfo.endDate.getTime() - tripInfo.startDate.getTime();
+            const differenceInDays = Math.floor(differenceInTime / (1000 * 3600 * 24));
+            const tripDays = differenceInDays + 1;
+            setTripDays(tripDays);
+        }
+    }, []);
 
     const handleTabClick = (index: number) => {
         console.log(index);
@@ -173,12 +183,10 @@ const MakePlan = () => {
                             <span className="sr-only">Search</span>
                         </button>
                     </form>
-                    <div className="w-full flex justify-center">
-                        <div className="w-11/12 grid grid-cols-2 justify-items-center items-center gap-1 mt-4">
-                            {res.map((place: Place, index: number) => (
-                                <PlaceBox key={index} place={place}/>
-                            ))}
-                        </div>
+                    <div className="grid grid-cols-2 justify-items-center items-center gap-3 mt-4">
+                        {res.map((place: Place) => (
+                            <PlaceBox place={place}/>
+                        ))}
                     </div>
                 </div>
                 <div className="w-1/2 h-full flex">
@@ -187,7 +195,7 @@ const MakePlan = () => {
                     </div>
                     <div className="flex flex-col w-full h-full border-4 border-[#FF9A9A] justify-between">
                         <div className="tab-content">
-                            {Array.from({ length: tripDays }, (_, tabIndex) => (
+                            {Array.from({length: tripDays}, (_, tabIndex) => (
                                 <div
                                     key={tabIndex + 1}
                                     id={`content${tabIndex + 1}`}
@@ -202,7 +210,8 @@ const MakePlan = () => {
                             ))}
                         </div>
                         <div className="h-[100px] w-full flex justify-center items-center">
-                            <button className="h-1/2 bg-black text-white px-10 rounded-md text-xl font-['BMJUA']">생성</button>
+                            <button className="h-1/2 bg-black text-white px-10 rounded-md text-xl font-['BMJUA']">생성
+                            </button>
                         </div>
                     </div>
                 </div>

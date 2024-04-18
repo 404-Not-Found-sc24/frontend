@@ -8,7 +8,7 @@ interface CityBoxProps {
 
 const PlaceBox: React.FC<CityBoxProps> = ({place}) => {
     return (
-        <button className="w-40 h-40 relative flex flex-col">
+        <div className="w-40 h-40 relative flex flex-col">
             <img
                 src={process.env.PUBLIC_URL + '/image/image 15.png'}
                 alt="City Image"
@@ -20,7 +20,7 @@ const PlaceBox: React.FC<CityBoxProps> = ({place}) => {
             >
                 {place.name.length > 4 ? `${place.name.slice(0, 4)}...` : place.name}
             </div>
-        </button>
+        </div>
     );
 };
 
