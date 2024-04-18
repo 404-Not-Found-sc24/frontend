@@ -3,11 +3,15 @@ import { useLocation } from 'react-router-dom'; // useLocation을 이용하여 �
 import SearchResults from '../components/searchresults';
 import placedata from '../placedata'; // 추가된 장소 데이터 파일
 import plandata from '../plandata'; // 일정 데이터 파일
-import SearchBar from '../components/SearchBar';
+import SearchBar from '../components/searchbar';
 
 interface PlaceData {
-  city: string;
-  keyword: string;
+  locationId: number;
+  name: string;
+  address: string;
+  latitude: number;
+  longitude: number;
+  imageUrl: string;
 }
 
 interface PlanData {
@@ -37,8 +41,11 @@ const SearchPlace: React.FC = () => {
     const searchTerm = queryParams.get('q');
     if (searchTerm) {
       // 장소 데이터에서 검색
-      const filteredPlaceData = placedata.filter((place) =>
-        place.keyword.toLowerCase().includes(searchTerm.toLowerCase()),
+      const filteredPlaceData = placedata.filter(
+        (place) =>
+          (place.name &&
+            place.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          place.address.toLowerCase().includes(searchTerm.toLowerCase()),
       );
       setPlaceSearchResults(filteredPlaceData);
 
@@ -73,46 +80,42 @@ const SearchPlace: React.FC = () => {
   };
 
   return (
-      <div className="flex w-full h-[864px]">
-        <div className="w-1/2 h-full">
-          <div className="w-full flex justify-center my-5">
-            <div className="w-5/6">
-              <SearchBar/>
-            </div>
+    <div className="flex">
+      <div className="w-1/2">
+        <SearchBar />
+        <div className="flex max-w-2xl mx-auto pt-4">
+          <div
+            className={`mx-auto justify-center py-2 text-center w-1/2 border-main-red-color font-BMJUA text-2xl cursor-pointer ${
+              activeTab === '장소 보기'
+                ? 'border-x-2 border-t-2 rounded-t-lg text-main-red-color'
+                : 'border-b-2'
+            }`}
+            onClick={() => handleTabClick('장소 보기')}
+          >
+            장소 보기
           </div>
-          <div className="flex max-w-2xl mx-auto pt-4">
-            <div
-                className={`mx-auto justify-center py-2 text-center w-1/2 border-main-red-color font-BMJUA text-2xl cursor-pointer ${
-                    activeTab === '장소 보기'
-                        ? 'border-x-2 border-t-2 rounded-t-lg text-main-red-color'
-                        : 'border-b-2'
-                }`}
-                onClick={() => handleTabClick('장소 보기')}
-            >
-              장소 보기
-            </div>
-            <div
-                className={`mx-auto justify-center py-2 text-center w-1/2 border-main-red-color font-BMJUA text-2xl cursor-pointer ${
-                    activeTab === '일정 보기'
-                        ? 'border-x-2 border-t-2 rounded-t-lg text-main-red-color'
-                        : 'border-b-2'
-                }`}
-                onClick={() => handleTabClick('일정 보기')}
-            >
-              일정 보기
-            </div>
-          </div>
-          <div className="tab-content">
-            {activeTab === '장소 보기' && (
-                <SearchResults data={placeSearchResults} searchTerm={searchTerm}/>
-            )}
-            {activeTab === '일정 보기' && (
-                <SearchResults data={planSearchResults} searchTerm={searchTerm}/>
-            )}
+          <div
+            className={`mx-auto justify-center py-2 text-center w-1/2 border-main-red-color font-BMJUA text-2xl cursor-pointer ${
+              activeTab === '일정 보기'
+                ? 'border-x-2 border-t-2 rounded-t-lg text-main-red-color'
+                : 'border-b-2'
+            }`}
+            onClick={() => handleTabClick('일정 보기')}
+          >
+            일정 보기
           </div>
         </div>
-        <div id="map" className="w-1/2"></div>
+        <div className="tab-content">
+          {activeTab === '장소 보기' && (
+            <SearchResults data={placeSearchResults} searchTerm={searchTerm} />
+          )}
+          {activeTab === '일정 보기' && (
+            <SearchResults data={planSearchResults} searchTerm={searchTerm} />
+          )}
+        </div>
       </div>
+      <div id="map" style={{ width: '50vw', height: '100vh' }}></div>
+    </div>
   );
 };
 
