@@ -81,8 +81,8 @@ const SearchPlace: React.FC = () => {
     };
 
     return (
-        <div className="flex">
-            <div className="w-1/2">
+        <div className="flex w-full h-[864px]">
+            <div className="w-1/2 h-full">
                 <SearchBar />
                 <div className="flex max-w-2xl mx-auto pt-4">
                     <div
