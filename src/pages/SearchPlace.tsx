@@ -83,7 +83,11 @@ const SearchPlace: React.FC = () => {
     return (
         <div className="flex w-full h-[864px]">
             <div className="w-1/2 h-full">
-                <SearchBar />
+                <div className="w-full flex justify-center mt-10">
+                    <div className="w-11/12">
+                        <SearchBar/>
+                    </div>
+                </div>
                 <div className="flex max-w-2xl mx-auto pt-4">
                     <div
                         className={`mx-auto justify-center py-2 text-center w-1/2 border-main-red-color font-BMJUA text-2xl cursor-pointer ${

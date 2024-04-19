@@ -46,6 +46,7 @@ const SearchBar: React.FC = () => {
                 id="simple-search"
                 className="text-gray-900 text-md rounded-lg block w-full ps-5 p-2.5 font-BMJUA focus:outline-0"
                 placeholder="궁금한 여행지를 검색해보세요!"
+                onChange={(e) => setSearchTerm(e.target.value)}
                 onFocus={addOutline}
                 onBlur={removeOutline}
             />
