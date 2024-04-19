@@ -58,7 +58,7 @@ const MakePlan = () => {
             });
             ;
         } catch (e: any) {
-            console.error(e)
+            console.error(e);
             return [
                 {
                     locationId: 1,
