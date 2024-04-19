@@ -7,12 +7,7 @@ import DayPlace from "../components/DayPlace";
 import axios from "axios";
 import Place from "../../types/Place";
 import SearchBar from "../components/SearchBar";
-
-declare global {
-    interface Window {
-        kakao: any;
-    }
-}
+import Map from "../components/Map";
 
 const MakePlan = () => {
     const location = useLocation();
@@ -82,15 +77,6 @@ const MakePlan = () => {
         }
     }
 
-    useEffect(() => {
-        if (tripInfo.startDate && tripInfo.endDate) {
-            const differenceInTime = tripInfo.endDate.getTime() - tripInfo.startDate.getTime();
-            const differenceInDays = Math.floor(differenceInTime / (1000 * 3600 * 24));
-            const tripDays = differenceInDays + 1;
-            setTripDays(tripDays);
-        }
-    }, []);
-
     const handleTabClick = (index: number) => {
         console.log(index);
         setActiveTab(index); // 클릭한 탭의 인덱스를 상태로 설정
@@ -103,34 +89,6 @@ const MakePlan = () => {
             const differenceInDays = Math.floor(differenceInTime / (1000 * 3600 * 24));
             const tripDays = differenceInDays + 1;
             setTripDays(tripDays);
-        }
-    }, []);
-
-    useEffect(() => {
-        const container = document.getElementById("map");
-        const options = {
-            center: new window.kakao.maps.LatLng(37.2795, 127.0438),
-            level: 3,
-        };
-        const map = new window.kakao.maps.Map(container, options);
-
-        const positions = [
-            {
-                title: '모각소',
-                latlng: new window.kakao.maps.LatLng(37.2795, 127.0438)
-            },
-            {
-                title: 'test',
-                latlng: new window.kakao.maps.LatLng(37.2785, 127.0428)
-            }
-        ];
-
-        for (var i = 0; i < positions.length; i++) {
-            const marker = new window.kakao.maps.Marker({
-                map: map,
-                position: positions[i].latlng,
-                title: positions[i].title,
-            });
         }
     }, []);
 
@@ -183,7 +141,7 @@ const MakePlan = () => {
                     </div>
                 </div>
             </div>
-            <div id="map" className="w-1/2"></div>
+            <Map />
         </div>
     );
 };
