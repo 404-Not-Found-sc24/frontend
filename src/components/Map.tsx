@@ -37,7 +37,7 @@ const Map: React.FC = () => {
     }, []);
 
     return (
-        <div id="map" className="w-1/2"></div>
+        <div id="map" className="w-1/2 h-full"></div>
     );
 };
 

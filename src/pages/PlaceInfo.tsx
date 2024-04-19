@@ -4,6 +4,7 @@ import SearchResults from '../components/searchresults';
 import placedata from '../placedata'; // 추가된 장소 데이터 파일
 import plandata from '../plandata'; // 일정 데이터 파일
 import SearchBar from '../components/SearchBar';
+import Map from '../components/Map';
 
 interface PlaceData {
   locationId: number;
@@ -80,12 +81,16 @@ const PlaceInfo: React.FC = () => {
   };
 
   return (
-    <div className="flex">
-      <div className="w-1/2">
-        <SearchBar />
+    <div className="flex w-full h-[864px]">
+      <div className="w-1/2 h-full">
+        <div className="w-full flex justify-center mt-10">
+          <div className="w-5/6">
+            <SearchBar/>
+          </div>
+        </div>
         <div className="flex max-w-2xl mx-auto pt-4">
           <div
-            className={`mx-auto justify-center py-2 text-center w-1/2 border-main-red-color font-BMJUA text-2xl cursor-pointer ${
+              className={`mx-auto justify-center py-2 text-center w-1/2 border-main-red-color font-BMJUA text-2xl cursor-pointer ${
               activeTab === '장소 보기'
                 ? 'border-x-2 border-t-2 rounded-t-lg text-main-red-color'
                 : 'border-b-2'
@@ -114,7 +119,7 @@ const PlaceInfo: React.FC = () => {
           )}
         </div>
       </div>
-      <div id="map" style={{ width: '50vw', height: '100vh' }}></div>
+      <Map />
     </div>
   );
 };
