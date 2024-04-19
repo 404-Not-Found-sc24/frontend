@@ -3,7 +3,7 @@ import {useState, useEffect, useCallback} from 'react';
 import Modal from '../components/modal';
 import {Link, useNavigate} from "react-router-dom";
 import Calendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css';
+import '../Calendar.css';
 import MakePlan from "./MakePlan";
 
 interface props {
