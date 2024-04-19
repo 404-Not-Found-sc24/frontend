@@ -7,7 +7,8 @@ import { BrowserRouter } from 'react-router-dom';
 import Travledes from './pages/TravelDes';
 import SignUp from './pages/SignUp';
 import MakePlan from './pages/MakePlan';
-import SearchPlace from './pages/SearchPlace';
+/*import SearchPlace from './pages/SearchPlace';*/
+import PlaceInfo from './pages/PlaceInfo';
 
 function App() {
   return (
@@ -16,8 +17,9 @@ function App() {
       <Routes>
         <Route path="/" element={<Main />}></Route>
         <Route path="/signup" element={<SignUp />}></Route>
-        <Route path="/searchplace" element={<SearchPlace />}></Route>
-        <Route path="/traveldes" element={<Travledes />}></Route>
+        {/*<Route path="/searchplace" element={<SearchPlace />} />*/}
+        <Route path="/placeinfo" element={<PlaceInfo />} />
+        <Route path="/traveldes" element={<Travledes />} />
         <Route path="/makeplan" element={<MakePlan />} />
       </Routes>
     </BrowserRouter>
