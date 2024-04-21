@@ -65,7 +65,7 @@ const SearchPlace: React.FC = () => {
         setSearchTerm('');
       }
     };
-
+    
     fetchData();
   }, [location.search]);
 
