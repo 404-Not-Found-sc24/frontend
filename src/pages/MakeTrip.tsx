@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {useState, useEffect, useCallback} from 'react';
-import Modal from '../components/modal';
+import Modal from '../components/Modal';
 import {Link, useNavigate} from "react-router-dom";
 import Calendar from 'react-calendar';
 import '../Calendar.css';
