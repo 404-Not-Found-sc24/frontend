@@ -6,9 +6,14 @@ interface PlanDetailBoxProps {
 }
 
 const PlanDetailBox: React.FC<PlanDetailBoxProps> = () => {
+    const navigate = useNavigate();
+
+    const toDiaryDetail = () => {
+        navigate('/diarydetail');
+    };
 
     return (
-        <div className="w-full h-[15%] p-5 flex rounded-md shadow-xl mb-5">
+        <div className="w-full h-[15%] p-5 flex rounded-md shadow-xl mb-5" onClick={toDiaryDetail}>
             <div className="w-full flex items-center px-5">
                 <div className="w-[10%] font-['BMJUA'] text-[#FF9A9A] text-xl">11:00</div>
                 <div className="w-[22%] font-['BMJUA'] text-2xl">장소 이름</div>

@@ -1,18 +1,16 @@
 import React, {useState} from 'react';
 import Map from "../components/Map";
-import {useNavigate} from "react-router-dom";
 import PlanDetailBox from "../components/PlanDetailBox";
 
 const PlanDetail: React.FC = () => {
     const [activeTab, setActiveTab] = useState('1');
-    const navigate = useNavigate();
 
     const handleTabClick = (tab: string) => {
         setActiveTab(tab);
     };
 
     const naviBack = () => {
-        navigate('/');
+        window.history.back();
     };
 
     return (
@@ -55,7 +53,7 @@ const PlanDetail: React.FC = () => {
                                 </button>
                             </div>
                             <button
-                                className="w-20 h-full bg-black rounded-2xl text-white font-['Nanum Gothic'] text-sm font-semibold">가져오기
+                                className="w-20 h-7 bg-black rounded-2xl text-white font-['Nanum Gothic'] text-sm font-semibold">가져오기
                             </button>
                         </div>
                         {activeTab === "1" && (

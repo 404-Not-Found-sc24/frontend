@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {useLocation, useNavigate} from 'react-router-dom';
+import {useLocation} from 'react-router-dom';
 import SearchBar from '../components/SearchBar';
 import Map from '../components/Map';
 import PlanBox from '../components/PlanBox';
@@ -7,7 +7,6 @@ import PlanBox from '../components/PlanBox';
 
 const PlaceInfo: React.FC = () => {
     const [activeTab, setActiveTab] = useState('장소 소개');
-    const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState<string>('');
     const location = useLocation(); // 현재 URL 정보 가져오기
 
@@ -16,7 +15,7 @@ const PlaceInfo: React.FC = () => {
     };
 
     const naviBack = () => {
-        navigate('/');
+        window.history.back();
     };
 
     return (

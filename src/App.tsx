@@ -10,6 +10,7 @@ import MakePlan from './pages/MakePlan';
 import SearchPlace from './pages/SearchPlace';
 import PlaceInfo from './pages/PlaceInfo';
 import PlanDetail from './pages/PlanDetail';
+import DiaryDetail from './pages/DiaryDetail';
 
 function App() {
     return (
@@ -23,6 +24,7 @@ function App() {
                 <Route path="/traveldes" element={<Travledes/>}/>
                 <Route path="/makeplan" element={<MakePlan/>}/>
                 <Route path="/plandetail" element={<PlanDetail/>}/>
+                <Route path="/diarydetail" element={<DiaryDetail/>}/>
             </Routes>
         </BrowserRouter>
     );
