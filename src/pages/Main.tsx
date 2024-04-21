@@ -4,7 +4,7 @@ import SearchBar from '../components/SearchBar';
 const Main: React.FC = () => {
   return (
       <div>
-        <div className="w-full flex justify-center my-10">
+        <div className="w-full flex justify-center mt-10">
           <div className="w-1/2">
             <SearchBar />
           </div>

@@ -24,12 +24,6 @@ interface PlanData {
     imageUrl: string;
 }
 
-declare global {
-    interface Window {
-        kakao: any;
-    }
-}
-
 const SearchPlace: React.FC = () => {
     const [activeTab, setActiveTab] = useState('장소 보기');
     const [placeSearchResults, setPlaceSearchResults] = useState<PlaceData[]>([]);
@@ -64,18 +58,6 @@ const SearchPlace: React.FC = () => {
             setSearchTerm('');
         }
     }, [location.search]);
-
-    useEffect(() => {
-        // window.kakao.maps가 정의된 이후에 맵을 초기화
-        if (window.kakao && window.kakao.maps) {
-            const container = document.getElementById('map');
-            const options = {
-                center: new window.kakao.maps.LatLng(33.450701, 126.570667), // 지도 중심 좌표
-                level: 3, // 지도의 레벨(확대, 축소 정도)
-            };
-            new window.kakao.maps.Map(container, options); // 지도 생성 및 객체 리턴
-        }
-    }, []);
 
     const handleTabClick = (tab: string) => {
         setActiveTab(tab);
