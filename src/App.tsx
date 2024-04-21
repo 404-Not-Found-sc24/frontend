@@ -2,7 +2,7 @@ import React from 'react';
 import './App.css';
 import { Route, Routes } from 'react-router-dom';
 import Main from './pages/Main';
-import NavBar from './components/navbar';
+import NavBar from './components/NavBar';
 import { BrowserRouter } from 'react-router-dom';
 import Travledes from './pages/TravelDes';
 import SignUp from './pages/SignUp';

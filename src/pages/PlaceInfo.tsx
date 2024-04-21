@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom'; // useLocation을 이용하여 현재 URL 정보 가져오기
-import SearchResults from '../components/searchresults';
+import SearchResults from '../components/SearchResults';
 import placedata from '../placedata'; // 추가된 장소 데이터 파일
 import plandata from '../plandata'; // 일정 데이터 파일
 import SearchBar from '../components/SearchBar';
@@ -85,12 +85,12 @@ const PlaceInfo: React.FC = () => {
       <div className="w-1/2 h-full">
         <div className="w-full flex justify-center mt-10">
           <div className="w-5/6">
-            <SearchBar/>
+            <SearchBar />
           </div>
         </div>
         <div className="flex max-w-2xl mx-auto pt-4">
           <div
-              className={`mx-auto justify-center py-2 text-center w-1/2 border-main-red-color font-BMJUA text-2xl cursor-pointer ${
+            className={`mx-auto justify-center py-2 text-center w-1/2 border-main-red-color font-BMJUA text-2xl cursor-pointer ${
               activeTab === '장소 보기'
                 ? 'border-x-2 border-t-2 rounded-t-lg text-main-red-color'
                 : 'border-b-2'

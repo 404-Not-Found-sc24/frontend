@@ -36,23 +36,26 @@ const SearchBar: React.FC = () => {
   };
 
   return (
-      <form
-          onSubmit={handleSubmit}
-      >
-        <div className="w-full h-12 flex justify-center my-3">
-          <div className="w-11/12 h-full rounded-md shadow-xl flex items-center" id="search-container">
-            <input
-                type="text"
-                id="simple-search"
-                className="text-gray-900 text-md rounded-lg block w-full ps-5 p-2.5 font-BMJUA focus:outline-0"
-                placeholder="궁금한 여행지를 검색해보세요!"
-                onFocus={addOutline}
-                onBlur={removeOutline}
-            />
-            <button type="submit" className="search relative right-3"></button>
-          </div>
+    <form onSubmit={handleSubmit}>
+      <div className="w-full h-12 flex justify-center my-3">
+        <div
+          className="w-11/12 h-full rounded-md shadow-xl flex items-center"
+          id="search-container"
+        >
+          <input
+            type="text"
+            id="simple-search"
+            className="text-gray-900 text-md rounded-lg block w-full ps-5 p-2.5 font-BMJUA focus:outline-0"
+            placeholder="궁금한 여행지를 검색해보세요!"
+            onChange={(e) => setSearchTerm(e.target.value)}
+            value={searchTerm}
+            onFocus={addOutline}
+            onBlur={removeOutline}
+          />
+          <button type="submit" className="search relative right-3"></button>
         </div>
-      </form>
+      </div>
+    </form>
   );
 };
 
