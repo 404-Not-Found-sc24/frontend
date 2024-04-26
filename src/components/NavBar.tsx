@@ -29,7 +29,7 @@ const NavBar: React.FC = () => {
               <ul className="font-medium flex p-4 md:p-0 mt-4 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white">
                 <li>
                   <Link
-                    to="/mapview"
+                    to="/makediary"
                     className="pt-2 px-3 text-main-green-color font-BMJUA"
                   >
                     게시판
