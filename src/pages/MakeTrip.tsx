@@ -1,13 +1,7 @@
 import * as React from 'react';
-<<<<<<< HEAD
-import {useState, useEffect, useCallback} from 'react';
-import Modal from '../components/Modal';
-import {Link, useNavigate} from "react-router-dom";
-=======
 import { useState, useEffect, useCallback } from 'react';
 import Modal from '../components/Modal';
 import { Link, useNavigate } from 'react-router-dom';
->>>>>>> 947eb5a (feat: add searchplace result)
 import Calendar from 'react-calendar';
 import '../Calendar.css';
 import MakePlan from './MakePlan';

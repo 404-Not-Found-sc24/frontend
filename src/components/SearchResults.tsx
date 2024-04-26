@@ -1,5 +1,12 @@
 import React from 'react';
 
+interface PlaceData {
+  locationId: number;
+  name: string;
+  address: string;
+  imageUrl: string;
+}
+
 interface PlanData {
   scheduleId: string;
   name: string;
@@ -9,49 +16,64 @@ interface PlanData {
   imageUrl: string;
 }
 
-interface PlaceData {
-  locationId: number;
-  name: string;
-  address: string;
-  latitude: number;
-  longitude: number;
-  imageUrl: string;
-}
-
 interface Props {
-  data: (PlanData | PlaceData)[];
+  data: (PlaceData | PlanData)[];
   searchTerm: string;
+  tab: string;
 }
 
-const SearchResults: React.FC<Props> = ({ data, searchTerm }) => {
+const SearchResults: React.FC<Props> = ({ data, searchTerm, tab }) => {
   const normalizedSearchTerm = searchTerm.toLowerCase();
 
   return (
-    <div>
-      {data.map((item, index) => (
-        <div key={index} className="bg-gray-100 p-4 mb-4 rounded-lg">
-          {'name' in item &&
-            'address' in item &&
-            (item.name.toLowerCase().includes(normalizedSearchTerm) ||
-              item.address.toLowerCase().includes(normalizedSearchTerm)) && (
-              <div>
-                <h3>{item.name}</h3>
-                <p>{item.address}</p>
+    <div className="bg-white p-10 max-h-[660px] overflow-y-auto">
+      {tab === '장소 보기' &&
+        data
+          .filter((item): item is PlaceData => 'locationId' in item)
+          .map((place: PlaceData, index) => (
+            <div key={index} className="shadow-xl border-2 p-4 mb-4 rounded-lg">
+              <div className="flex">
+                {place.imageUrl ? (
+                  <img
+                    src={place.imageUrl}
+                    alt={place.name}
+                    className="w-32 h-32 mt-2"
+                  />
+                ) : (
+                  <div className="border-2 flex w-32 h-32 mt-2 text-gray-600 justify-center items-center">
+                    사진이 없습니다.
+                  </div>
+                )}
+
+                <div className="flex flex-col p-2">
+                  <h3 className="font-[BMJUA] text-xl">{place.name}</h3>
+                  <p className="font-[Nanum Gothic] text-gray-600">
+                    {place.address}
+                  </p>
+                </div>
               </div>
-            )}
-          {'name' in item &&
-            'startDate' in item &&
-            'endDate' in item &&
-            item.name.toLowerCase().includes(normalizedSearchTerm) && (
+            </div>
+          ))}
+      {tab === '일정 보기' &&
+        data
+          .filter((item): item is PlanData => 'scheduleId' in item)
+          .map((plan: PlanData, index) => (
+            <div key={index} className="bg-gray-100 p-4 mb-4 rounded-lg">
               <div>
-                <h3>{item.name}</h3>
-                <p>
-                  {item.startDate} - {item.endDate}
+                <h3 className="font-bold text-lg">{plan.name}</h3>
+                <p className="text-gray-600">
+                  {plan.startDate} - {plan.endDate}
                 </p>
+                {plan.imageUrl && (
+                  <img
+                    src={plan.imageUrl}
+                    alt={plan.name}
+                    className="w-32 h-32 mt-2"
+                  />
+                )}
               </div>
-            )}
-        </div>
-      ))}
+            </div>
+          ))}
     </div>
   );
 };
