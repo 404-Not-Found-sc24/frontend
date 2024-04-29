@@ -16,21 +16,18 @@ const MakePlan = () => {
     const [tripDays, setTripDays] = useState<number>(0);
     const [keyword, setKeyword] = useState('');
     const [activeTab, setActiveTab] = useState<number>(1);
-    const [res, setRes] = useState([
-        {
-            locationId: 1,
-            name: "경복궁",
-            address: "서울특별시 종로구 사직로 161",
-            latitude: 37.579617,
-            longitude: 126.977041
-        },
-        {
-            locationId: 2,
-            name: "남산서울타워",
-            address: "서울특별시 용산구 남산공원길 105",
-            latitude: 37.551169,
-            longitude: 126.988227
-        }]);
+    const [res , setRes] = useState([]);
+    const [selectedPlaces, setSelectedPlaces] = useState<Array<Place>>([]);
+
+    const addSelectedPlace = (place: Place) => {
+        setSelectedPlaces([...selectedPlaces, place]);
+        console.log(selectedPlaces);
+    };
+
+    const removePlace = (placeToRemove: Place) => {
+        const updatedPlaces = selectedPlaces.filter(place => place !== placeToRemove); // 선택된 장소 배열에서 해당 장소를 제거
+        setSelectedPlaces(updatedPlaces); // 제거된 장소를 상태로 업데이트
+    };
 
     const generateTabs = (days: number) => {
         const tabs = [];
@@ -47,8 +44,10 @@ const MakePlan = () => {
     };
 
     const getData = async () => {
+        console.log(tripInfo.city);
+        console.log(keyword);
         try {
-            await axios.get('/tour/locations?city="' + tripInfo.city + '"&keyword="' + keyword + '"', {
+            await axios.get('tour/locations?city=' + tripInfo.city + '&keyword=' + keyword, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -59,21 +58,6 @@ const MakePlan = () => {
             ;
         } catch (e: any) {
             console.error(e);
-            return [
-                {
-                    locationId: 1,
-                    name: "경복궁",
-                    address: "서울특별시 종로구 사직로 161",
-                    latitude: 37.579617,
-                    longitude: 126.977041
-                },
-                {
-                    locationId: 2,
-                    name: "남산서울타워",
-                    address: "서울특별시 용산구 남산공원길 105",
-                    latitude: 37.551169,
-                    longitude: 126.988227
-                }];
         }
     }
 
@@ -108,8 +92,8 @@ const MakePlan = () => {
                     <SearchBar />
                     <div className="flex justify-center">
                         <div className="w-11/12 grid grid-cols-2 justify-items-center items-center gap-3 mt-4">
-                            {res.map((place: Place) => (
-                                <PlaceBox place={place}/>
+                            {res.map((place: Place, index: number) => (
+                                <PlaceBox key={index} place={place} addSelectedPlace={addSelectedPlace} />
                             ))}
                         </div>
                     </div>
@@ -128,7 +112,9 @@ const MakePlan = () => {
                                 >
                                     <div className="contentBox">
                                         <div className="w-full h-full flex flex-col items-center pt-3">
-                                            <DayPlace/>
+                                            {selectedPlaces.map((place: Place, index: number) => (
+                                                <DayPlace place={place} selectedPlaces={selectedPlaces} removePlace={removePlace}/>
+                                            ))}
                                         </div>
                                     </div>
                                 </div>

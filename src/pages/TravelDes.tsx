@@ -30,7 +30,7 @@ const Travledes: React.FC = () => {
           </div>
         </div>
         <div className="container mx-auto mt-24 mb-24 grid grid-cols-2 md:grid-cols-4 gap-8">
-          <button className="relative flex flex-col" onClick={() => handleOpenModal("서울")}>
+          <button className="relative flex flex-col" onClick={() => handleOpenModal("서울특별시")}>
             <img
                 src={process.env.PUBLIC_URL + '/image/image 15.png'}
                 alt="서울 이미지"

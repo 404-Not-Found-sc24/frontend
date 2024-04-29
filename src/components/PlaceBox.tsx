@@ -4,13 +4,18 @@ import Place from "../../types/Place";
 
 interface CityBoxProps {
     place: Place;
+    addSelectedPlace: (place: Place) => void;
 }
 
-const PlaceBox: React.FC<CityBoxProps> = ({place}) => {
+const PlaceBox: React.FC<CityBoxProps> = ({ place, addSelectedPlace }) => {
+    const handleSelectPlace = () => {
+        addSelectedPlace(place);
+    };
+
     return (
-        <div className="w-40 h-40 relative flex flex-col">
+        <div className="w-40 h-40 relative flex flex-col cursor-pointer" onClick={handleSelectPlace}>
             <img
-                src={process.env.PUBLIC_URL + '/image/image 15.png'}
+                src={place.imageUrl}
                 alt="City Image"
                 className="rounded-4"
             />
