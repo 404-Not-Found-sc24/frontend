@@ -11,6 +11,10 @@ const PlaceInfo: React.FC = () => {
   const [activeTab, setActiveTab] = useState('장소 소개');
   const [searchTerm, setSearchTerm] = useState<string>('');
   const location = useLocation(); // 현재 URL 정보 가져오기
+  const placeinfo = useLocation();
+  const place = location.state.place;
+
+  console.log(place);
 
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);

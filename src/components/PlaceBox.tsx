@@ -7,7 +7,7 @@ interface CityBoxProps {
     addSelectedPlace: (place: Place) => void;
 }
 
-const PlaceBox: React.FC<CityBoxProps> = ({ place, addSelectedPlace }) => {
+const PlaceBox: React.FC<CityBoxProps> = ({place, addSelectedPlace}) => {
     const handleSelectPlace = () => {
         addSelectedPlace(place);
     };

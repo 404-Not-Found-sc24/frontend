@@ -17,7 +17,7 @@ const MakePlan = () => {
     const [keyword, setKeyword] = useState('');
     const [activeTab, setActiveTab] = useState<number>(1);
     const [res , setRes] = useState([]);
-    const [selectedPlaces, setSelectedPlaces] = useState<Array<Array<Place>>>([]);
+    const [selectedPlaces, setSelectedPlaces] = useState<Place[][]>();
 
     useEffect(() => {
         getData();
@@ -32,9 +32,17 @@ const MakePlan = () => {
         }
     }, []);
 
+    useEffect(() => {
+        console.log(selectedPlaces);
+    }, [selectedPlaces]);
+
+    useEffect(() => {
+        console.log(res);
+    }, [res]);
+
     const addSelectedPlace = (selectedPlace: Place, dayIndex: number) => {
         setSelectedPlaces(prevSelectedPlaces => {
-            const newSelectedPlaces = [...prevSelectedPlaces];
+            const newSelectedPlaces = [...prevSelectedPlaces || []];
             newSelectedPlaces[dayIndex-1].push(selectedPlace);
             return newSelectedPlaces;
         });
@@ -43,7 +51,7 @@ const MakePlan = () => {
 
     const removePlace = (dayIndex: number, placeIndex: number) => {
         setSelectedPlaces(prevSelectedPlaces => {
-            const newSelectedPlaces = [...prevSelectedPlaces];
+            const newSelectedPlaces = [...prevSelectedPlaces || []];
             newSelectedPlaces[dayIndex].splice(placeIndex, 1);
             return newSelectedPlaces;
         });
@@ -121,16 +129,16 @@ const MakePlan = () => {
                                     className={`content ${activeTab === tabIndex + 1 ? 'active' : ''}`}
                                 >
                                     <div className="contentBox">
-                                        <div className="w-full h-full flex flex-col items-center pt-3">
-                                            {/*{selectedPlaces.map((selectedPlace, index) => (
+                                        {selectedPlaces && (<div className="w-full h-full flex flex-col items-center pt-3">
+                                            {selectedPlaces[activeTab-1].map((selectedPlace, index) => (
                                                 <DayPlace
                                                     key={index}
                                                     index={index}
-                                                    selectedPlaces={selectedPlace}
-                                                    removePlace={removePlace}
+                                                    selectedPlace={selectedPlace}
+                                                    removePlace={() => removePlace(activeTab, index)}
                                                 />
-                                            ))}*/}
-                                        </div>
+                                            ))}
+                                        </div>)}
                                     </div>
                                 </div>
                             ))}
