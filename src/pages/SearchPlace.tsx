@@ -64,10 +64,10 @@ const SearchPlace: React.FC = () => {
         setSearchTerm('');
       }
     };
-
+    
     fetchData();
   }, [location.search]);
-
+  
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
   };
