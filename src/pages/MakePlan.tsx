@@ -16,21 +16,38 @@ const MakePlan = () => {
     const [tripDays, setTripDays] = useState<number>(0);
     const [keyword, setKeyword] = useState('');
     const [activeTab, setActiveTab] = useState<number>(1);
-    const [res, setRes] = useState([
-        {
-            locationId: 1,
-            name: "경복궁",
-            address: "서울특별시 종로구 사직로 161",
-            latitude: 37.579617,
-            longitude: 126.977041
-        },
-        {
-            locationId: 2,
-            name: "남산서울타워",
-            address: "서울특별시 용산구 남산공원길 105",
-            latitude: 37.551169,
-            longitude: 126.988227
-        }]);
+    const [res , setRes] = useState([]);
+    const [selectedPlaces, setSelectedPlaces] = useState<Array<Array<Place>>>([]);
+
+    useEffect(() => {
+        getData();
+        if (tripInfo.startDate && tripInfo.endDate) {
+            const differenceInTime = tripInfo.endDate.getTime() - tripInfo.startDate.getTime();
+            const differenceInDays = Math.floor(differenceInTime / (1000 * 3600 * 24));
+            const tripDays = differenceInDays + 1;
+            setTripDays(tripDays);
+
+            const newTripPlaces = Array.from({ length: tripDays }, () => ([] as Place[]));
+            setSelectedPlaces(newTripPlaces);
+        }
+    }, []);
+
+    const addSelectedPlace = (selectedPlace: Place, dayIndex: number) => {
+        setSelectedPlaces(prevSelectedPlaces => {
+            const newSelectedPlaces = [...prevSelectedPlaces];
+            newSelectedPlaces[dayIndex-1].push(selectedPlace);
+            return newSelectedPlaces;
+        });
+        console.log(selectedPlaces);
+    };
+
+    const removePlace = (dayIndex: number, placeIndex: number) => {
+        setSelectedPlaces(prevSelectedPlaces => {
+            const newSelectedPlaces = [...prevSelectedPlaces];
+            newSelectedPlaces[dayIndex].splice(placeIndex, 1);
+            return newSelectedPlaces;
+        });
+    };
 
     const generateTabs = (days: number) => {
         const tabs = [];
@@ -47,8 +64,10 @@ const MakePlan = () => {
     };
 
     const getData = async () => {
+        console.log(tripInfo.city);
+        console.log(keyword);
         try {
-            await axios.get('/tour/locations?city="' + tripInfo.city + '"&keyword="' + keyword + '"', {
+            await axios.get('tour/locations?city=' + tripInfo.city + '&keyword=' + keyword, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -59,21 +78,6 @@ const MakePlan = () => {
             ;
         } catch (e: any) {
             console.error(e);
-            return [
-                {
-                    locationId: 1,
-                    name: "경복궁",
-                    address: "서울특별시 종로구 사직로 161",
-                    latitude: 37.579617,
-                    longitude: 126.977041
-                },
-                {
-                    locationId: 2,
-                    name: "남산서울타워",
-                    address: "서울특별시 용산구 남산공원길 105",
-                    latitude: 37.551169,
-                    longitude: 126.988227
-                }];
         }
     }
 
@@ -81,16 +85,6 @@ const MakePlan = () => {
         console.log(index);
         setActiveTab(index); // 클릭한 탭의 인덱스를 상태로 설정
     };
-
-    useEffect(() => {
-        getData();
-        if (tripInfo.startDate && tripInfo.endDate) {
-            const differenceInTime = tripInfo.endDate.getTime() - tripInfo.startDate.getTime();
-            const differenceInDays = Math.floor(differenceInTime / (1000 * 3600 * 24));
-            const tripDays = differenceInDays + 1;
-            setTripDays(tripDays);
-        }
-    }, []);
 
     const naviBack = () => {
         navigate('/');
@@ -108,8 +102,8 @@ const MakePlan = () => {
                     <SearchBar />
                     <div className="flex justify-center">
                         <div className="w-11/12 grid grid-cols-2 justify-items-center items-center gap-3 mt-4">
-                            {res.map((place: Place) => (
-                                <PlaceBox place={place}/>
+                            {res.map((place: Place, index: number) => (
+                                <PlaceBox key={index} place={place} addSelectedPlace={() => addSelectedPlace(place, activeTab)} />
                             ))}
                         </div>
                     </div>
@@ -128,7 +122,14 @@ const MakePlan = () => {
                                 >
                                     <div className="contentBox">
                                         <div className="w-full h-full flex flex-col items-center pt-3">
-                                            <DayPlace/>
+                                            {/*{selectedPlaces.map((selectedPlace, index) => (
+                                                <DayPlace
+                                                    key={index}
+                                                    index={index}
+                                                    selectedPlaces={selectedPlace}
+                                                    removePlace={removePlace}
+                                                />
+                                            ))}*/}
                                         </div>
                                     </div>
                                 </div>
