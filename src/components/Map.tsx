@@ -1,4 +1,5 @@
-import React, {useState, useEffect} from 'react';
+import React, { useEffect } from 'react';
+import { useMap } from '../context/MapContext';
 
 declare global {
   interface Window {
@@ -6,36 +7,48 @@ declare global {
   }
 }
 
-const Map: React.FC = () => {
+interface MapProps {
+  center?: { latitude: number; longitude: number };
+  onMapClick?: (lat: number, lng: number) => void;
+}
+
+const Map: React.FC<MapProps> = ({ center, onMapClick }) => {
+  const { latitude, longitude, setMapLocation } = useMap();
+
   useEffect(() => {
     if (window.kakao && window.kakao.maps) {
-      const container = document.getElementById('map');
-      const options = {
-        center: new window.kakao.maps.LatLng(37.2795, 127.0438),
+      const mapContainer = document.getElementById('map');
+      const mapOption = {
+        center: new window.kakao.maps.LatLng(latitude, longitude),
         level: 3,
       };
-      const map = new window.kakao.maps.Map(container, options);
 
-      const positions = [
-        {
-          title: '모각소',
-          latlng: new window.kakao.maps.LatLng(37.2795, 127.0438),
-        },
-        {
-          title: 'test',
-          latlng: new window.kakao.maps.LatLng(37.2785, 127.0428),
-        },
-      ];
+      const map = new window.kakao.maps.Map(mapContainer, mapOption);
 
-      for (var i = 0; i < positions.length; i++) {
-        const marker = new window.kakao.maps.Marker({
-          map: map,
-          position: positions[i].latlng,
-          title: positions[i].title,
-        });
-      }
+      const markerPosition = new window.kakao.maps.LatLng(latitude, longitude);
+      const marker = new window.kakao.maps.Marker({
+        position: markerPosition,
+      });
+
+      marker.setMap(map);
+
+      // 클릭 이벤트 처리
+      window.kakao.maps.event.addListener(
+        map,
+        'click',
+        function (mouseEvent: any) {
+          const latLng = mouseEvent.latLng;
+          const lat = latLng.getLat();
+          const lng = latLng.getLng();
+          setMapLocation(lat, lng);
+          marker.setPosition(latLng);
+          if (onMapClick) {
+            onMapClick(lat, lng);
+          }
+        },
+      );
     }
-  }, []);
+  }, [latitude, longitude, setMapLocation, onMapClick]);
 
   return <div id="map" className="w-1/2 h-full"></div>;
 };
