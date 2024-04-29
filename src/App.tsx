@@ -14,6 +14,8 @@ import DiaryDetail from './pages/DiaryDetail';
 import MakeDiary from './pages/MakeDiary';
 import SignIn from './pages/SignIn';
 import { AuthProvider } from './context/AuthContext';
+import { MapProvider } from './context/MapContext';
+import AddPlaceForm from './pages/AddPlaceForm';
 
 function App() {
   return (
@@ -28,6 +30,16 @@ function App() {
           <Route path="/placeinfo" element={<PlaceInfo />} />
           <Route path="/traveldes" element={<Travledes />} />
           <Route path="/makeplan" element={<MakePlan />} />
+          <Route
+            path="/addplaceform"
+            element={
+              <MapProvider
+                initialCenter={{ latitude: 37.2795, longitude: 127.0438 }}
+              >
+                <AddPlaceForm />
+              </MapProvider>
+            }
+          />
           <Route path="/makediary" element={<MakeDiary />} />
           <Route path="/plandetail" element={<PlanDetail />} />
           <Route path="/diarydetail" element={<DiaryDetail />} />

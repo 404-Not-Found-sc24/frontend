@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import Map from '../components/Map';
-import { useNavigate } from 'react-router-dom';
 import '../index.css';
 import { ToastContainer, toast } from 'react-toastify';
+import { MapProvider } from '../context/MapContext';
+import { useAuth } from '../context/AuthContext';
 
 const MakeDiary: React.FC = () => {
   const [title, setTitle] = useState('');
@@ -13,7 +14,7 @@ const MakeDiary: React.FC = () => {
   const [previewImages, setPreviewImages] = useState<string[]>([]);
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
   const [showUploadMessage, setShowUploadMessage] = useState<boolean>(true);
-  const navigate = useNavigate();
+  const { accessToken, refreshAccessToken } = useAuth();
 
   const notifySuccess = () =>
     toast.success('일기가 성공적으로 작성되었습니다.', {
@@ -34,16 +35,32 @@ const MakeDiary: React.FC = () => {
         formData.append('images', image);
       });
 
-      const response = await axios.post(`schedule/record/8265`, formData, {
+      const response = await axios.post('schedule/diary/10', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${accessToken}`,
         },
       });
       console.log('일기가 성공적으로 작성되었습니다:', response.data);
       notifySuccess();
     } catch (error) {
-      console.error('일기 작성 중 오류 발생:', error);
-      notifyError();
+      if (
+        (error as AxiosError).response &&
+        (error as AxiosError).response?.status === 401
+      ) {
+        try {
+          await refreshAccessToken();
+          // 새로운 액세스 토큰으로 다시 요청을 보냅니다.
+          // 여기에서는 재시도 로직을 추가할 수 있습니다.
+        } catch (refreshError) {
+          console.error('Failed to refresh access token:', refreshError);
+          notifyError();
+          // 액세스 토큰 갱신에 실패한 경우 사용자에게 알립니다.
+        }
+      } else {
+        console.error('일기 작성 중 오류 발생:', error);
+        notifyError();
+      }
     }
   };
 
@@ -61,7 +78,7 @@ const MakeDiary: React.FC = () => {
   };
 
   const handleBackButtonClick = () => {
-    navigate('/');
+    window.history.back();
   };
 
   const handlePrevImage = () => {
@@ -161,7 +178,9 @@ const MakeDiary: React.FC = () => {
           </div>
         </div>
       </div>
-      <Map />
+      <MapProvider initialCenter={{ latitude: 37.2795, longitude: 127.0438 }}>
+        <Map />
+      </MapProvider>
     </div>
   );
 };

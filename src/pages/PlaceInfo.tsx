@@ -6,6 +6,7 @@ import plandata from '../plandata'; // 일정 데이터 파일
 import SearchBar from '../components/SearchBar';
 import Map from '../components/Map';
 import PlanBox from '../components/PlanBox';
+import { MapProvider } from '../context/MapContext';
 
 const PlaceInfo: React.FC = () => {
   const [activeTab, setActiveTab] = useState('장소 소개');
@@ -86,7 +87,9 @@ const PlaceInfo: React.FC = () => {
           </div>
         </div>
       </div>
-      <Map />
+      <MapProvider initialCenter={{ latitude: 37.2795, longitude: 127.0438 }}>
+        <Map />
+      </MapProvider>
     </div>
   );
 };
