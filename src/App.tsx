@@ -3,7 +3,7 @@ import './App.css';
 import {Route, Routes} from 'react-router-dom';
 import Main from './pages/Main';
 import NavBar from './components/NavBar';
-import {BrowserRouter} from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import Travledes from './pages/TravelDes';
 import SignUp from './pages/SignUp';
 import MakePlan from './pages/MakePlan';

@@ -45,45 +45,125 @@ code {
   font-style: normal;
   font-weight: 700;
   src: url(//themes.googleusercontent.com/static/fonts/earlyaccess/nanumgothic/v3/NanumGothic-Bold.eot);
-  src: url(//themes.googleusercontent.com/static/fonts/earlyaccess/nanumgothic/v3/NanumGothic-Bold.eot?#iefix) format('embedded-opentype'),
-  url(//themes.googleusercontent.com/static/fonts/earlyaccess/nanumgothic/v3/NanumGothic-Bold.woff2) format('woff2'),
-  url(//themes.googleusercontent.com/static/fonts/earlyaccess/nanumgothic/v3/NanumGothic-Bold.woff) format('woff'),
-  url(//themes.googleusercontent.com/static/fonts/earlyaccess/nanumgothic/v3/NanumGothic-Bold.ttf) format('truetype');
+  src: url(//themes.googleusercontent.com/static/fonts/earlyaccess/nanumgothic/v3/NanumGothic-Bold.eot?#iefix)
+      format('embedded-opentype'),
+    url(//themes.googleusercontent.com/static/fonts/earlyaccess/nanumgothic/v3/NanumGothic-Bold.woff2)
+      format('woff2'),
+    url(//themes.googleusercontent.com/static/fonts/earlyaccess/nanumgothic/v3/NanumGothic-Bold.woff)
+      format('woff'),
+    url(//themes.googleusercontent.com/static/fonts/earlyaccess/nanumgothic/v3/NanumGothic-Bold.ttf)
+      format('truetype');
 }
 @font-face {
   font-family: 'Nanum Gothic';
   font-style: normal;
   font-weight: 400;
   src: url(//themes.googleusercontent.com/static/fonts/earlyaccess/nanumgothic/v3/NanumGothic-Regular.eot);
-  src: url(//themes.googleusercontent.com/static/fonts/earlyaccess/nanumgothic/v3/NanumGothic-Regular.eot?#iefix) format('embedded-opentype'),
-  url(//themes.googleusercontent.com/static/fonts/earlyaccess/nanumgothic/v3/NanumGothic-Regular.woff2) format('woff2'),
-  url(//themes.googleusercontent.com/static/fonts/earlyaccess/nanumgothic/v3/NanumGothic-Regular.woff) format('woff'),
-  url(//themes.googleusercontent.com/static/fonts/earlyaccess/nanumgothic/v3/NanumGothic-Regular.ttf) format('truetype');
+  src: url(//themes.googleusercontent.com/static/fonts/earlyaccess/nanumgothic/v3/NanumGothic-Regular.eot?#iefix)
+      format('embedded-opentype'),
+    url(//themes.googleusercontent.com/static/fonts/earlyaccess/nanumgothic/v3/NanumGothic-Regular.woff2)
+      format('woff2'),
+    url(//themes.googleusercontent.com/static/fonts/earlyaccess/nanumgothic/v3/NanumGothic-Regular.woff)
+      format('woff'),
+    url(//themes.googleusercontent.com/static/fonts/earlyaccess/nanumgothic/v3/NanumGothic-Regular.ttf)
+      format('truetype');
 }
 @font-face {
   font-family: 'Nanum Gothic';
   font-style: normal;
   font-weight: 800;
   src: url(//themes.googleusercontent.com/static/fonts/earlyaccess/nanumgothic/v3/NanumGothic-ExtraBold.eot);
-  src: url(//themes.googleusercontent.com/static/fonts/earlyaccess/nanumgothic/v3/NanumGothic-ExtraBold.eot?#iefix) format('embedded-opentype'),
-  url(//themes.googleusercontent.com/static/fonts/earlyaccess/nanumgothic/v3/NanumGothic-ExtraBold.woff2) format('woff2'),
-  url(//themes.googleusercontent.com/static/fonts/earlyaccess/nanumgothic/v3/NanumGothic-ExtraBold.woff) format('woff'),
-  url(//themes.googleusercontent.com/static/fonts/earlyaccess/nanumgothic/v3/NanumGothic-ExtraBold.ttf) format('truetype');
+  src: url(//themes.googleusercontent.com/static/fonts/earlyaccess/nanumgothic/v3/NanumGothic-ExtraBold.eot?#iefix)
+      format('embedded-opentype'),
+    url(//themes.googleusercontent.com/static/fonts/earlyaccess/nanumgothic/v3/NanumGothic-ExtraBold.woff2)
+      format('woff2'),
+    url(//themes.googleusercontent.com/static/fonts/earlyaccess/nanumgothic/v3/NanumGothic-ExtraBold.woff)
+      format('woff'),
+    url(//themes.googleusercontent.com/static/fonts/earlyaccess/nanumgothic/v3/NanumGothic-ExtraBold.ttf)
+      format('truetype');
 }
 
 /* popup */
-.modal{background-color: rgb(0, 0, 0, 0.7); position: fixed; inset: 0px; z-index: 9998; cursor: pointer; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center}
-.bpopup{display:block;border:8px solid #FF9A9A;border-radius:14px;background:#fff;padding:50px;box-sizing:border-box; z-index:9999; opacity: 1; position: relative}
-.bpopup.popMid{width:600px}
-.bpopup.popBig{width:1000px;}
-.bpopup .popClose{position:absolute;top:0;right:0;transform:translate(50%, -50%);display:block;width:54px;height:54px;border-radius:100%;background:#FF9A9A url(../public/image/ico_close.png) no-repeat center;z-index:1;}
+.modal {
+  background-color: rgb(0, 0, 0, 0.7);
+  position: fixed;
+  inset: 0px;
+  z-index: 9998;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.bpopup {
+  display: block;
+  border: 8px solid #ff9a9a;
+  border-radius: 14px;
+  background: #fff;
+  padding: 50px;
+  box-sizing: border-box;
+  z-index: 9999;
+  opacity: 1;
+  position: relative;
+}
+.bpopup.popMid {
+  width: 600px;
+}
+.bpopup.popBig {
+  width: 1000px;
+}
+.bpopup .popClose {
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform: translate(50%, -50%);
+  display: block;
+  width: 54px;
+  height: 54px;
+  border-radius: 100%;
+  background: #ff9a9a url(../public/image/ico_close.png) no-repeat center;
+  z-index: 1;
+}
 
-.backArrow{width:54px;height:54px; background:white url(../public/image/arrow-left-line.png) no-repeat center;z-index:1;}
-.plus{width:35px;height:35px; background:rgba(0, 0, 0, 0.5) url(../public/image/add-line.png) no-repeat center; z-index:10;}
-.check{width:35px;height:35px; background:rgba(140, 211, 255, 0.5) url(../public/image/check-line.png) no-repeat center; z-index:10;}
-.delete{width:24px;height:24px; background:white url(../public/image/close-circle-fill.png) no-repeat center; z-index:10;}
-.menu{width:24px;height:24px; background:white url(../public/image/menu-line.png) no-repeat center; z-index:10;}
-.search{width:24px;height:24px; background:white url(../public/image/search-line.png) no-repeat center; z-index:10;}
+.backArrow {
+  width: 54px;
+  height: 54px;
+  background: white url(../public/image/arrow-left-line.png) no-repeat center;
+  z-index: 1;
+}
+.plus {
+  width: 35px;
+  height: 35px;
+  background: rgba(0, 0, 0, 0.5) url(../public/image/add-line.png) no-repeat
+    center;
+  z-index: 10;
+}
+.check {
+  width: 35px;
+  height: 35px;
+  background: rgba(140, 211, 255, 0.5) url(../public/image/check-line.png)
+    no-repeat center;
+  z-index: 10;
+}
+.delete {
+  width: 24px;
+  height: 24px;
+  background: white url(../public/image/close-circle-fill.png) no-repeat center;
+  z-index: 10;
+}
+.menu {
+  width: 24px;
+  height: 24px;
+  background: white url(../public/image/menu-line.png) no-repeat center;
+  z-index: 10;
+}
+.search {
+  width: 24px;
+  height: 24px;
+  background: white url(../public/image/search-line.png) no-repeat center;
+  z-index: 10;
+}
 
 .tabs {
   display: flex;
@@ -92,11 +172,11 @@ code {
 
 .tab {
   padding: 10px 10px 10px 3px;
-  border-bottom: 2px solid #FF9A9A;
-  border-left: medium solid #FF9A9A;
-  border-top: 2px solid #FF9A9A;
+  border-bottom: 2px solid #ff9a9a;
+  border-left: medium solid #ff9a9a;
+  border-top: 2px solid #ff9a9a;
   cursor: pointer;
-  border-color: #FF9A9A;
+  border-color: #ff9a9a;
   border-top-left-radius: 10px;
   border-bottom-left-radius: 10px;
   writing-mode: vertical-lr;
@@ -123,7 +203,7 @@ code {
 }
 
 .active {
-  background-color: #FF9A9A;
+  background-color: #ff9a9a;
   margin-left: 0px;
 }
 
