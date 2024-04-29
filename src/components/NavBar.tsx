@@ -1,15 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const NavBar: React.FC = () => {
-  const [isLogin, setIsLogin] = useState<boolean>(true);
+  const { isAuthenticated, logout } = useAuth();
 
   const handleLogout = () => {
-    setIsLogin(false);
-  };
-
-  const handleLogin = () => {
-    setIsLogin(true);
+    logout();
   };
 
   return (
@@ -25,12 +22,12 @@ const NavBar: React.FC = () => {
         </Link>
         <div className="hidden w-full md:block md:w-auto" id="navbar-default">
           <div>
-            {isLogin ? (
+            {isAuthenticated ? (
               <ul className="font-medium flex p-4 md:p-0 mt-4 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white">
                 <li>
                   <Link
                     to="/makediary"
-                    className="pt-2 px-3 text-main-green-color font-BMJUA"
+                    className="py-4 px-3 item-center text-main-green-color font-BMJUA"
                   >
                     게시판
                   </Link>
@@ -38,7 +35,7 @@ const NavBar: React.FC = () => {
                 <li>
                   <Link
                     to="/traveldes"
-                    className="py-2 px-3 text-main-green-color font-BMJUA"
+                    className="py-4 px-3 item-center text-main-green-color font-BMJUA"
                   >
                     여행지
                   </Link>
@@ -46,7 +43,7 @@ const NavBar: React.FC = () => {
                 <li>
                   <Link
                     to="/"
-                    className="py-2 px-3 text-main-green-color font-BMJUA"
+                    className="py-4 px-3 item-center text-main-green-color font-BMJUA"
                   >
                     마이페이지
                   </Link>
@@ -73,8 +70,7 @@ const NavBar: React.FC = () => {
                 </li>
                 <li>
                   <Link
-                    to="/"
-                    onClick={handleLogin}
+                    to="/signin"
                     className="py-2 px-3 border-2 border-white hover:border-main-green-color text-main-green-color font-BMJUA"
                   >
                     로그인
