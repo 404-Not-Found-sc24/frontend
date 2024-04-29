@@ -11,6 +11,7 @@ import SearchPlace from './pages/SearchPlace';
 import PlaceInfo from './pages/PlaceInfo';
 import PlanDetail from './pages/PlanDetail';
 import DiaryDetail from './pages/DiaryDetail';
+import MakeDiary from './pages/MakeDiary';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         <Route path="/placeinfo" element={<PlaceInfo />} />
         <Route path="/traveldes" element={<Travledes />} />
         <Route path="/makeplan" element={<MakePlan />} />
+        <Route path="/makediary" element={<MakeDiary />} />
         <Route path="/plandetail" element={<PlanDetail />} />
         <Route path="/diarydetail" element={<DiaryDetail />} />
       </Routes>
