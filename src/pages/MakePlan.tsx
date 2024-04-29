@@ -17,16 +17,36 @@ const MakePlan = () => {
     const [keyword, setKeyword] = useState('');
     const [activeTab, setActiveTab] = useState<number>(1);
     const [res , setRes] = useState([]);
-    const [selectedPlaces, setSelectedPlaces] = useState<Array<Place>>([]);
+    const [selectedPlaces, setSelectedPlaces] = useState<Array<Array<Place>>>([]);
 
-    const addSelectedPlace = (place: Place) => {
-        setSelectedPlaces([...selectedPlaces, place]);
+    useEffect(() => {
+        getData();
+        if (tripInfo.startDate && tripInfo.endDate) {
+            const differenceInTime = tripInfo.endDate.getTime() - tripInfo.startDate.getTime();
+            const differenceInDays = Math.floor(differenceInTime / (1000 * 3600 * 24));
+            const tripDays = differenceInDays + 1;
+            setTripDays(tripDays);
+
+            const newTripPlaces = Array.from({ length: tripDays }, () => ([] as Place[]));
+            setSelectedPlaces(newTripPlaces);
+        }
+    }, []);
+
+    const addSelectedPlace = (selectedPlace: Place, dayIndex: number) => {
+        setSelectedPlaces(prevSelectedPlaces => {
+            const newSelectedPlaces = [...prevSelectedPlaces];
+            newSelectedPlaces[dayIndex-1].push(selectedPlace);
+            return newSelectedPlaces;
+        });
         console.log(selectedPlaces);
     };
 
-    const removePlace = (placeToRemove: Place) => {
-        const updatedPlaces = selectedPlaces.filter(place => place !== placeToRemove); // 선택된 장소 배열에서 해당 장소를 제거
-        setSelectedPlaces(updatedPlaces); // 제거된 장소를 상태로 업데이트
+    const removePlace = (dayIndex: number, placeIndex: number) => {
+        setSelectedPlaces(prevSelectedPlaces => {
+            const newSelectedPlaces = [...prevSelectedPlaces];
+            newSelectedPlaces[dayIndex].splice(placeIndex, 1);
+            return newSelectedPlaces;
+        });
     };
 
     const generateTabs = (days: number) => {
@@ -66,16 +86,6 @@ const MakePlan = () => {
         setActiveTab(index); // 클릭한 탭의 인덱스를 상태로 설정
     };
 
-    useEffect(() => {
-        getData();
-        if (tripInfo.startDate && tripInfo.endDate) {
-            const differenceInTime = tripInfo.endDate.getTime() - tripInfo.startDate.getTime();
-            const differenceInDays = Math.floor(differenceInTime / (1000 * 3600 * 24));
-            const tripDays = differenceInDays + 1;
-            setTripDays(tripDays);
-        }
-    }, []);
-
     const naviBack = () => {
         navigate('/');
     };
@@ -93,7 +103,7 @@ const MakePlan = () => {
                     <div className="flex justify-center">
                         <div className="w-11/12 grid grid-cols-2 justify-items-center items-center gap-3 mt-4">
                             {res.map((place: Place, index: number) => (
-                                <PlaceBox key={index} place={place} addSelectedPlace={addSelectedPlace} />
+                                <PlaceBox key={index} place={place} addSelectedPlace={() => addSelectedPlace(place, activeTab)} />
                             ))}
                         </div>
                     </div>
@@ -112,9 +122,14 @@ const MakePlan = () => {
                                 >
                                     <div className="contentBox">
                                         <div className="w-full h-full flex flex-col items-center pt-3">
-                                            {selectedPlaces.map((place: Place, index: number) => (
-                                                <DayPlace place={place} selectedPlaces={selectedPlaces} removePlace={removePlace}/>
-                                            ))}
+                                            {/*{selectedPlaces.map((selectedPlace, index) => (
+                                                <DayPlace
+                                                    key={index}
+                                                    index={index}
+                                                    selectedPlaces={selectedPlace}
+                                                    removePlace={removePlace}
+                                                />
+                                            ))}*/}
                                         </div>
                                     </div>
                                 </div>

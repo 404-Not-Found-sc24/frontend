@@ -11,7 +11,6 @@ const PlaceBox: React.FC<CityBoxProps> = ({ place, addSelectedPlace }) => {
     const handleSelectPlace = () => {
         addSelectedPlace(place);
     };
-
     return (
         <div className="w-40 h-40 relative flex flex-col cursor-pointer" onClick={handleSelectPlace}>
             <img
