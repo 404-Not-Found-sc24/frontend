@@ -53,7 +53,6 @@ const SearchPlace: React.FC = () => {
         } catch (error) {
           console.error('Failed to fetch place search results:', error);
         }
-
         // 일정 검색은 클라이언트에서 처리
         const filteredPlanData = plandata.filter((plan) =>
           plan.name.toLowerCase().includes(searchTerm.toLowerCase()),
@@ -68,7 +67,7 @@ const SearchPlace: React.FC = () => {
     
     fetchData();
   }, [location.search]);
-
+  
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
   };
