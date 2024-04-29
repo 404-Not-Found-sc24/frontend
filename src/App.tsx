@@ -20,7 +20,6 @@ function App() {
       <Routes>
         <Route path="/" element={<Main />}></Route>
         <Route path="/signup" element={<SignUp />}></Route>
-        <Route path="/makediary" element={<MakeDiary />}></Route>
         <Route path="/searchplace" element={<SearchPlace />} />
         <Route path="/placeinfo" element={<PlaceInfo />} />
         <Route path="/traveldes" element={<Travledes />} />

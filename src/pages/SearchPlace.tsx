@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import SearchResults from '../components/SearchResults';
-import plandata from '../plandata'; // 일정 데이터 파일
+import axios from 'axios';
+import { MapProvider } from '../context/MapContext';
 import SearchBar from '../components/SearchBar';
 import Map from '../components/Map';
-import axios from 'axios';
 
 interface PlaceData {
   locationId: number;
   name: string;
   address: string;
-  latitude: number;
-  longitude: number;
   imageUrl: string;
 }
 
@@ -24,18 +22,12 @@ interface PlanData {
   imageUrl: string;
 }
 
-declare global {
-  interface Window {
-    kakao: any;
-  }
-}
-
 const SearchPlace: React.FC = () => {
   const [activeTab, setActiveTab] = useState('장소 보기');
   const [placeSearchResults, setPlaceSearchResults] = useState<PlaceData[]>([]);
   const [planSearchResults, setPlanSearchResults] = useState<PlanData[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const location = useLocation(); // 현재 URL 정보 가져오기
+  const location = useLocation();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -44,30 +36,31 @@ const SearchPlace: React.FC = () => {
       if (searchTerm) {
         setSearchTerm(searchTerm);
 
-        // 장소 검색은 서버에서 처리
         try {
-          const response = await axios.get(
+          // 장소 데이터 가져오기
+          const placeResponse = await axios.get(
             `/tour/locations?city=${searchTerm}`,
           );
-          setPlaceSearchResults(response.data);
+          setPlaceSearchResults(placeResponse.data);
+
+          // 일정 데이터 가져오기
+          const planResponse = await axios.get(
+            `/tour/schedules?city=${searchTerm}`,
+          );
+          setPlanSearchResults(planResponse.data);
         } catch (error) {
-          console.error('Failed to fetch place search results:', error);
+          console.error('Failed to fetch search results:', error);
         }
-        // 일정 검색은 클라이언트에서 처리
-        const filteredPlanData = plandata.filter((plan) =>
-          plan.name.toLowerCase().includes(searchTerm.toLowerCase()),
-        );
-        setPlanSearchResults(filteredPlanData);
       } else {
         setPlaceSearchResults([]);
         setPlanSearchResults([]);
         setSearchTerm('');
       }
     };
-    
+
     fetchData();
   }, [location.search]);
-  
+
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
   };
@@ -102,16 +95,34 @@ const SearchPlace: React.FC = () => {
             일정 보기
           </div>
         </div>
+        <div className="flex max-w-4xl justify-end mt-2">
+          <Link
+            to="/addplaceform"
+            className="text-ms text-main-green-color font-Nanum Gothic underline underline-offset-4"
+          >
+            장소 직접 추가하기
+          </Link>
+        </div>
         <div className="tab-content">
           <div className={activeTab === '장소 보기' ? 'active' : ''}>
-            <SearchResults data={placeSearchResults} searchTerm={searchTerm} />
+            <SearchResults
+              data={placeSearchResults}
+              searchTerm={searchTerm}
+              tab={activeTab}
+            />
           </div>
           <div className={activeTab === '일정 보기' ? 'active' : ''}>
-            <SearchResults data={planSearchResults} searchTerm={searchTerm} />
+            <SearchResults
+              data={planSearchResults}
+              searchTerm={searchTerm}
+              tab={activeTab}
+            />
           </div>
         </div>
       </div>
-      <Map />
+      <MapProvider initialCenter={{ latitude: 37.2795, longitude: 127.0438 }}>
+        <Map />
+      </MapProvider>
     </div>
   );
 };
