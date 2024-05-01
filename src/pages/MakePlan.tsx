@@ -8,7 +8,6 @@ import axios from "axios";
 import Place from "../../types/Place";
 import SearchBar from "../components/SearchBar";
 import Map from "../components/Map";
-
 const MakePlan = () => {
     const location = useLocation();
     const tripInfo = {...location.state};
@@ -26,7 +25,6 @@ const MakePlan = () => {
             const differenceInDays = Math.floor(differenceInTime / (1000 * 3600 * 24));
             const tripDays = differenceInDays + 1;
             setTripDays(tripDays);
-
             const newTripPlaces = Array.from({ length: tripDays }, () => ([] as Place[]));
             setSelectedPlaces(newTripPlaces);
         }
@@ -56,7 +54,6 @@ const MakePlan = () => {
             return newSelectedPlaces;
         });
     };
-
     const generateTabs = (days: number) => {
         const tabs = [];
         for (let i = 1; i <= days; i++) {
@@ -70,7 +67,6 @@ const MakePlan = () => {
         }
         return tabs;
     };
-
     const getData = async () => {
         console.log(tripInfo.city);
         console.log(keyword);
@@ -88,16 +84,13 @@ const MakePlan = () => {
             console.error(e);
         }
     }
-
     const handleTabClick = (index: number) => {
         console.log(index);
         setActiveTab(index); // 클릭한 탭의 인덱스를 상태로 설정
     };
-
     const naviBack = () => {
         navigate('/');
     };
-
     return (
         <div className="w-full h-[864px] flex">
             <div className="w-1/2 h-full flex">
@@ -154,5 +147,4 @@ const MakePlan = () => {
         </div>
     );
 };
-
 export default MakePlan;
