@@ -1,13 +1,14 @@
 import * as React from 'react';
-import {useEffect, useMemo, useState} from "react";
-import {useLocation, useNavigate} from "react-router-dom";
+import { useEffect, useMemo, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import '../index.css';
-import PlaceBox from "../components/PlaceBox";
-import DayPlace from "../components/DayPlace";
-import axios from "axios";
-import Place from "../../types/Place";
-import SearchBar from "../components/SearchBar";
-import Map from "../components/Map";
+import PlaceBox from '../components/PlaceBox';
+import DayPlace from '../components/DayPlace';
+import axios from 'axios';
+import Place from '../../types/Place';
+import SearchBar from '../components/SearchBar';
+import Map from '../components/Map';
+import { MapProvider } from '../context/MapContext';
 
 const MakePlan = () => {
     const location = useLocation();
@@ -19,84 +20,85 @@ const MakePlan = () => {
     const [res , setRes] = useState([]);
     const [selectedPlaces, setSelectedPlaces] = useState<Place[][]>();
 
-    useEffect(() => {
-        getData();
-        if (tripInfo.startDate && tripInfo.endDate) {
-            const differenceInTime = tripInfo.endDate.getTime() - tripInfo.startDate.getTime();
-            const differenceInDays = Math.floor(differenceInTime / (1000 * 3600 * 24));
-            const tripDays = differenceInDays + 1;
-            setTripDays(tripDays);
+  useEffect(() => {
+    getData();
+    if (tripInfo.startDate && tripInfo.endDate) {
+      const differenceInTime =
+        tripInfo.endDate.getTime() - tripInfo.startDate.getTime();
+      const differenceInDays = Math.floor(
+        differenceInTime / (1000 * 3600 * 24),
+      );
+      const tripDays = differenceInDays + 1;
+      setTripDays(tripDays);
 
-            const newTripPlaces = Array.from({ length: tripDays }, () => ([] as Place[]));
-            setSelectedPlaces(newTripPlaces);
-        }
-    }, []);
-
-    useEffect(() => {
-        console.log(selectedPlaces);
-    }, [selectedPlaces]);
-
-    useEffect(() => {
-        console.log(res);
-    }, [res]);
-
-    const addSelectedPlace = (selectedPlace: Place, dayIndex: number) => {
-        setSelectedPlaces(prevSelectedPlaces => {
-            const newSelectedPlaces = [...prevSelectedPlaces || []];
-            newSelectedPlaces[dayIndex-1].push(selectedPlace);
-            return newSelectedPlaces;
-        });
-        console.log(selectedPlaces);
-    };
-
-    const removePlace = (dayIndex: number, placeIndex: number) => {
-        setSelectedPlaces(prevSelectedPlaces => {
-            const newSelectedPlaces = [...prevSelectedPlaces || []];
-            newSelectedPlaces[dayIndex].splice(placeIndex, 1);
-            return newSelectedPlaces;
-        });
-    };
-
-    const generateTabs = (days: number) => {
-        const tabs = [];
-        for (let i = 1; i <= days; i++) {
-            tabs.push(
-                <div key={i} className={`tab ${activeTab === i ? 'active' : ''}`} onClick={() => handleTabClick(i)}>
-                    <div className="tabContent">
-                        {`${i}일차`}
-                    </div>
-                </div>
-            );
-        }
-        return tabs;
-    };
-
-    const getData = async () => {
-        console.log(tripInfo.city);
-        console.log(keyword);
-        try {
-            await axios.get('tour/locations?city=' + tripInfo.city + '&keyword=' + keyword, {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            }).then((response) => {
-                console.log(response.data);
-                setRes(response.data);
-            });
-            ;
-        } catch (e: any) {
-            console.error(e);
-        }
+      const newTripPlaces = Array.from(
+        { length: tripDays },
+        () => [] as Place[],
+      );
+      setSelectedPlaces(newTripPlaces);
     }
+  }, []);
 
-    const handleTabClick = (index: number) => {
-        console.log(index);
-        setActiveTab(index); // 클릭한 탭의 인덱스를 상태로 설정
-    };
+  const addSelectedPlace = (selectedPlace: Place, dayIndex: number) => {
+    setSelectedPlaces((prevSelectedPlaces) => {
+      const newSelectedPlaces = [...prevSelectedPlaces];
+      newSelectedPlaces[dayIndex - 1].push(selectedPlace);
+      return newSelectedPlaces;
+    });
+    console.log(selectedPlaces);
+  };
 
-    const naviBack = () => {
-        navigate('/');
-    };
+  const removePlace = (dayIndex: number, placeIndex: number) => {
+    setSelectedPlaces((prevSelectedPlaces) => {
+      const newSelectedPlaces = [...prevSelectedPlaces];
+      newSelectedPlaces[dayIndex].splice(placeIndex, 1);
+      return newSelectedPlaces;
+    });
+  };
+
+  const generateTabs = (days: number) => {
+    const tabs = [];
+    for (let i = 1; i <= days; i++) {
+      tabs.push(
+        <div
+          key={i}
+          className={`tab ${activeTab === i ? 'active' : ''}`}
+          onClick={() => handleTabClick(i)}
+        >
+          <div className="tabContent">{`${i}일차`}</div>
+        </div>,
+      );
+    }
+    return tabs;
+  };
+
+  const getData = async () => {
+    console.log(tripInfo.city);
+    console.log(keyword);
+    try {
+      await axios
+        .get('tour/locations?city=' + tripInfo.city + '&keyword=' + keyword, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+        .then((response) => {
+          console.log(response.data);
+          setRes(response.data);
+        });
+    } catch (e: any) {
+      console.error(e);
+    }
+  };
+
+  const handleTabClick = (index: number) => {
+    console.log(index);
+    setActiveTab(index); // 클릭한 탭의 인덱스를 상태로 설정
+  };
+
+  const naviBack = () => {
+    navigate('/');
+  };
 
     return (
         <div className="w-full h-[864px] flex">
@@ -131,6 +133,7 @@ const MakePlan = () => {
                                     <div className="contentBox">
                                         {selectedPlaces && (<div className="w-full h-full flex flex-col items-center pt-3">
                                             {selectedPlaces[activeTab-1].map((selectedPlace, index) => (
+
                                                 <DayPlace
                                                     key={index}
                                                     index={index}
@@ -148,11 +151,23 @@ const MakePlan = () => {
                             </button>
                         </div>
                     </div>
+                  </div>
                 </div>
+              ))}
             </div>
-            <Map />
+            <div className="h-[100px] w-full flex justify-center items-center">
+              <button className="h-1/2 bg-black text-white px-10 rounded-md text-xl font-['BMJUA']">
+                생성
+              </button>
+            </div>
+          </div>
         </div>
-    );
+      </div>
+      <MapProvider initialCenter={{ latitude: 37.2795, longitude: 127.0438 }}>
+        <Map />
+      </MapProvider>
+    </div>
+  );
 };
 
 export default MakePlan;
