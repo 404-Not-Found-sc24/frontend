@@ -1,21 +1,24 @@
 import '../index.css';
 import * as React from "react";
 import Place from '../../types/Place';
+import {useEffect} from "react";
 
 interface DayPlaceProps {
     index: number;
     selectedPlace: Place;
-    removePlace: (dayIndex: number, placeIndex: number) => void;
+    removePlace: (placeIndex: number) => void;
 }
 
-const DayPlace: React.FC<DayPlaceProps> = ({ index, selectedPlace, removePlace }) => {
-    const handleRemovePlace = (placeIndex: number) => {
-        removePlace(placeIndex, index);
+const DayPlace: React.FC<DayPlaceProps> = ({index, selectedPlace, removePlace}) => {
+    const handleRemovePlace = () => {
+        removePlace(index);
     };
-
+    useEffect(() => {
+        console.log(selectedPlace);
+    }, []);
     return (
-        <div key={index} className="w-11/12 h-20 flex items-center mb-3">
-            <button className="delete mr-3" onClick={() => handleRemovePlace(index)}></button>
+        <div className="w-11/12 h-20 flex items-center mb-3">
+            <button className="delete mr-3" onClick={() => handleRemovePlace()}></button>
             <div className="w-full h-full rounded-md shadow-xl flex items-center">
                 <img
                     src={selectedPlace.imageUrl}

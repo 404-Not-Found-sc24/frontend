@@ -7,7 +7,7 @@ interface CityBoxProps {
     addSelectedPlace: (place: Place) => void;
 }
 
-const PlaceBox: React.FC<CityBoxProps> = ({ place, addSelectedPlace }) => {
+const PlaceBox: React.FC<CityBoxProps> = ({place, addSelectedPlace}) => {
     const handleSelectPlace = () => {
         addSelectedPlace(place);
     };
@@ -16,13 +16,13 @@ const PlaceBox: React.FC<CityBoxProps> = ({ place, addSelectedPlace }) => {
             <img
                 src={place.imageUrl}
                 alt="City Image"
-                className="rounded-4"
+                className="rounded-4 w-full h-full object-cover"
             />
             <div
-                className="absolute bottom-0 right-0 text-4xl font-['BMHANNApro'] text-white bg-black bg-opacity-50 p-2 rounded-tl rounded-br z-10"
+                className="absolute bottom-0 right-0 text-2xl font-['BMHANNApro'] text-white bg-black bg-opacity-50 p-2 rounded-tl rounded-br z-10"
                 style={{overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis"}}
             >
-                {place.name.length > 4 ? `${place.name.slice(0, 4)}...` : place.name}
+                {place.name.length > 7 ? `${place.name.slice(0, 6)}...` : place.name}
             </div>
         </div>
     );

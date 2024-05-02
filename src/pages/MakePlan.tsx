@@ -1,13 +1,14 @@
 import * as React from 'react';
-import {useEffect, useMemo, useState} from "react";
-import {useLocation, useNavigate} from "react-router-dom";
+import {useEffect, useMemo, useState} from 'react';
+import {useLocation, useNavigate} from 'react-router-dom';
 import '../index.css';
-import PlaceBox from "../components/PlaceBox";
-import DayPlace from "../components/DayPlace";
-import axios from "axios";
-import Place from "../../types/Place";
-import SearchBar from "../components/SearchBar";
-import Map from "../components/Map";
+import PlaceBox from '../components/PlaceBox';
+import DayPlace from '../components/DayPlace';
+import axios from 'axios';
+import Place from '../../types/Place';
+import SearchBar from '../components/SearchBar';
+import Map from '../components/Map';
+import {MapProvider} from '../context/MapContext';
 
 const MakePlan = () => {
     const location = useLocation();
@@ -15,33 +16,33 @@ const MakePlan = () => {
     const navigate = useNavigate();
     const [tripDays, setTripDays] = useState<number>(0);
     const [keyword, setKeyword] = useState('');
+    const [lastIdx, setLastIdx] = useState<number>(0);
     const [activeTab, setActiveTab] = useState<number>(1);
     const [res, setRes] = useState([]);
-    const [selectedPlaces, setSelectedPlaces] = useState<Place[][]>();
+    const [selectedPlaces, setSelectedPlaces] = useState<Place[][]>([]);
 
     useEffect(() => {
         getData();
         if (tripInfo.startDate && tripInfo.endDate) {
-            const differenceInTime = tripInfo.endDate.getTime() - tripInfo.startDate.getTime();
-            const differenceInDays = Math.floor(differenceInTime / (1000 * 3600 * 24));
+            const differenceInTime =
+                tripInfo.endDate.getTime() - tripInfo.startDate.getTime();
+            const differenceInDays = Math.floor(
+                differenceInTime / (1000 * 3600 * 24),
+            );
             const tripDays = differenceInDays + 1;
             setTripDays(tripDays);
-            const newTripPlaces = Array.from({length: tripDays}, () => ([] as Place[]));
+
+            const newTripPlaces = Array.from(
+                {length: tripDays},
+                () => [] as Place[],
+            );
             setSelectedPlaces(newTripPlaces);
         }
     }, []);
 
-    useEffect(() => {
-        console.log(selectedPlaces);
-    }, [selectedPlaces]);
-
-    useEffect(() => {
-        console.log(res);
-    }, [res]);
-
     const addSelectedPlace = (selectedPlace: Place, dayIndex: number) => {
-        setSelectedPlaces(prevSelectedPlaces => {
-            const newSelectedPlaces = [...prevSelectedPlaces || []];
+        setSelectedPlaces((prevSelectedPlaces) => {
+            const newSelectedPlaces = [...prevSelectedPlaces];
             newSelectedPlaces[dayIndex - 1].push(selectedPlace);
             return newSelectedPlaces;
         });
@@ -49,49 +50,56 @@ const MakePlan = () => {
     };
 
     const removePlace = (dayIndex: number, placeIndex: number) => {
-        setSelectedPlaces(prevSelectedPlaces => {
-            const newSelectedPlaces = [...prevSelectedPlaces || []];
-            newSelectedPlaces[dayIndex].splice(placeIndex, 1);
+        setSelectedPlaces((prevSelectedPlaces) => {
+            const newSelectedPlaces = [...prevSelectedPlaces];
+            newSelectedPlaces[dayIndex - 1].splice(placeIndex, 1);
             return newSelectedPlaces;
         });
     };
+
     const generateTabs = (days: number) => {
         const tabs = [];
         for (let i = 1; i <= days; i++) {
             tabs.push(
-                <div key={i} className={`tab ${activeTab === i ? 'active' : ''}`} onClick={() => handleTabClick(i)}>
-                    <div className="tabContent">
-                        {`${i}일차`}
-                    </div>
-                </div>
+                <div
+                    key={i}
+                    className={`tab ${activeTab === i ? 'active' : ''}`}
+                    onClick={() => handleTabClick(i)}
+                >
+                    <div className="tabContent">{`${i}일차`}</div>
+                </div>,
             );
         }
         return tabs;
     };
+  
     const getData = async () => {
         console.log(tripInfo.city);
         console.log(keyword);
         try {
-            await axios.get('tour/locations?city=' + tripInfo.city + '&keyword=' + keyword, {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            }).then((response) => {
-                console.log(response.data);
-                setRes(response.data);
-            });
-            ;
+            await axios
+                .get('tour/locations?city=' + tripInfo.city + '&keyword=' + keyword + '&lastIdx=' + lastIdx, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
+                .then((response) => {
+                    console.log(response.data);
+                    setRes(response.data);
+                });
         } catch (e: any) {
             console.error(e);
         }
-    }
+    };
     const handleTabClick = (index: number) => {
         console.log(index);
         setActiveTab(index); // 클릭한 탭의 인덱스를 상태로 설정
     };
+
     const naviBack = () => {
         navigate('/');
     };
+  
     return (
         <div className="w-full h-[864px] flex">
             <div className="w-1/2 h-full flex">
@@ -102,8 +110,8 @@ const MakePlan = () => {
                             className="font-['Nanum Gothic'] text-3xl font-semibold text-black ml-2 w-72 flex items-center">{tripInfo.city}</div>
                     </div>
                     <SearchBar/>
-                    <div className="flex justify-center">
-                        <div className="w-11/12 grid grid-cols-2 justify-items-center items-center gap-3 mt-4">
+                    <div className="flex justify-center h-[720px] overscroll-y-auto">
+                        <div className="w-11/12 grid grid-cols-2 justify-items-center items-center gap-3 mt-4 overflow-y-auto">
                             {res.map((place: Place, index: number) => (
                                 <PlaceBox key={index} place={place}
                                           addSelectedPlace={() => addSelectedPlace(place, activeTab)}/>
@@ -140,13 +148,14 @@ const MakePlan = () => {
                             ))}
                         </div>
                         <div className="h-[100px] w-full flex justify-center items-center">
-                            <button className="h-1/2 bg-black text-white px-10 rounded-md text-xl font-['BMJUA']">생성
-                            </button>
+                            <button className="h-1/2 bg-black text-white px-10 rounded-md text-xl font-['BMJUA']">추가</button>
                         </div>
                     </div>
                 </div>
             </div>
-            <Map/>
+            <MapProvider initialCenter={{latitude: 37.2795, longitude: 127.0438}}>
+                <Map/>
+            </MapProvider>
         </div>
     );
 };
