@@ -72,7 +72,7 @@ const MakePlan = () => {
         }
         return tabs;
     };
-
+  
     const getData = async () => {
         console.log(tripInfo.city);
         console.log(keyword);
@@ -91,7 +91,6 @@ const MakePlan = () => {
             console.error(e);
         }
     };
-
     const handleTabClick = (index: number) => {
         console.log(index);
         setActiveTab(index); // 클릭한 탭의 인덱스를 상태로 설정
@@ -100,7 +99,7 @@ const MakePlan = () => {
     const naviBack = () => {
         navigate('/');
     };
-
+  
     return (
         <div className="w-full h-[864px] flex">
             <div className="w-1/2 h-full flex">
@@ -136,7 +135,6 @@ const MakePlan = () => {
                                         {selectedPlaces && (
                                             <div className="w-full h-full flex flex-col items-center pt-3">
                                                 {selectedPlaces[activeTab - 1].map((selectedPlace, index) => (
-
                                                     <DayPlace
                                                         key={index}
                                                         index={index}
@@ -161,5 +159,4 @@ const MakePlan = () => {
         </div>
     );
 };
-
 export default MakePlan;

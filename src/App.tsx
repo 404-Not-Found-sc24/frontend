@@ -29,7 +29,12 @@ function App() {
           <Route path="/searchplace" element={<SearchPlace />} />
           <Route path="/placeinfo" element={<PlaceInfo />} />
           <Route path="/traveldes" element={<Travledes />} />
-          <Route path="/makeplan" element={<MakePlan />} />
+          <Route path="/makeplan" element={
+              <MapProvider
+                  initialCenter={{ latitude: 37.2795, longitude: 127.0438 }}
+              >
+                  <MakePlan />
+              </MapProvider>} />
           <Route
             path="/addplaceform"
             element={
