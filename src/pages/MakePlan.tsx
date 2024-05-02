@@ -16,6 +16,7 @@ const MakePlan = () => {
     const navigate = useNavigate();
     const [tripDays, setTripDays] = useState<number>(0);
     const [keyword, setKeyword] = useState('');
+    const [lastIdx, setLastIdx] = useState<number>(0);
     const [activeTab, setActiveTab] = useState<number>(1);
     const [res, setRes] = useState([]);
     const [selectedPlaces, setSelectedPlaces] = useState<Place[][]>([]);
@@ -77,7 +78,7 @@ const MakePlan = () => {
         console.log(keyword);
         try {
             await axios
-                .get('tour/locations?city=' + tripInfo.city + '&keyword=' + keyword, {
+                .get('tour/locations?city=' + tripInfo.city + '&keyword=' + keyword + '&lastIdx=' + lastIdx, {
                     headers: {
                         'Content-Type': 'application/json',
                     },
@@ -149,7 +150,7 @@ const MakePlan = () => {
                             ))}
                         </div>
                         <div className="h-[100px] w-full flex justify-center items-center">
-                            <button className="h-1/2 bg-black text-white px-10 rounded-md text-xl font-['BMJUA']">생성</button>
+                            <button className="h-1/2 bg-black text-white px-10 rounded-md text-xl font-['BMJUA']">추가</button>
                         </div>
                     </div>
                 </div>
