@@ -26,7 +26,6 @@ interface Props {
 const SearchResults: React.FC<Props> = ({data, searchTerm, tab}) => {
     const normalizedSearchTerm = searchTerm.toLowerCase();
     const navigate = useNavigate();
-
     const navigateToDiary = (locationId: number, name: string) => {
         navigate(`/searchresultdiary/${locationId}`, {
             state: {placeName: name},
@@ -45,8 +44,9 @@ const SearchResults: React.FC<Props> = ({data, searchTerm, tab}) => {
                                 pathname: '/placeinfo',
                             }}
                             state={{place}}
+                            className="w-full h-[30%] p-5 flex rounded-md shadow-xl mb-2"
                         >
-                            <div className="shadow-xl border-2 p-4 mb-4 rounded-lg">
+                            <div>
                                 <div
                                     onClick={() => navigateToDiary(place.locationId, place.name)}
                                     style={{cursor: 'pointer'}}
@@ -75,7 +75,7 @@ const SearchResults: React.FC<Props> = ({data, searchTerm, tab}) => {
                                 </div>
                             </div>
                         </Link>
-                ))}
+                    ))}
             {tab === '일정 보기' &&
                 data
                     .filter((item): item is PlanData => 'scheduleId' in item)
@@ -99,5 +99,4 @@ const SearchResults: React.FC<Props> = ({data, searchTerm, tab}) => {
         </div>
     );
 };
-
 export default SearchResults;
