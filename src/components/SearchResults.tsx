@@ -44,7 +44,7 @@ const SearchResults: React.FC<Props> = ({data, searchTerm, tab}) => {
                                   pathname: '/placeinfo',
                               }}
                               state={{place}}
-                              className="shadow-xl border-2 p-4 mb-4 rounded-lg">
+                              className="w-full h-[30%] p-5 flex rounded-md shadow-xl mb-2">
                             <div
                                 onClick={() => navigateToDiary(place.locationId, place.name)}
                                 style={{cursor: 'pointer'}}

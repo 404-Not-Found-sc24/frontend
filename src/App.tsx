@@ -16,6 +16,7 @@ import SignIn from './pages/SignIn';
 import { AuthProvider } from './context/AuthContext';
 import { MapProvider } from './context/MapContext';
 import AddPlaceForm from './pages/AddPlaceForm';
+import Event from './pages/Event';
 
 function App() {
   return (
@@ -48,6 +49,7 @@ function App() {
           <Route path="/makediary" element={<MakeDiary />} />
           <Route path="/plandetail" element={<PlanDetail />} />
           <Route path="/diarydetail" element={<DiaryDetail />} />
+            <Route path="/event" element={<Event />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
