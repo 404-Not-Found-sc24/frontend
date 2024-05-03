@@ -211,3 +211,29 @@ code {
   background-color: white;
   height: 100%;
 }
+
+/* 표 */
+table{
+  display:flex;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+tbody
+{display:flex}
+
+th{
+  display:block;
+  color:#ED661A;
+  font-family: BMJUA;
+  width: 100px;
+  text-align: left;
+}
+
+td{
+  display:block;
+  font-family: "Nanum Gothic";
+  text-align: left;
+}
