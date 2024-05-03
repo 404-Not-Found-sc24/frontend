@@ -39,40 +39,43 @@ const SearchResults: React.FC<Props> = ({data, searchTerm, tab}) => {
                 data
                     .filter((item): item is PlaceData => 'locationId' in item)
                     .map((place: PlaceData, index) => (
-                        <Link key={index}
-                              to={{
-                                  pathname: '/placeinfo',
-                              }}
-                              state={{place}}
-                              className="w-full h-[30%] p-5 flex rounded-md shadow-xl mb-2">
-                            <div
-                                onClick={() => navigateToDiary(place.locationId, place.name)}
-                                style={{cursor: 'pointer'}}
-                            >
-                                <div className="flex">
-                                    {place.imageUrl ? (
-                                        <img
-                                            src={place.imageUrl}
-                                            alt={place.name}
-                                            className="w-32 h-32 mt-2"
-                                        />
-                                    ) : (
-                                        <div
-                                            className="border-2 flex w-32 h-32 mt-2 text-gray-600 justify-center items-center">
-                                            사진이 없습니다.
-                                        </div>
-                                    )}
+                        <Link
+                            key={index}
+                            to={{
+                                pathname: '/placeinfo',
+                            }}
+                            state={{place}}
+                        >
+                            <div className="shadow-xl border-2 p-4 mb-4 rounded-lg">
+                                <div
+                                    onClick={() => navigateToDiary(place.locationId, place.name)}
+                                    style={{cursor: 'pointer'}}
+                                >
+                                    <div className="flex">
+                                        {place.imageUrl ? (
+                                            <img
+                                                src={place.imageUrl}
+                                                alt={place.name}
+                                                className="w-32 h-32 mt-2"
+                                            />
+                                        ) : (
+                                            <div
+                                                className="border-2 flex w-32 h-32 mt-2 text-gray-600 justify-center items-center">
+                                                사진이 없습니다.
+                                            </div>
+                                        )}
 
-                                    <div className="flex flex-col p-2">
-                                        <h3 className="font-[BMJUA] text-xl">{place.name}</h3>
-                                        <p className="font-[Nanum Gothic] text-gray-600">
-                                            {place.address}
-                                        </p>
+                                        <div className="flex flex-col p-2">
+                                            <h3 className="font-[BMJUA] text-xl">{place.name}</h3>
+                                            <p className="font-[Nanum Gothic] text-gray-600">
+                                                {place.address}
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </Link>
-                    ))}
+                ))}
             {tab === '일정 보기' &&
                 data
                     .filter((item): item is PlanData => 'scheduleId' in item)
