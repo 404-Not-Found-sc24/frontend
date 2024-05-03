@@ -34,6 +34,8 @@ export const MapProvider: React.FC<MapProviderProps> = ({
     setMapCenter({ latitude: lat, longitude: lng });
   };
 
+  console.log(mapCenter);
+
   return (
     <MapContext.Provider value={{ ...mapCenter, setMapLocation }}>
       {children}

@@ -27,6 +27,7 @@ const PlaceInfo: React.FC = () => {
 
     const naviBack = () => {
         window.history.back();
+        window.history.back();
     };
 
     const getData = async () => {
@@ -101,8 +102,19 @@ const PlaceInfo: React.FC = () => {
                                 <div className="w-full h-[95%] flex justify-center py-5 rounded-md shadow-xl">
                                     <div className="w-full h-full flex items-center flex-col">
                                         <div className="m-3">
-                                            <img src={place.imageUrl} alt="지역소개사진"
-                                                 className="rounded-4 w-[400px] h-[250px] object-cover"></img>
+                                            <div className="text-center font-NanumGothic font-semibold text-2xl mb-5">[{place.name}]</div>
+                                            {place.imageUrl ? (
+                                                <img
+                                                    src={place.imageUrl}
+                                                    alt={place.name}
+                                                    className="rounded-4 w-[400px] h-[250px] object-cover"
+                                                />
+                                            ) : (
+                                                <div
+                                                    className="border-2 flex w-[400px] h-[250px] mt-2 text-gray-600 justify-center items-center">
+                                                    사진이 없습니다.
+                                                </div>
+                                            )}
                                         </div>
                                         <div className="m-5 w-4/5">
                                             <table>
@@ -117,7 +129,7 @@ const PlaceInfo: React.FC = () => {
                                                 <tr>
                                                     <td>{res ? res.address : ''}</td>
                                                     <td>{res ? res.division : ''}</td>
-                                                    <td>{res ? res.phone : ''}</td>
+                                                    <td>{res ? (res.phone === 'nan' ? '-' : res.phone) : '-'}</td>
                                                 </tr>
                                                 </tbody>
                                             </table>
@@ -158,9 +170,9 @@ const PlaceInfo: React.FC = () => {
                                                     </thead>
                                                     <tbody>
                                                     <tr>
-                                                        <td>{res ? (res.culture.time === 'nan' ? '-' : res.culture.time) : '-'}</td>
+                                                        <td>{res && res.culture && res.culture.time && typeof res.culture.time === 'string' ? (res.culture.time.length > 35 ? `${res.culture.time.slice(0, 35)}...` : res.culture.time) : '-'}</td>
                                                         <td>{res ? res.culture.offDate : '-'}</td>
-                                                        <td>{res ? res.culture.fee : '-'}</td>
+                                                        <td>{res && res.culture && res.culture.fee && typeof res.culture.fee === 'string' ? (res.culture.fee.replace(/<br >/g, ' ').length > 35 ? `${res.culture.fee.replace(/<br >/g, ' ').slice(0, 35)}...` : res.culture.fee.replace(/<br >/g, ' ')) : '-'}</td>
                                                         <td>{res ? (res.culture.discount === 'nan' ? '-' : res.culture.discount) : '-'}</td>
                                                         <td>{res ? (res.culture.parking || '-') : '-'}</td>
                                                         <td>{res ? (res.culture.babycar || '-') : '-'}</td>
@@ -205,8 +217,78 @@ const PlaceInfo: React.FC = () => {
                                                         <td>{res ? res.tour.offDate : '-'}</td>
                                                         <td>{res ? res.tour.time : '-'}</td>
                                                         <td>{res ? res.tour.parking : '-'}</td>
-                                                        <td>{res ? res.tour.babycar : '-'}</td>
-                                                        <td>{res ? res.tour.babycar : '-'}</td>
+                                                        <td>{res ? (res.tour && (res.tour.babycar === 'nan' || !res.tour.babycar) ? '-' : res.tour.babycar) : '-'}</td>
+                                                        <td>{res ? (res.tour && (res.tour.pet === 'nan' || !res.tour.pet) ? '-' : res.tour.pet) : '-'}</td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            )}
+                                            {res && res.division === '레포츠' && (
+                                                <table>
+                                                    <thead>
+                                                    <tr>
+                                                        <th>쉬는날</th>
+                                                        <th>개장기간</th>
+                                                        <th>이용시간</th>
+                                                        <th>입장료</th>
+                                                        <th>주차시설</th>
+                                                        <th>유모차대여</th>
+                                                        <th>애완동물</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr>
+                                                        <td>{res ? res.leisure.offDate : '-'}</td>
+                                                        <td>{res && res.leisure && res.leisure.openDate && typeof res.leisure.openDate === 'string' ? (res.leisure.openDate.replace(/<br>/g, ' ').length > 35 ? `${res.leisure.openDate.replace(/<br>/g, ' ').slice(0, 35)}...` : res.leisure.openDate.replace(/<br>/g, ' ')) : '-'}</td>
+                                                        <td>{res ? res.leisure.time : '-'}</td>
+                                                        <td>{res ? (res.leisure.fee === 'nan' ? '-' : res.leisure.fee) : '-'}</td>
+                                                        <td>{res && res.leisure && res.leisure.parking && typeof res.leisure.parking === 'string' ? (res.leisure.parking.replace(/<br>/g, ' ').length > 35 ? `${res.leisure.parking.replace(/<br>/g, ' ').slice(0, 35)}...` : res.leisure.parking.replace(/<br>/g, ' ')) : '-'}</td>
+                                                        <td>{res ? res.leisure.babycar : '-'}</td>
+                                                        <td>{res ? res.leisure.pet : '-'}</td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            )}
+                                            {res && res.division === '숙박' && (
+                                                <table>
+                                                    <thead>
+                                                    <tr>
+                                                        <th>체크인</th>
+                                                        <th>체크아웃</th>
+                                                        <th>주차시설</th>
+                                                        <th>조리시설</th>
+                                                        <th>홈페이지</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr>
+                                                        <td>{res ? res.accommodation.checkIn : '-'}</td>
+                                                        <td>{res ? res.accommodation.checkOut : '-'}</td>
+                                                        <td>{res ? res.accommodation.parking : '-'}</td>
+                                                        <td>{res ? res.accommodation.cook : '-'}</td>
+                                                        <td>{res ? res.accommodation.reservation : '-'}</td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            )}
+                                            {res && res.division === '쇼핑' && (
+                                                <table>
+                                                    <thead>
+                                                    <tr>
+                                                        <th>영업시간</th>
+                                                        <th>쉬는날</th>
+                                                        <th>주차시설</th>
+                                                        <th>유모차 대여</th>
+                                                        <th>애완동물 동반</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr>
+                                                        <td>{res ? res.shopping.time : '-'}</td>
+                                                        <td>{res ? res.shopping.offDate : '-'}</td>
+                                                        <td>{res ? res.shopping.parking : '-'}</td>
+                                                        <td>{res ? res.shopping.babycar : '-'}</td>
+                                                        <td>{res ? res.shopping.pet : '-'}</td>
                                                     </tr>
                                                     </tbody>
                                                 </table>
@@ -226,7 +308,7 @@ const PlaceInfo: React.FC = () => {
                     </div>
                 </div>
             </div>
-            <MapProvider initialCenter={{latitude: res?.latitude || 37.2795, longitude: res?.longitude || 127.0438}}>
+            <MapProvider initialCenter={{latitude: place.latitude, longitude: place.longitude}}>
                 <Map/>
             </MapProvider>
         </div>
