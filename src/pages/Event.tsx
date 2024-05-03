@@ -1,15 +1,35 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
-import {AgGridReact} from 'ag-grid-react'; // Ag-Grid의 React 컴포넌트를 가져옴
+import {AgGridReact} from 'ag-grid-react';
+import axios from "axios";
+import PlaceDetail from "../../types/PlaceDetail"; // Ag-Grid의 React 컴포넌트를 가져옴
 
 const Event: React.FC = () => {
     const gridRef = useRef();
     const [activeTab, setActiveTab] = useState('공지사항');
-    const rowsData = [
-        {title: "공지 테스트", content: "이건 공ㅇ지라고 해", createdDate: "2025-05-25", updatedDate: "2025-05-25", memberName: "나영이"},
-        {title: "공지 테스트2", content: "이건 공ㅇ지라고 해2", createdDate: "2025-05-25", updatedDate: "2025-05-25", memberName: "나영이"},
-    ];
+    const [rowsData, setRowData] = useState([]);
+
+    useEffect(() => {
+        getData();
+    }, []);
+
+    const getData = async () => {
+        try {
+            await axios
+                .get(`https://api.nadueli.com/event/announce`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
+                .then(response => {
+                    console.log(response.data);
+                    setRowData(response.data);
+                });
+        } catch(e) {
+            console.error('Error:', e);
+        };
+    };
 
     const handleTabClick = (tab: string) => {
         setActiveTab(tab);
@@ -72,7 +92,7 @@ const Event: React.FC = () => {
             </div>
             <div className="h-full w-full flex justify-center">
                 {activeTab === '공지사항' && (
-                    <div className="ag-theme-alpine" style={{height: "700px", width: '80%'}}>
+                    <div className="ag-theme-alpine" style={{height: "650px", width: '70%'}}>
                         <AgGridReact
                             rowData={rowData} // 테이블 데이터
                             /*columnDefs={columnDefs}*/ // 헤더데이터
