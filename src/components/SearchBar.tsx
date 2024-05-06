@@ -17,6 +17,10 @@ const SearchBar: React.FC = () => {
     navigate(`/searchplace?q=${searchTerm}`);
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
+
   return (
     <form onSubmit={handleSubmit}>
       <div className="w-full h-12 flex justify-center my-3">
@@ -25,7 +29,7 @@ const SearchBar: React.FC = () => {
             type="text"
             className="text-gray-900 text-md rounded-lg block w-full ps-5 p-2.5 font-BMJUA focus:outline-0"
             placeholder="궁금한 여행지를 검색해보세요!"
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={handleChange}
             value={searchTerm}
           />
           <button type="submit" className="search relative right-3"></button>
