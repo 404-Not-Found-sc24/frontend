@@ -5,18 +5,19 @@ import Main from './pages/Main';
 import NavBar from './components/NavBar';
 import { BrowserRouter } from 'react-router-dom';
 import Travledes from './pages/TravelDes';
-import SignUp from './pages/SignUp';
-import MakePlan from './pages/MakePlan';
 import SearchPlace from './pages/SearchPlace';
-import PlaceInfo from './pages/PlaceInfo';
-import PlanDetail from './pages/PlanDetail';
-import DiaryDetail from './pages/DiaryDetail';
-import MakeDiary from './pages/MakeDiary';
+import SignUp from './pages/SignUp';
 import SignIn from './pages/SignIn';
 import { AuthProvider } from './context/AuthContext';
-import { MapProvider } from './context/MapContext';
+import PlaceInfo from './pages/PlaceInfo';
+import MakePlan from './pages/MakePlan';
+import MakeDiary from './pages/MakeDiary';
+import DiaryDetail from './pages/DiaryDetail';
+import PlanDetail from './pages/PlanDetail';
 import AddPlaceForm from './pages/AddPlaceForm';
-import Event from './pages/Event';
+import { MapProvider } from './context/MapContext';
+import SearchTravelDes from './pages/SearchTravelDes';
+import EventPage from './pages/Event';
 
 function App() {
   return (
@@ -24,18 +25,26 @@ function App() {
       <BrowserRouter>
         <NavBar />
         <Routes>
-          <Route path="/" element={<Main />}></Route>
+          <Route path="/" element={<Main />} />
+          <Route path="/makediary" element={<MakeDiary />} />
           <Route path="/signin" element={<SignIn />} />
-          <Route path="/signup" element={<SignUp />}></Route>
-          <Route path="/searchplace" element={<SearchPlace />} />
-          <Route path="/placeinfo" element={<PlaceInfo />} />
-          <Route path="/traveldes" element={<Travledes />} />
-          <Route path="/makeplan" element={
+          <Route path="/signup" element={<SignUp />} />
+          <Route
+            path="/makeplan"
+            element={
               <MapProvider
-                  initialCenter={{ latitude: 37.2795, longitude: 127.0438 }}
+                initialCenter={{ latitude: 37.2795, longitude: 127.0438 }}
               >
-                  <MakePlan />
-              </MapProvider>} />
+                <MakePlan />
+              </MapProvider>
+            }
+          />
+          <Route path="/placeinfo" element={<PlaceInfo />} />
+          <Route path="/searchplace" element={<SearchPlace />} />
+          <Route path="/searchtraveldes" element={<SearchTravelDes />} />
+          <Route path="/traveldes" element={<Travledes />} />
+          <Route path="/plandetail" element={<PlanDetail />} />
+          <Route path="/diarydetail" element={<DiaryDetail />} />
           <Route
             path="/addplaceform"
             element={
@@ -46,10 +55,7 @@ function App() {
               </MapProvider>
             }
           />
-          <Route path="/makediary" element={<MakeDiary />} />
-          <Route path="/plandetail" element={<PlanDetail />} />
-          <Route path="/diarydetail" element={<DiaryDetail />} />
-            <Route path="/event" element={<Event />} />
+          <Route path="/event" element={<EventPage />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

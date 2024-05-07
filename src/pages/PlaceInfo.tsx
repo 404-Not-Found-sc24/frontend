@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import PlaceDetail from '../../types/PlaceDetail'
+import PlaceDetail from '../../types/PlaceDetail';
 import SearchBar from '../components/SearchBar';
 import Map from '../components/Map';
 import PlanBox from '../components/PlanBox';
@@ -18,21 +18,21 @@ const PlaceInfo: React.FC = () => {
     const [schedueleRes, setScheduleRes] = useState<ScheduleData[]>([],);
     const place = location.state.place;
 
-    console.log(place);
+  console.log(place);
 
     useEffect(() => {
         getData();
         getScheduleData();
     }, []);
 
-    const handleTabClick = (tab: string) => {
-        setActiveTab(tab);
-    };
+  const handleTabClick = (tab: string) => {
+    setActiveTab(tab);
+  };
 
-    const naviBack = () => {
-        window.history.back();
-        window.history.back();
-    };
+  const naviBack = () => {
+    window.history.back();
+    window.history.back();
+  };
 
     const getData = async () => {
         try {
@@ -43,7 +43,6 @@ const PlaceInfo: React.FC = () => {
                     },
                 })
                 .then(response => {
-                    console.log(response.data);
                     setRes(response.data);
                 });
         } catch (e) {
@@ -60,7 +59,6 @@ const PlaceInfo: React.FC = () => {
                     },
                 })
                 .then(response => {
-                    console.log("schedule", response.data);
                     setScheduleRes(response.data);
                 });
         } catch (e) {
@@ -68,7 +66,6 @@ const PlaceInfo: React.FC = () => {
         };
     }
 
-    console.log(res);
     return (
         <div className="flex w-full h-[864px]">
             <div className="w-1/2 h-full">
@@ -329,14 +326,16 @@ const PlaceInfo: React.FC = () => {
                                 })}
                             </div>
                         )}
-                    </div>
                 </div>
-            </div>
-            <MapProvider initialCenter={{ latitude: place.latitude, longitude: place.longitude }}>
-                <Map />
-            </MapProvider>
         </div>
-    );
+      </div>
+      <MapProvider
+        initialCenter={{ latitude: place.latitude, longitude: place.longitude }}
+      >
+        <Map />
+      </MapProvider>
+    </div>
+  );
 };
 
 export default PlaceInfo;  
