@@ -319,10 +319,13 @@ const PlaceInfo: React.FC = () => {
                         )}
                         {activeTab === '일기 보기' && <></>}
                         {activeTab === '일정 보기' && (
-                            <div className="w-full h-full flex flex-col items-center pt-3">
+                            <div>
                                 {schedueleRes.map((data: ScheduleData, index: number) => {
-                                    console.log("schedule: ", data);
-                                    return <PlanBox key={index} props={data} />
+                                    return (
+                                    <div className="w-full h-full flex flex-col items-center pt-3">
+                                        <PlanBox key={index} props={data} />
+                                    </div>
+                                    )
                                 })}
                             </div>
                         )}
