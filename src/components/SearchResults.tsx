@@ -24,159 +24,147 @@ interface Props {
 }
 
 const SearchResults: React.FC<Props> = ({ tab }) => {
-  const [searchResults, setSearchResults] = useState<(PlaceData | PlanData)[]>(
-    [],
-  );
-  const [lastIdx, setLastIdx] = useState<number>(0);
-  const loadMoreRef = useRef<HTMLDivElement>(null);
-  const [searchTerm, setSearchTerm] = useState<string>('');
   const [placeSearchResults, setPlaceSearchResults] = useState<PlaceData[]>([]);
   const [planSearchResults, setPlanSearchResults] = useState<PlanData[]>([]);
-  const observer = useRef<IntersectionObserver>();
+  const [lastPlaceIdx, setLastPlaceIdx] = useState<number>(0);
+  const placeLoadMoreRef = useRef<HTMLDivElement>(null);
+  const planLoadMoreRef = useRef<HTMLDivElement>(null);
+  const placeObserver = useRef<IntersectionObserver>();
+  const planObserver = useRef<IntersectionObserver>();
   const location = useLocation();
 
   useEffect(() => {
-    const fetchDataOnScroll = async () => {
+    const fetchPlaceDataOnScroll = async () => {
       const queryParams = new URLSearchParams(location.search);
       const searchTerm = queryParams.get('q');
       try {
-        // 스크롤 가능한 컨테이너의 끝에 도달했을 때 추가 데이터 요청
         const placeResponse = await axios.get(
-          `/tour/locations?keyword=${searchTerm}&lastIdx=${lastIdx}`,
+          `/tour/locations?keyword=${searchTerm}&lastIdx=${lastPlaceIdx}`,
         );
         setPlaceSearchResults((prevData) => [
           ...prevData,
           ...placeResponse.data,
         ]);
-
-        const planResponse = await axios.get(
-          `/tour/schedules?city=${searchTerm}&lastIdx=${lastIdx}`,
-          {
-            headers: { 'Content-Type': 'application/json' },
-          },
+        setLastPlaceIdx(
+          (prevLastIdx) => prevLastIdx + placeResponse.data.length,
         );
-        setPlanSearchResults((prevData) => [...prevData, ...planResponse.data]);
-        const newPlaceData = placeResponse.data;
-        const newPlanData = planResponse.data;
-        if (newPlaceData.length === 0) {
-          // 받아온 데이터가 없을 경우 IntersectionObserver를 해제하고 종료
-          if (observer.current) {
-            observer.current.disconnect();
-          }
-          return;
-        }
-        if (newPlanData.length === 0) {
-          // 받아온 데이터가 없을 경우 IntersectionObserver를 해제하고 종료
-          if (observer.current) {
-            observer.current.disconnect();
-          }
-          return;
-        }
-        setLastIdx((prevLastIdx) => prevLastIdx + 20);
       } catch (error) {
-        console.error('Failed to fetch search results:', error);
+        console.error('Failed to fetch place search results:', error);
       }
     };
 
-    const options = {
+    const placeOptions = {
       root: null,
       rootMargin: '20px',
       threshold: 0.8,
     };
 
-    const callback: IntersectionObserverCallback = (entries) => {
+    const placeCallback: IntersectionObserverCallback = (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          fetchDataOnScroll();
+          fetchPlaceDataOnScroll();
         }
       });
     };
 
-    observer.current = new IntersectionObserver(callback, options);
+    placeObserver.current = new IntersectionObserver(
+      placeCallback,
+      placeOptions,
+    );
 
-    if (loadMoreRef.current) {
-      observer.current.observe(loadMoreRef.current);
+    if (placeLoadMoreRef.current) {
+      placeObserver.current.observe(placeLoadMoreRef.current);
     }
 
     return () => {
-      if (observer.current) {
-        observer.current.disconnect();
+      if (placeObserver.current) {
+        placeObserver.current.disconnect();
       }
     };
-  }, [loadMoreRef, location.search, lastIdx]);
+  }, [placeLoadMoreRef, location.search, lastPlaceIdx]);
 
   useEffect(() => {
-    // 검색어가 변경될 때마다 초기화 및 새로운 데이터 가져오기
+    const fetchData = async () => {
+      const queryParams = new URLSearchParams(location.search);
+      const searchTerm = queryParams.get('q');
+
+      try {
+        if (tab === '일정 보기') {
+          const planResponse = await axios.get(
+            `/tour/schedules?keyword=${searchTerm}`,
+          );
+          setPlanSearchResults(planResponse.data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch plan search results:', error);
+      }
+    };
+
+    fetchData();
+  }, [location.search, tab]);
+
+  useEffect(() => {
     setPlaceSearchResults([]);
     setPlanSearchResults([]);
-    setLastIdx(0);
+    setLastPlaceIdx(0);
   }, [location.search]);
-
-  useEffect(() => {
-    console.log(placeSearchResults);
-    console.log(planSearchResults);
-    setSearchResults([...placeSearchResults, ...planSearchResults]);
-  }, [placeSearchResults, planSearchResults]);
 
   return (
     <div className="bg-white p-10 max-h-[660px] overflow-y-auto">
       {tab === '장소 보기' &&
-        searchResults
-          .filter((item): item is PlaceData => 'locationId' in item)
-          .map((place: PlaceData, index) => (
-            <Link
-              key={index}
-              to={{
-                pathname: '/placeinfo',
-              }}
-              state={{ place }}
-              className="w-full h-[30%] p-5 flex rounded-md shadow-xl mb-2"
-            >
-              <div>
-                <div className="flex">
-                  {place.imageUrl ? (
-                    <img
-                      src={place.imageUrl}
-                      alt={place.name}
-                      className="w-32 h-32 mt-2"
-                    />
-                  ) : (
-                    <div className="border-2 flex w-32 h-32 mt-2 text-gray-600 justify-center items-center">
-                      사진이 없습니다.
-                    </div>
-                  )}
-
-                  <div className="flex flex-col p-2">
-                    <h3 className="font-[BMJUA] text-xl">{place.name}</h3>
-                    <p className="font-[Nanum Gothic] text-gray-600">
-                      {place.address}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </Link>
-          ))}
-      {tab === '일정 보기' &&
-        searchResults
-          .filter((item): item is PlanData => 'scheduleId' in item)
-          .map((plan: PlanData, index) => (
-            <div key={index} className="bg-gray-100 p-4 mb-4 rounded-lg">
-              <div>
-                <h3 className="font-bold text-lg">{plan.name}</h3>
-                <p className="text-gray-600">
-                  {plan.startDate} - {plan.endDate}
-                </p>
-                {plan.imageUrl && (
+        placeSearchResults.map((place: PlaceData, index) => (
+          <Link
+            key={index}
+            to={{
+              pathname: '/placeinfo',
+            }}
+            state={{ place }}
+            className="w-full h-[30%] p-5 flex rounded-md shadow-xl mb-2"
+          >
+            <div>
+              <div className="flex">
+                {place.imageUrl ? (
                   <img
-                    src={plan.imageUrl}
-                    alt={plan.name}
+                    src={place.imageUrl}
+                    alt={place.name}
                     className="w-32 h-32 mt-2"
                   />
+                ) : (
+                  <div className="border-2 flex w-32 h-32 mt-2 text-gray-600 justify-center items-center">
+                    사진이 없습니다.
+                  </div>
                 )}
+
+                <div className="flex flex-col p-2">
+                  <h3 className="font-[BMJUA] text-xl">{place.name}</h3>
+                  <p className="font-[Nanum Gothic] text-gray-600">
+                    {place.address}
+                  </p>
+                </div>
               </div>
             </div>
-          ))}
-      <div ref={loadMoreRef}></div>
+          </Link>
+        ))}
+      {tab === '일정 보기' &&
+        planSearchResults.map((plan: PlanData, index) => (
+          <div key={index} className="bg-gray-100 p-4 mb-4 rounded-lg">
+            <div>
+              <h3 className="font-bold text-lg">{plan.name}</h3>
+              <p className="text-gray-600">
+                {plan.startDate} - {plan.endDate}
+              </p>
+              {plan.imageUrl && (
+                <img
+                  src={plan.imageUrl}
+                  alt={plan.name}
+                  className="w-32 h-32 mt-2"
+                />
+              )}
+            </div>
+          </div>
+        ))}
+      {tab === '장소 보기' && <div ref={placeLoadMoreRef}></div>}
+      {tab === '일정 보기' && <div ref={planLoadMoreRef}></div>}
     </div>
   );
 };

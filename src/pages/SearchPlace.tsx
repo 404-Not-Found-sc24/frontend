@@ -60,10 +60,10 @@ const SearchPlace: React.FC = () => {
         </div>
         <div className="tab-content">
           <div className={activeTab === '장소 보기' ? 'active' : ''}>
-            <SearchResults tab={activeTab} />
+            {activeTab === '장소 보기' && <SearchResults tab={activeTab} />}
           </div>
           <div className={activeTab === '일정 보기' ? 'active' : ''}>
-            <SearchResults tab={activeTab} />
+            {activeTab === '일정 보기' && <SearchResults tab={activeTab} />}
           </div>
         </div>
       </div>
