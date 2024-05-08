@@ -18,6 +18,7 @@ import AddPlaceForm from './pages/AddPlaceForm';
 import { MapProvider } from './context/MapContext';
 import SearchTravelDes from './pages/SearchTravelDes';
 import EventPage from './pages/Event';
+import MyPage from './pages/MyPage';
 
 function App() {
   return (
@@ -56,6 +57,7 @@ function App() {
             }
           />
           <Route path="/event" element={<EventPage />} />
+          <Route path="/mypage" element={<MyPage />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

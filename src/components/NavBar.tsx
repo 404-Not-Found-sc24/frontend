@@ -42,7 +42,7 @@ const NavBar: React.FC = () => {
                 </li>
                 <li>
                   <Link
-                    to="/"
+                    to="/mypage"
                     className="py-4 px-3 item-center text-main-green-color font-BMJUA"
                   >
                     마이페이지
