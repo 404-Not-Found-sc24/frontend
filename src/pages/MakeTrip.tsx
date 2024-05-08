@@ -114,6 +114,7 @@ const MakeTrip = ({isOpen, city, handleCloseModal}: props) => {
                 startDate: startDate,
                 endDate: endDate,
                 city: city,
+                name: title,
             },
         });
     }, []);
