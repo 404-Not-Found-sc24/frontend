@@ -21,6 +21,8 @@ const MakePlan = () => {
     const [res, setRes] = useState([]);
     const [selectedPlaces, setSelectedPlaces] = useState<Place[][]>([]);
 
+    console.log(tripInfo);
+
     useEffect(() => {
         getData();
         if (tripInfo.startDate && tripInfo.endDate) {
