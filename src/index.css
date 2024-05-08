@@ -237,3 +237,7 @@ td{
   font-family: "Nanum Gothic";
   text-align: left;
 }
+
+.header-center {
+  text-align: center;
+}

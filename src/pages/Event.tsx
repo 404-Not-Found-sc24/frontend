@@ -1,20 +1,32 @@
 import React, {useEffect, useRef, useState} from "react";
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
-import {AgGridReact} from 'ag-grid-react';
+import {AgGridReact, AgGridReactProps} from 'ag-grid-react';
 import axios from "axios";
-import PlaceDetail from "../../types/PlaceDetail"; // Ag-Grid의 React 컴포넌트를 가져옴
+import "../index.css"
+
+interface Event {
+    title: any;
+    content: any;
+    createdDate: Date;
+    updatedDate: Date;
+    memberName: any;
+}
 
 const Event: React.FC = () => {
     const gridRef = useRef();
     const [activeTab, setActiveTab] = useState('공지사항');
-    const [rowsData, setRowData] = useState([]);
+    const [rowsNoticeData, setRowsNoticeData] = useState([]);
+    const [rowsEventData, setRowsEventData] = useState([]);
+    const [rowsPromotionData, setRowsPromotionData] = useState([]);
 
     useEffect(() => {
-        getData();
+        getNoticeData();
+        getEventData();
+        getPromoteData();
     }, []);
 
-    const getData = async () => {
+    const getNoticeData = async () => {
         try {
             await axios
                 .get(`https://api.nadueli.com/event/announce`, {
@@ -24,7 +36,41 @@ const Event: React.FC = () => {
                 })
                 .then(response => {
                     console.log(response.data);
-                    setRowData(response.data);
+                    setRowsNoticeData(response.data);
+                });
+        } catch(e) {
+            console.error('Error:', e);
+        };
+    };
+
+    const getEventData = async () => {
+        try {
+            await axios
+                .get(`https://api.nadueli.com/event/event`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
+                .then(response => {
+                    console.log(response.data);
+                    setRowsEventData(response.data);
+                });
+        } catch(e) {
+            console.error('Error:', e);
+        };
+    };
+
+    const getPromoteData = async () => {
+        try {
+            await axios
+                .get(`https://api.nadueli.com/event/promotion`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
+                .then(response => {
+                    console.log(response.data);
+                    setRowsPromotionData(response.data);
                 });
         } catch(e) {
             console.error('Error:', e);
@@ -35,15 +81,42 @@ const Event: React.FC = () => {
         setActiveTab(tab);
     };
 
-    const [columnDefs, setColumnDefs] = useState([
-        {headerName: '제목', field: 'title'},
-        {headerName: '내용', field: 'content'},
-        {headerName: '작성일자', field: 'createdDate'},
-        {headerName: '수정일자', field: 'updatedDate'},
-        {headerName: '작성자', field: 'memberName'},
-    ]);
+    const gridOptions: AgGridReactProps<Event> = {
+        columnDefs: [
+            { headerName: '번호', valueGetter: (params) => params.node && params.node.rowIndex != null ? params.node.rowIndex + 1 : '' , width: 70, cellStyle: {textAlign: 'center'}},
+            {headerName: '제목', field: 'title', width: 250},
+            {headerName: '내용', field: 'content', width: 300},
+            {headerName: '작성일자', field: 'createdDate', width: 150, cellStyle: {textAlign: 'center'}},
+            {headerName: '수정일자', field: 'updatedDate', width: 150, cellStyle: {textAlign: 'center'}},
+            {headerName: '작성자', field: 'memberName', width: 100, cellStyle: {textAlign: 'center'}},
+        ],
+        defaultColDef: {
+            sortable: true,
+            headerClass: "centered",
+        }
+    };
 
-    const rowData = rowsData && rowsData.map((v: any) => {
+    const rowNoticeData = rowsNoticeData && rowsNoticeData.map((v: any) => {
+        return {
+            title: v.title,
+            content: v.content,
+            createdDate: new Date(v.createdDate),
+            updatedDate: new Date(v.updatedDate),
+            memberName: v.memberName,
+        };
+    });
+
+    const rowEventData = rowsEventData && rowsEventData.map((v: any) => {
+        return {
+            title: v.title,
+            content: v.content,
+            createdDate: new Date(v.createdDate),
+            updatedDate: new Date(v.updatedDate),
+            memberName: v.memberName,
+        };
+    });
+
+    const rowPromotionData = rowsPromotionData && rowsPromotionData.map((v: any) => {
         return {
             title: v.title,
             content: v.content,
@@ -92,10 +165,10 @@ const Event: React.FC = () => {
             </div>
             <div className="h-full w-full flex justify-center">
                 {activeTab === '공지사항' && (
-                    <div className="ag-theme-alpine" style={{height: "650px", width: '70%'}}>
+                    <div className="ag-theme-alpine" style={{height: "650px", width: '60%'}}>
                         <AgGridReact
-                            rowData={rowData} // 테이블 데이터
-                            /*columnDefs={columnDefs}*/ // 헤더데이터
+                            rowData={rowNoticeData}
+                            gridOptions={gridOptions}
                             animateRows={true} // 행 애니메이션
                             suppressRowClickSelection={true} // true -> 클릭 시 행이 선택안됌
                             rowSelection={'multiple'} // 여러행 선택
@@ -105,10 +178,30 @@ const Event: React.FC = () => {
                     </div>
                 )}
                 {activeTab === '이벤트' && (
-                    <></>
+                    <div className="ag-theme-alpine" style={{height: "650px", width: '60%'}}>
+                        <AgGridReact
+                            rowData={rowEventData}
+                            gridOptions={gridOptions}
+                            animateRows={true} // 행 애니메이션
+                            suppressRowClickSelection={true} // true -> 클릭 시 행이 선택안됌
+                            rowSelection={'multiple'} // 여러행 선택
+                            enableCellTextSelection={true} // 그리드가 일반 테이블인 것처럼 드래그시 일반 텍스트 선택
+                        >
+                        </AgGridReact>
+                    </div>
                 )}
                 {activeTab === '홍보' && (
-                    <></>
+                    <div className="ag-theme-alpine" style={{height: "650px", width: '60%'}}>
+                        <AgGridReact
+                            rowData={rowPromotionData}
+                            gridOptions={gridOptions}
+                            animateRows={true} // 행 애니메이션
+                            suppressRowClickSelection={true} // true -> 클릭 시 행이 선택안됌
+                            rowSelection={'multiple'} // 여러행 선택
+                            enableCellTextSelection={true} // 그리드가 일반 테이블인 것처럼 드래그시 일반 텍스트 선택
+                        >
+                        </AgGridReact>
+                    </div>
                 )}
             </div>
         </div>
