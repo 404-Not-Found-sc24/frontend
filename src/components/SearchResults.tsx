@@ -30,7 +30,6 @@ const SearchResults: React.FC<Props> = ({ tab }) => {
   const placeLoadMoreRef = useRef<HTMLDivElement>(null);
   const planLoadMoreRef = useRef<HTMLDivElement>(null);
   const placeObserver = useRef<IntersectionObserver>();
-  const planObserver = useRef<IntersectionObserver>();
   const location = useLocation();
 
   useEffect(() => {
@@ -147,12 +146,16 @@ const SearchResults: React.FC<Props> = ({ tab }) => {
         ))}
       {tab === '일정 보기' &&
         planSearchResults.map((plan: PlanData, index) => (
-          <div key={index} className="bg-gray-100 p-4 mb-4 rounded-lg">
-            <div>
-              <h3 className="font-bold text-lg">{plan.name}</h3>
-              <p className="text-gray-600">
-                {plan.startDate} - {plan.endDate}
-              </p>
+          <Link
+            key={index}
+            to={{
+              pathname: '/scheduleex',
+              search: `?scheduleId=${plan.scheduleId}`,
+            }}
+            state={{ plan }}
+            className="w-full h-[30%] p-5 flex rounded-md shadow-xl mb-2"
+          >
+            <div className="flex">
               {plan.imageUrl && (
                 <img
                   src={plan.imageUrl}
@@ -160,8 +163,14 @@ const SearchResults: React.FC<Props> = ({ tab }) => {
                   className="w-32 h-32 mt-2"
                 />
               )}
+              <div className="flex flex-col p-2">
+                <h3 className="font-[BMJUA] text-xl">{plan.name}</h3>
+                <p className="font-[Nanum Gothic] text-gray-600">
+                  {plan.startDate} - {plan.endDate}
+                </p>
+              </div>
             </div>
-          </div>
+          </Link>
         ))}
       {tab === '장소 보기' && <div ref={placeLoadMoreRef}></div>}
       {tab === '일정 보기' && <div ref={planLoadMoreRef}></div>}

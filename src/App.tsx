@@ -19,6 +19,8 @@ import { MapProvider } from './context/MapContext';
 import SearchTravelDes from './pages/SearchTravelDes';
 import EventPage from './pages/Event';
 import MyPage from './pages/MyPage';
+import MyPlan from './pages/MyPlan';
+import ScheduleEx from './pages/ScheduleEx';
 
 function App() {
   return (
@@ -57,7 +59,9 @@ function App() {
             }
           />
           <Route path="/event" element={<EventPage />} />
+          <Route path="myplan" element={<MyPlan />} />
           <Route path="/mypage" element={<MyPage />} />
+          <Route path="/scheduleex" element={<ScheduleEx />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
