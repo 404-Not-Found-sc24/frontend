@@ -7,6 +7,7 @@ import '../Calendar.css';
 import MakePlan from './MakePlan';
 import axios, {AxiosError} from 'axios';
 import {useAuth} from "../context/AuthContext";
+import {toast} from "react-toastify";
 
 interface props {
     isOpen: boolean;
@@ -23,6 +24,7 @@ const MakeTrip = ({isOpen, city, handleCloseModal}: props) => {
     const {accessToken, refreshAccessToken} = useAuth();
     const navigate = useNavigate();
     const [scheduleId, setScheduleId] = useState(0);
+    const [share, setShare] = useState(0);
 
     useEffect(() => {
         console.log("city ", city, "title ", title, "scheduleId ", scheduleId);
@@ -35,6 +37,11 @@ const MakeTrip = ({isOpen, city, handleCloseModal}: props) => {
             setModalOpen(isOpen);
         }
     }, [isOpen]);
+
+    const handleSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const value = parseInt(event.target.value, 10); // 문자열을 숫자로 변환
+        setShare(value); // 선택된 라디오 버튼의 값으로 share 상태 업데이트
+    };
 
     const handleDateChange = useCallback(
         (value: any, event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -126,7 +133,8 @@ const MakeTrip = ({isOpen, city, handleCloseModal}: props) => {
             },
         });
     }, [city, title, startDate, endDate, scheduleId]);
-
+    
+    
     const savePlan = async () => {
         try {
             const startDateString = startDate instanceof Date ? startDate.toISOString() : '';
@@ -141,7 +149,8 @@ const MakeTrip = ({isOpen, city, handleCloseModal}: props) => {
                 name: title,
                 location: city,
                 startDate: startPlanDate,
-                endDate: endPlanDate
+                endDate: endPlanDate,
+                share: share,
             };
 
             await axios
@@ -260,17 +269,39 @@ const MakeTrip = ({isOpen, city, handleCloseModal}: props) => {
                                     <input
                                         type="text"
                                         value={title}
-                                        placeholder="일기 제목"
+                                        placeholder="일정 이름"
                                         className="w-72 p-2 mx-2 my-2 border-2 border-gray rounded-md font-['BMJUA']"
                                         onChange={handleInputChange}
                                     />
+                                </div>
+                                <div className="w-48 flex justify-between font-['BMJUA']">
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            value={0} // 개인일정
+                                            checked={share === 0}
+                                            onChange={handleSelect}
+                                            className="mr-1"
+                                        />
+                                        개인일정
+                                    </label>
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            value={1} // 공개일정
+                                            checked={share === 1}
+                                            onChange={handleSelect}
+                                            className="mr-1"
+                                        />
+                                        공개일정
+                                    </label>
                                 </div>
                                 <div className="flex justify-center mt-2 w-64 justify-between">
                                     <button
                                         className="border-2 border-[#FF9A9A] bg-white rounded-md px-10 py-2 text-xl font-['BMJUA']"
                                         onClick={handlePrevStep}
                                     >
-                                        이전
+                                    이전
                                     </button>
                                     <button
                                         className="border-4 border-[#FF9A9A] bg-[#FF9A9A] rounded-md px-10 py-2 text-xl font-['BMJUA']"
