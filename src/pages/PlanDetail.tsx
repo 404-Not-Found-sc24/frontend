@@ -61,9 +61,9 @@ const PlanDetail: React.FC = () => {
                 가져오기
               </button>
             </div>
-            {activeTab === '1' && <PlanDetailBox />}
-            {activeTab === '2' && <PlanDetailBox />}
-            {activeTab === '3' && <PlanDetailBox />}
+            {activeTab === '1'}
+            {activeTab === '2'}
+            {activeTab === '3'}
           </div>
         </div>
       </div>
