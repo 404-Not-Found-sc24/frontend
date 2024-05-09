@@ -23,7 +23,7 @@ const ScheduleCard: React.FC<ScheduleCardProps> = (props) => {
     const checkDate = async () => {
         const nextDate = new Date(startDate);
         const currentDate = new Date();
-        const differenceInMilliseconds = Math.abs(nextDate.getTime() - currentDate.getTime());
+        const differenceInMilliseconds = nextDate.getTime() - currentDate.getTime();
 
         // 밀리초를 일로 변환하여 차이 계산
         setDifferenceInDays(Math.ceil(differenceInMilliseconds / (1000 * 60 * 60 * 24)));
@@ -39,8 +39,9 @@ const ScheduleCard: React.FC<ScheduleCardProps> = (props) => {
                 <div className='flex flex-col w-full'>
                     <div className='flex flex-row'>
                         <div className='text-main-red-color text-xl font-bold w-20 mr-5'>
-                            D-{differenceInDays}
+                        {differenceInDays !== undefined && (differenceInDays === 0 ? "D-Day" : `D${differenceInDays < 0 ? '+' : '-'}${Math.abs(differenceInDays)}`)}
                         </div>
+
                         <div className='text-xl flex-grow'>{location}</div>
                         <div className='text-xl w-20'>{share == 1 ? 'PUBLIC' : 'PRIVATE'}</div>
                     </div>
