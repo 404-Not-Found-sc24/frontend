@@ -10,6 +10,7 @@ import SearchBar from '../components/SearchBar';
 import Map from '../components/Map';
 import {MapProvider} from '../context/MapContext';
 import {useAuth} from "../context/AuthContext";
+import {toast} from "react-toastify";
 
 const MakePlan = () => {
     const location = useLocation();
@@ -104,6 +105,11 @@ const MakePlan = () => {
         navigate('/');
     };
 
+    const notifySuccess = () =>
+        toast.success('장소가 성공적으로 추가되었습니다!', {
+            position: 'top-center',
+        });
+
     const addPlace = async () => {
         try {
             const postData = selectedPlaces.flatMap((innerArray, index) => {
@@ -132,6 +138,7 @@ const MakePlan = () => {
                 })
                 .then((response) => {
                     console.log(response);
+                    notifySuccess();
                     navigate('/');
                 });
         } catch (error) {
