@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import Map from '../components/Map';
 import { MapProvider, useMap } from '../context/MapContext';
 import { useAuth } from '../context/AuthContext';
@@ -21,10 +21,12 @@ const AddPlaceForm: React.FC = () => {
   const [previewImages, setPreviewImages] = useState<string[]>([]);
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
   const { setMapLocation } = useMap();
-  const { accessToken } = useAuth();
+  const { accessToken, refreshAccessToken } = useAuth();
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
   ) => {
     const { name, value } = e.target;
     setPlaceInfo((prevState) => ({
@@ -87,10 +89,27 @@ const AddPlaceForm: React.FC = () => {
       });
       // 성공적으로 제출되었을 경우 처리
     } catch (error) {
-      console.error('장소 정보 제출 실패:', error);
-      toast.error('장소 정보 제출에 실패했습니다.', {
-        position: 'top-center',
-      });
+      if (
+        (error as AxiosError).response &&
+        (error as AxiosError).response?.status === 401
+      ) {
+        try {
+          await refreshAccessToken();
+          // 새로운 액세스 토큰으로 다시 요청을 보냅니다.
+          // 여기에서는 재시도 로직을 추가할 수 있습니다.
+        } catch (refreshError) {
+          console.error('Failed to refresh access token:', refreshError);
+          toast.error('accesstoken 재발급에 실패했습니다.', {
+            position: 'top-center',
+          });
+          // 액세스 토큰 갱신에 실패한 경우 사용자에게 알립니다.
+        }
+      } else {
+        console.error('장소 정보 제출 실패:', error);
+        toast.error('장소 정보 제출에 실패했습니다.', {
+          position: 'top-center',
+        });
+      }
     }
   };
 
@@ -113,7 +132,7 @@ const AddPlaceForm: React.FC = () => {
   return (
     <div className="w-full h-screen flex">
       <ToastContainer />
-      <div className="flex flex-col w-1/2 p-6">
+      <div className="flex flex-col w-1/2 p-4">
         <div className="flex items-center">
           <button
             className="backArrow"
@@ -185,14 +204,21 @@ const AddPlaceForm: React.FC = () => {
             </div>
             <div className="flex p-1 items-center">
               <div className="flex w-20">구분 :</div>
-              <input
-                type="text"
-                placeholder="구분"
+              <select
                 name="division"
                 value={placeInfo.division}
                 onChange={handleChange}
-                className="w-full p-2 border-2 input-field "
-              />
+                className="w-full p-2 border-2 input-field"
+              >
+                <option value="">구분 선택</option>
+                <option value="숙박">숙박</option>
+                <option value="문화시설">문화시설</option>
+                <option value="음식점">음식점</option>
+                <option value="축제 공연 행사">축제 공연 행사</option>
+                <option value="관광지">관광지</option>
+                <option value="레포츠">레포츠</option>
+                <option value="쇼핑">쇼핑</option>
+              </select>
             </div>
             <div className="flex p-1 items-center">
               <div className="flex w-20">전화번호 :</div>

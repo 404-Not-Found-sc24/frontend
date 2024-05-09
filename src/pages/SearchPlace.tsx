@@ -50,7 +50,7 @@ const SearchPlace: React.FC = () => {
             일정 보기
           </div>
         </div>
-        <div className="flex max-w-4xl justify-end mt-2">
+        <div className="flex max-w-4xl justify-end mt-2 mx-10">
           <Link
             to="/addplaceform"
             className="text-ms text-main-green-color font-Nanum Gothic underline underline-offset-4"
