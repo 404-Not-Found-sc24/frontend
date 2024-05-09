@@ -4,11 +4,12 @@ import {useLocation, useNavigate} from 'react-router-dom';
 import '../index.css';
 import PlaceBox from '../components/PlaceBox';
 import DayPlace from '../components/DayPlace';
-import axios from 'axios';
+import axios, {AxiosError} from 'axios';
 import Place from '../../types/Place';
 import SearchBar from '../components/SearchBar';
 import Map from '../components/Map';
 import {MapProvider} from '../context/MapContext';
+import {useAuth} from "../context/AuthContext";
 
 const MakePlan = () => {
     const location = useLocation();
@@ -20,6 +21,7 @@ const MakePlan = () => {
     const [activeTab, setActiveTab] = useState<number>(1);
     const [res, setRes] = useState([]);
     const [selectedPlaces, setSelectedPlaces] = useState<Place[][]>([]);
+    const {accessToken, refreshAccessToken} = useAuth();
 
     console.log(tripInfo);
 
@@ -101,7 +103,52 @@ const MakePlan = () => {
     const naviBack = () => {
         navigate('/');
     };
-  
+
+    const addPlace = async () => {
+        try {
+            const postData = selectedPlaces.flatMap((innerArray, index) => {
+                const startDate = new Date(tripInfo.startDate);
+                console.log(startDate);
+                const currentDate = new Date(startDate);
+                currentDate.setDate(startDate.getDate() + index + 1); // 시작 날짜에 인덱스를 더한 값
+                console.log(currentDate);
+
+                return innerArray.map((place, innerIndex) => ({
+                    placeId: innerIndex, // 내부 배열의 인덱스를 placeId로 사용
+                    locationId: place.locationId,
+                    date: currentDate.toISOString().slice(0, 10), // ISO 형식으로 변환하여 날짜만 추출
+                    time: "00:00", // 예시: 방문 예정 시간
+                }));
+            });
+
+
+            console.log(postData);
+            await axios
+                .post('/schedule/place/' + tripInfo.scheduleId, postData, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                })
+                .then((response) => {
+                    console.log(response);
+                    navigate('/');
+                });
+        } catch (error) {
+            if (
+                (error as AxiosError).response &&
+                (error as AxiosError).response?.status === 401
+            ) {
+                try {
+                    await refreshAccessToken();
+                } catch (refreshError) {
+                    console.error('Failed to refresh access token:', refreshError);
+                }
+            } else {
+            }
+        }
+    };
+
     return (
         <div className="w-full h-[864px] flex">
             <div className="w-1/2 h-full flex">
@@ -150,7 +197,8 @@ const MakePlan = () => {
                             ))}
                         </div>
                         <div className="h-[100px] w-full flex justify-center items-center">
-                            <button className="h-1/2 bg-black text-white px-10 rounded-md text-xl font-['BMJUA']">추가</button>
+                            <button className="h-1/2 bg-black text-white px-10 rounded-md text-xl font-['BMJUA']"
+                            onClick={addPlace}>추가</button>
                         </div>
                     </div>
                 </div>

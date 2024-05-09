@@ -17,11 +17,11 @@ const PlaceBox: React.FC<CityBoxProps> = ({place, addSelectedPlace}) => {
                 <img
                     src={place.imageUrl}
                     alt={place.name}
-                    className="rounded-4 w-full h-full object-cover"
+                    className="rounded-4 w-full h-full overflow-hidden object-cover"
                 />
             ) : (
                 <div
-                    className="rounded-4 w-full h-full border-2 flex w-32 h-32 mt-2 text-gray-600 justify-center items-center text-center">
+                    className="rounded-4 w-full h-full border-2 flex mt-2 text-gray-600 justify-center items-center text-center">
                     {place.name}
                 </div>
             )}

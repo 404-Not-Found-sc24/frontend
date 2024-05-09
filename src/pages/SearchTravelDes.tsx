@@ -89,13 +89,13 @@ const SearchTravelDes: React.FC = () => {
         {placeSearchResults.map((place: CityData, index) => (
           <button
             key={index}
-            className="relative flex flex-col"
+            className="relative flex flex-col w-80 h-80"
             onClick={() => handleOpenModal(place.cityName)}
           >
             <img
               src={place.imageUrl}
               alt={place.cityName + '이미지'}
-              className="w-96 h-96 rounded-4"
+              className="w-full h-full rounded-4 object-cover"
             />
             <div className="absolute bottom-0 right-0 text-4xl font-['BMHANNApro'] text-white bg-black bg-opacity-50 p-2 rounded-tl rounded-br">
               {place.cityName}
