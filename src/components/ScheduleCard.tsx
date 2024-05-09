@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 
 interface ScheduleCardProps {
     props: {
@@ -13,6 +14,21 @@ interface ScheduleCardProps {
 
 const ScheduleCard: React.FC<ScheduleCardProps> = (props) => {
     const { scheduleId, name, location, startDate, endDate, share, imageUrl } = props.props;
+    const [differenceInDays, setDifferenceInDays] = useState<number> ();
+
+    useEffect (() => {
+        checkDate();
+    }, []);
+
+    const checkDate = async () => {
+        const nextDate = new Date(startDate);
+        const currentDate = new Date();
+        const differenceInMilliseconds = Math.abs(nextDate.getTime() - currentDate.getTime());
+
+        // 밀리초를 일로 변환하여 차이 계산
+        setDifferenceInDays(Math.ceil(differenceInMilliseconds / (1000 * 60 * 60 * 24)));
+
+    }
 
     return (
         <div className='w-full flex p-5 h-44 shadow-md'>
@@ -23,7 +39,7 @@ const ScheduleCard: React.FC<ScheduleCardProps> = (props) => {
                 <div className='flex flex-col w-full'>
                     <div className='flex flex-row'>
                         <div className='text-main-red-color text-xl font-bold w-20 mr-5'>
-                            D-Day
+                            D-{differenceInDays}
                         </div>
                         <div className='text-xl flex-grow'>{location}</div>
                         <div className='text-xl w-20'>{share == 1 ? 'PUBLIC' : 'PRIVATE'}</div>

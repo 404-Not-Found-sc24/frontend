@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import ScheduleCard from '../components/ScheduleCard';
+import { useAuth } from '../context/AuthContext';
+import axios, { AxiosError } from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
 
 interface ScheduleData {
   scheduleId: number;
@@ -13,26 +16,43 @@ interface ScheduleData {
 }
 
 const MyPage: React.FC = () => {
-  const schedules: ScheduleData[] =  [
-    {
-      "scheduleId": 2,
-      "name": "나영이의 서울 탐험",
-      "location": "서울특별시",
-      "startDate": "2024-05-07",
-      "endDate": "2024-05-10",
-      "share": 1,
-      "imageUrl": "{`${process.env.PUBLIC_URL}/image/image 15.png`}"
-    },
-    {
-      "scheduleId": 2,
-      "name": "나영이의 서울 탐험",
-      "location": "서울특별시",
-      "startDate": "2024-05-07",
-      "endDate": "2024-05-10",
-      "share": 0,
-      "imageUrl": "{`${process.env.PUBLIC_URL}/image/image 15.png`}"
-    },
-  ]
+  const [schedules, setSchedules] = useState<ScheduleData[]> ([]);
+
+
+  const { accessToken, refreshAccessToken  } = useAuth();
+
+
+  useEffect(() => {
+    getSchedules();
+  }, []);
+
+  const getSchedules = async () => {
+    try {
+      const response = await axios.get('/schedule', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      setSchedules(response.data);
+
+    } catch (error) {
+      if (
+        (error as AxiosError).response &&
+        (error as AxiosError).response?.status === 401
+      ) {
+        try {
+          await refreshAccessToken();
+          // 새로운 액세스 토큰으로 다시 요청을 보냅니다.
+          // 여기에서는 재시도 로직을 추가할 수 있습니다.
+        } catch (refreshError) {
+          console.error('Failed to refresh access token:', refreshError);
+          // 액세스 토큰 갱신에 실패한 경우 사용자에게 알립니다.
+        }
+      } else {
+        console.error('일정 조회 중 오류 발생:', error);
+      }
+    }
+  }
 
   return (
     <div>
@@ -61,22 +81,22 @@ const MyPage: React.FC = () => {
             <button className='bg-main-red-color text-white rounded-full px-3 py-1'>+ 일정 추가</button>
           </div>
           <div>
-            { schedules.length > 0 ?
-            <div>
-              {schedules.map((data: ScheduleData, index: number) => {
-              return (
-                <div className="w-full h-full flex flex-col items-center pt-3">
-                  <ScheduleCard key={index} props={data} />
-                </div>
-              );
-            })}</div>
+            {schedules.length > 0 ?
+              <div>
+                {schedules.map((data: ScheduleData, index: number) => {
+                  return (
+                    <div className="w-full h-full flex flex-col items-center pt-3">
+                      <ScheduleCard key={index} props={data} />
+                    </div>
+                  );
+                })}</div>
 
-            :
-            <div className='flex justify-center items-center h-44 shadow-md'>
-              <div className='text-slate-300 font-bold text-3xl'>
-                등록된 일정이 없습니다.
+              :
+              <div className='flex justify-center items-center h-44 shadow-md'>
+                <div className='text-slate-300 font-bold text-3xl'>
+                  등록된 일정이 없습니다.
+                </div>
               </div>
-            </div>
             }
           </div>
         </div>
