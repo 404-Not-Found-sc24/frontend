@@ -22,6 +22,11 @@ const MakeTrip = ({isOpen, city, handleCloseModal}: props) => {
     const [title, setTitle] = useState('');
     const {accessToken, refreshAccessToken} = useAuth();
     const navigate = useNavigate();
+    const [scheduleId, setScheduleId] = useState(0);
+
+    useEffect(() => {
+        console.log("city ", city, "title ", title, "scheduleId ", scheduleId);
+    }, [city, scheduleId]);
 
     useEffect(() => {
         // externalParameter에 변화가 있을 때만 modalOpen 상태를 변경
@@ -101,6 +106,7 @@ const MakeTrip = ({isOpen, city, handleCloseModal}: props) => {
     }, []);
 
     const handleInputChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+        console.log(event.target.value);
         setTitle(event.target.value);
     }, []);
 
@@ -109,15 +115,17 @@ const MakeTrip = ({isOpen, city, handleCloseModal}: props) => {
     }, []);
 
     const naviPage = useCallback(() => {
+        console.log("city ", city, "title ", title, "endD ", endDate,"startD ",  startDate, "scheduleId ", scheduleId);
         navigate('/makeplan', {
             state: {
                 startDate: startDate,
                 endDate: endDate,
                 city: city,
                 name: title,
+                scheduleId: scheduleId,
             },
         });
-    }, []);
+    }, [city, title, startDate, endDate, scheduleId]);
 
     const savePlan = async () => {
         try {
@@ -145,6 +153,8 @@ const MakeTrip = ({isOpen, city, handleCloseModal}: props) => {
                 })
                 .then((response) => {
                     console.log(response);
+                    const tempScheduleId = response.data;
+                    setScheduleId(tempScheduleId);
                     setStep((prevStep) => prevStep + 1);
                 });
         } catch (error) {

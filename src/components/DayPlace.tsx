@@ -20,11 +20,19 @@ const DayPlace: React.FC<DayPlaceProps> = ({index, selectedPlace, removePlace}) 
         <div className="w-11/12 h-20 flex items-center mb-3">
             <button className="delete mr-3" onClick={() => handleRemovePlace()}></button>
             <div className="w-full h-full rounded-md shadow-xl flex items-center">
-                <img
-                    src={selectedPlace.imageUrl}
-                    alt="City Image"
-                    className="rounded-md w-[60px] h-[60px] ml-3"
-                />
+                {selectedPlace.imageUrl ? (
+                    <img
+                        src={selectedPlace.imageUrl}
+                        alt={selectedPlace.name}
+                        className="rounded-md ml-3"
+                        style={{ objectFit: 'cover', width: '60px', height: '60px' }}
+                    />
+                ) : (
+                    <div
+                        className="rounded-md w-[60px] h-[60px] border-2 ml-3 px-1.5 text-center pt-1">
+                        No Image
+                    </div>
+                )}
                 <div className="w-full ml-3">
                     <div className="font-extrabold text-lg font-['Nanum Gothic']"
                          style={{overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis"}}
