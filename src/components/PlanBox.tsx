@@ -18,8 +18,16 @@ const PlanBox: React.FC<PlanBoxProps> = (props) => {
 
     return (
         <div className="w-full h-[30%] p-5 flex rounded-md shadow-xl mb-5" onClick={toPlanDetail}>
-            <div className="flex items-center">
-                <img src={imageUrl} width="250px" alt="지역소개사진"></img>
+            <div className="flex h-[200px] items-center">
+                {imageUrl ? (
+                    <img src={imageUrl} alt="지역소개사진"
+                         style={{objectFit: 'cover', width: '250px', height: '180px'}}></img>
+                ) : (
+                    <div className="border-2 flex w-[250px] h-[180px] mt-2 text-gray-600 justify-center items-center">
+                        사진이 없습니다.
+                    </div>
+                )}
+
             </div>
             <div className="flex flex-col ml-5 mt-2">
                 <div className="font-['BMJUA'] text-2xl">{name}</div>

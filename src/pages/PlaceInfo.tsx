@@ -8,6 +8,7 @@ import { MapProvider } from '../context/MapContext';
 import '../index.css';
 import axios from 'axios';
 import ScheduleData from '../../types/ScheduleData';
+import DiariesData from '../../types/DiariesData';
 import SearchResultDiary from '../components/SearchResultDiary';
 
 const PlaceInfo: React.FC = () => {
@@ -15,7 +16,8 @@ const PlaceInfo: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const location = useLocation(); // 현재 URL 정보 가져오기
   const [res, setRes] = useState<PlaceDetail | undefined>();
-  const [schedueleRes, setScheduleRes] = useState<ScheduleData[]>([]);
+  const [scheduleRes, setScheduleRes] = useState<ScheduleData[]>([]);
+  const [diariesRes, setDiariesRes] = useState<DiariesData[]>([]);
   const place = location.state.place;
 
   console.log(place);
@@ -23,6 +25,7 @@ const PlaceInfo: React.FC = () => {
   useEffect(() => {
     getData();
     getScheduleData();
+    getDiariesData();
   }, []);
 
   const handleTabClick = (tab: string) => {
@@ -37,7 +40,7 @@ const PlaceInfo: React.FC = () => {
   const getData = async () => {
     try {
       await axios
-        .get(`https://api.nadueli.com/tour/location/${place.locationId}`, {
+        .get(`/tour/location/${place.locationId}`, {
           headers: {
             'Content-Type': 'application/json',
           },
@@ -53,7 +56,7 @@ const PlaceInfo: React.FC = () => {
   const getScheduleData = async () => {
     try {
       await axios
-        .get(`https://api.nadueli.com/tour/schedules/${place.locationId}`, {
+        .get(`/tour/schedules/${place.locationId}`, {
           headers: {
             'Content-Type': 'application/json',
           },
@@ -61,6 +64,22 @@ const PlaceInfo: React.FC = () => {
         .then((response) => {
           setScheduleRes(response.data);
         });
+    } catch (e) {
+      console.error('Error:', e);
+    }
+  };
+
+  const getDiariesData = async () => {
+    try {
+      await axios
+          .get(`/tour/diaries/${place.locationId}`, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          })
+          .then((response) => {
+            setDiariesRes(response.data);
+          });
     } catch (e) {
       console.error('Error:', e);
     }
@@ -412,13 +431,19 @@ const PlaceInfo: React.FC = () => {
               </div>
             )}
             {activeTab === '일기 보기' && (
-              <div className="w-full h-full flex flex-col items-center pt-3">
-                <SearchResultDiary />
-              </div>
+                <div>
+                  {diariesRes.map((data: DiariesData, index: number) => {
+                    return (
+                        <div className="w-full h-full flex flex-col items-center pt-3">
+                          <SearchResultDiary key={index} props={data} />
+                        </div>
+                    );
+                  })}
+                </div>
             )}
             {activeTab === '일정 보기' && (
               <div>
-                {schedueleRes.map((data: ScheduleData, index: number) => {
+                {scheduleRes.map((data: ScheduleData, index: number) => {
                   return (
                     <div className="w-full h-full flex flex-col items-center pt-3">
                       <PlanBox key={index} props={data} />

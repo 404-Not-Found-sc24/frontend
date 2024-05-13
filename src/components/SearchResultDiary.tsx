@@ -1,74 +1,40 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { useLocation } from 'react-router-dom';
+import {useLocation, useNavigate} from 'react-router-dom';
+import DiariesData from "../../types/DiariesData";
 import '../index.css';
 
-interface Diary {
-  diaryId: number;
-  placeId: number;
-  title: string;
-  date: string;
-  content: string;
-  imageUrl: string;
+interface PlanBoxProps {
+  props: DiariesData
 }
 
-const SearchResultDiary: React.FC = () => {
-  const location = useLocation();
-  const locationId = location.state.place.locationId;
-  const placeName = location.state && location.state.placeName;
-  const [diaries, setDiaries] = useState([] as Diary[]);
+const SearchResultDiary: React.FC<PlanBoxProps> = (props) => {
+  const { diaryId, placeId, title, date, content, imageUrl } = props.props;
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchDiaries = async () => {
-      try {
-        const response = await axios.get(`/tour/diaries/${locationId}`);
-        setDiaries(response.data);
-      } catch (error) {
-        console.error('Error fetching diaries:', error);
-      }
-    };
-
-    fetchDiaries();
-
-    return () => {};
-  }, [locationId]);
+  const toPlanDetail = () => {
+    navigate('/plandetail');
+  };
 
   return (
-    <div className="flex w-full h-[864px]">
-      <div className="w-full h-full">
-        <div className="bg-white p-10 max-h-[660px] overflow-y-auto">
-          {diaries.map((diary) => (
-            <div
-              key={diary.diaryId}
-              className="w-full h-[30%] p-5 flex rounded-md shadow-xl mb-2"
-            >
-              <div className="flex ">
-                {diary.imageUrl ? (
-                  <img
-                    src={diary.imageUrl}
-                    alt={diary.title}
-                    className="w-32 h-32 mt-2"
-                  />
-                ) : (
-                  <div className="border-2 flex w-32 h-32 mt-2 text-gray-600 justify-center items-center">
-                    사진이 없습니다.
-                  </div>
-                )}
-                <div className="flex flex-col p-2">
-                  <div className="font-[BMJUA] text-xl">{diary.title}</div>
-                  <div className="font-[Nanum Gothic] text-gray-600">
-                    Date : {diary.date}
-                  </div>
-                  <div className="font-[Nanum Gothic] text-gray-600">
-                    {diary.content}
-                  </div>
-                </div>
+      <div className="w-full h-[30%] p-5 flex rounded-md shadow-xl mb-5" onClick={toPlanDetail}>
+        <div className="flex h-[200px] items-center">
+          {imageUrl ? (
+              <img src={imageUrl} alt="지역소개사진"
+                   style={{objectFit: 'cover', width: '250px', height: '180px'}}></img>
+          ) : (
+              <div className="border-2 flex w-[250px] h-[180px] mt-2 text-gray-600 justify-center items-center">
+                사진이 없습니다.
               </div>
-            </div>
-          ))}
+          )}
+
+        </div>
+        <div className="flex flex-col ml-5 mt-2">
+          <div className="font-['BMJUA'] text-2xl">{title}</div>
+          <div className="font-['BMJUA'] text-[#ED661A] text-lg">{date}</div>
+          <div className="font-['Nanum Gothic'] text-[#6E6E6E] text-sm mt-2">username</div>
+          <div className="font-['Nanum Gothic'] text-black text-sm mt-2">{content}</div>
         </div>
       </div>
-    </div>
   );
 };
 
