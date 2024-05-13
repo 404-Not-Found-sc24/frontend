@@ -6,7 +6,7 @@ import '../index.css';
 interface Diary {
   diaryId: number;
   placeId: number;
-  scheduleName: string;
+  title: string;
   date: string;
   content: string;
   imageUrl: string;
@@ -46,7 +46,7 @@ const SearchResultDiary: React.FC = () => {
                 {diary.imageUrl ? (
                   <img
                     src={diary.imageUrl}
-                    alt={diary.scheduleName}
+                    alt={diary.title}
                     className="w-32 h-32 mt-2"
                   />
                 ) : (
@@ -55,9 +55,7 @@ const SearchResultDiary: React.FC = () => {
                   </div>
                 )}
                 <div className="flex flex-col p-2">
-                  <div className="font-[BMJUA] text-xl">
-                    {diary.scheduleName}
-                  </div>
+                  <div className="font-[BMJUA] text-xl">{diary.title}</div>
                   <div className="font-[Nanum Gothic] text-gray-600">
                     Date : {diary.date}
                   </div>
