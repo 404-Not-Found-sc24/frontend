@@ -16,15 +16,10 @@ interface ScheduleData {
 }
 
 const MyPage: React.FC = () => {
-  const [schedules, setSchedules] = useState<ScheduleData[]> ([]);
+  const [schedules, setSchedules] = useState<ScheduleData[]>([]);
 
-
-  const { accessToken, refreshAccessToken  } = useAuth();
-
-
-  useEffect(() => {
-    getSchedules();
-  }, []);
+  const { refreshAccessToken } = useAuth();
+  const accessToken = localStorage.getItem('accessToken');
 
   const getSchedules = async () => {
     try {
@@ -34,7 +29,6 @@ const MyPage: React.FC = () => {
         },
       });
       setSchedules(response.data);
-
     } catch (error) {
       if (
         (error as AxiosError).response &&
@@ -52,16 +46,23 @@ const MyPage: React.FC = () => {
         console.error('일정 조회 중 오류 발생:', error);
       }
     }
-  }
+  };
+
+  useEffect(() => {
+    getSchedules();
+  }, [refreshAccessToken]);
 
   return (
     <div>
-      <div className='h-[22rem]'>
-        <div className='w-full h-44 bg-main-red-color'>
-        </div>
-        <div className='relative flex justify-center'>
-          <img src={`${process.env.PUBLIC_URL}/image/user.png`} alt="유저 기본 이미지" className='absolute w-24 h-24 -top-10 bg-white rounded-full'></img>
-          <h1 className='absolute top-16 text-3xl font-medium'>나영이</h1>
+      <div className="h-[22rem]">
+        <div className="w-full h-44 bg-main-red-color"></div>
+        <div className="relative flex justify-center">
+          <img
+            src={`${process.env.PUBLIC_URL}/image/user.png`}
+            alt="유저 기본 이미지"
+            className="absolute w-24 h-24 -top-10 bg-white rounded-full"
+          ></img>
+          <h1 className="absolute top-16 text-3xl font-medium">나영이</h1>
           <Link
             to="/"
             className="text-ms text-main-green-color font-Nanum Gothic underline underline-offset-4 absolute top-28"
@@ -70,38 +71,47 @@ const MyPage: React.FC = () => {
           </Link>
         </div>
       </div>
-      <div className='flex justify-center '>
-        <div className='w-3/4'>
-          <div className='flex flex-row justify-between mb-5'>
-            <div className='flex flex-row'>
-              <div className='bg-main-red-color w-[0.3rem] h-8 rounded'></div>
-              <h1 className='text-3xl font-medium mx-3'>나의 일정</h1>
-              <h1 className='text-3xl font-medium text-main-red-color'>{schedules.length}</h1>
+      <div className="flex justify-center ">
+        <div className="w-3/4">
+          <div className="flex flex-row justify-between mb-5">
+            <div className="flex flex-row">
+              <div className="bg-main-red-color w-[0.3rem] h-8 rounded"></div>
+              <h1 className="text-3xl font-medium mx-3">나의 일정</h1>
+              <h1 className="text-3xl font-medium text-main-red-color">
+                {schedules.length}
+              </h1>
             </div>
-            <button className='bg-main-red-color text-white rounded-full px-3 py-1'>+ 일정 추가</button>
+            <button className="bg-main-red-color text-white rounded-full px-3 py-1">
+              + 일정 추가
+            </button>
           </div>
           <div>
-            {schedules.length > 0 ?
+            {schedules.length > 0 ? (
               <div>
                 {schedules.map((data: ScheduleData, index: number) => {
                   return (
-                    <div className="w-full h-full flex flex-col items-center pt-3">
+                    <Link
+                      key={index}
+                      to="/myplanpage"
+                      state={{ data }}
+                      className="w-full h-full flex flex-col items-center pt-3"
+                    >
                       <ScheduleCard key={index} props={data} />
-                    </div>
+                    </Link>
                   );
-                })}</div>
-
-              :
-              <div className='flex justify-center items-center h-44 shadow-md'>
-                <div className='text-slate-300 font-bold text-3xl'>
+                })}
+              </div>
+            ) : (
+              <div className="flex justify-center items-center h-44 shadow-md">
+                <div className="text-slate-300 font-bold text-3xl">
                   등록된 일정이 없습니다.
                 </div>
               </div>
-            }
+            )}
           </div>
         </div>
       </div>
-    </div >
+    </div>
   );
 };
 
