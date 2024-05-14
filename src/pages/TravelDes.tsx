@@ -33,7 +33,7 @@ const Travledes: React.FC = () => {
   return (
     <div>
       <div className="w-full flex justify-center my-10">
-        <div className="w-1/2">
+        <div className="w-2/3 sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/2">
           <CitySearchBar />
         </div>
       </div>
