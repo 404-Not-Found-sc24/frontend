@@ -35,9 +35,9 @@ const Travledes: React.FC = () => {
           onClick={() => navigateToSearchTravelmajor('광역시', '특별')}
         >
           <img
-            src={process.env.PUBLIC_URL + '/image/image 15.png'}
+            src={process.env.PUBLIC_URL + '/image/광역시.jpg'}
             alt="서울, 광역시 이미지"
-            className="rounded-4"
+            className="rounded-4 w-full h-full overflow-hidden object-cover"
           />
           <div className="absolute bottom-0 right-0 text-4xl font-['BMHANNApro'] text-white bg-black bg-opacity-50 p-2 rounded-tl rounded-br">
             서울, 광역시
@@ -48,22 +48,22 @@ const Travledes: React.FC = () => {
           onClick={() => navigateToSearchTravel('경기도')}
         >
           <img
-            src={process.env.PUBLIC_URL + '/image/image 15.png'}
+            src={process.env.PUBLIC_URL + '/image/경기도.jpg'}
             alt="경기도 이미지"
-            className="rounded-4"
+            className="rounded-4 mt-20"
           />
           <div className="absolute bottom-0 right-0 text-4xl font-['BMHANNApro'] text-white bg-black bg-opacity-50 p-2 rounded-tl rounded-br">
             경기도
           </div>
         </button>
         <button
-          className="relative flex flex-col"
+          className="relative flex-col"
           onClick={() => navigateToSearchTravel('강원도')}
         >
           <img
-            src={process.env.PUBLIC_URL + '/image/image 15.png'}
+            src={process.env.PUBLIC_URL + '/image/강원도.jpg'}
             alt="강원도 이미지"
-            className="rounded-4"
+            className="rounded-4 mt-20"
           />
           <div className="absolute bottom-0 right-0 text-4xl font-['BMHANNApro'] text-white bg-black bg-opacity-50 p-2 rounded-tl rounded-br">
             강원도
@@ -74,9 +74,9 @@ const Travledes: React.FC = () => {
           onClick={() => navigateToSearchTravel('충청북도')}
         >
           <img
-            src={process.env.PUBLIC_URL + '/image/image 15.png'}
+            src={process.env.PUBLIC_URL + '/image/충청북도.jpg'}
             alt="충청북도 이미지"
-            className="rounded-4"
+            className="rounded-4 mt-16"
           />
           <div className="absolute bottom-0 right-0 text-4xl font-['BMHANNApro'] text-white bg-black bg-opacity-50 p-2 rounded-tl rounded-br">
             충청북도
@@ -87,9 +87,9 @@ const Travledes: React.FC = () => {
           onClick={() => navigateToSearchTravel('충청남도')}
         >
           <img
-            src={process.env.PUBLIC_URL + '/image/image 15.png'}
+            src={process.env.PUBLIC_URL + '/image/충청남도.jpg'}
             alt="충청남도 이미지"
-            className="rounded-4"
+            className="rounded-4 mt-16"
           />
           <div className="absolute bottom-0 right-0 text-4xl font-['BMHANNApro'] text-white bg-black bg-opacity-50 p-2 rounded-tl rounded-br">
             충청남도
@@ -100,9 +100,9 @@ const Travledes: React.FC = () => {
           onClick={() => navigateToSearchTravel('경상북도')}
         >
           <img
-            src={process.env.PUBLIC_URL + '/image/image 15.png'}
+            src={process.env.PUBLIC_URL + '/image/경상북도.jpg'}
             alt="경상북도 이미지"
-            className="rounded-4"
+            className="rounded-4 mt-16"
           />
           <div className="absolute bottom-0 right-0 text-4xl font-['BMHANNApro'] text-white bg-black bg-opacity-50 p-2 rounded-tl rounded-br">
             경상북도
@@ -113,9 +113,9 @@ const Travledes: React.FC = () => {
           onClick={() => navigateToSearchTravel('경상남도')}
         >
           <img
-            src={process.env.PUBLIC_URL + '/image/image 15.png'}
+            src={process.env.PUBLIC_URL + '/image/경상남도.jpg'}
             alt="경상남도 이미지"
-            className="rounded-4"
+            className="rounded-4 mt-16"
           />
           <div className="absolute bottom-0 right-0 text-4xl font-['BMHANNApro'] text-white bg-black bg-opacity-50 p-2 rounded-tl rounded-br">
             경상남도
@@ -126,9 +126,9 @@ const Travledes: React.FC = () => {
           onClick={() => navigateToSearchTravel('전라북도')}
         >
           <img
-            src={process.env.PUBLIC_URL + '/image/image 15.png'}
+            src={process.env.PUBLIC_URL + '/image/전라북도.jpg'}
             alt="전라북도 이미지"
-            className="rounded-4"
+            className="rounded-4 mt-16"
           />
           <div className="absolute bottom-0 right-0 text-4xl font-['BMHANNApro'] text-white bg-black bg-opacity-50 p-2 rounded-tl rounded-br">
             전라북도
@@ -139,9 +139,9 @@ const Travledes: React.FC = () => {
           onClick={() => navigateToSearchTravel('전라남도')}
         >
           <img
-            src={process.env.PUBLIC_URL + '/image/image 15.png'}
+            src={process.env.PUBLIC_URL + '/image/전라남도.jpg'}
             alt="전라남도 이미지"
-            className="rounded-4"
+            className="rounded-4 mt-16"
           />
           <div className="absolute bottom-0 right-0 text-4xl font-['BMHANNApro'] text-white bg-black bg-opacity-50 p-2 rounded-tl rounded-br">
             전라남도
@@ -152,9 +152,9 @@ const Travledes: React.FC = () => {
           onClick={() => navigateToSearchTravel('제주')}
         >
           <img
-            src={process.env.PUBLIC_URL + '/image/image 15.png'}
+            src={process.env.PUBLIC_URL + '/image/제주도.jpg'}
             alt="제주 이미지"
-            className="rounded-4"
+            className="rounded-4 w-full h-full overflow-hidden object-cover"
           />
           <div className="absolute bottom-0 right-0 text-4xl font-['BMHANNApro'] text-white bg-black bg-opacity-50 p-2 rounded-tl rounded-br">
             제주
