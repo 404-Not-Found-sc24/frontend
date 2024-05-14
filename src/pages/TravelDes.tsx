@@ -1,15 +1,18 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import CitySearchBar from '../components/CitySearchBar';
 
 const Travledes: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const curr = { ...location.state };
 
   const navigateToSearchTravelmajor = (city: string, city2: string) => {
     navigate('/searchtraveldes', {
       state: {
         city: city,
         city2: city2,
+        curr: curr.curr,
       },
     });
   };
@@ -18,6 +21,7 @@ const Travledes: React.FC = () => {
     navigate('/searchtraveldes', {
       state: {
         city: city,
+        curr: curr.curr,
       },
     });
   };
@@ -49,6 +53,7 @@ const Travledes: React.FC = () => {
         </button>
         {cities.map((city: string, index) => (
           <button
+            key={index}
             className="relative flex flex-col w-full aspect-square"
             onClick={() => navigateToSearchTravel(city)}
           >
@@ -62,7 +67,7 @@ const Travledes: React.FC = () => {
             </div>
           </button>
         ))}
-        
+
       </div>
     </div>
   );

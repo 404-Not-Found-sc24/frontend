@@ -31,15 +31,17 @@ const SearchResults: React.FC<Props> = ({ tab }) => {
   const planLoadMoreRef = useRef<HTMLDivElement>(null);
   const placeObserver = useRef<IntersectionObserver>();
   const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const searchTerm = queryParams.get('q') || '';
+  const city = queryParams.get('city') || '';
 
   useEffect(() => {
     const fetchPlaceDataOnScroll = async () => {
-      const queryParams = new URLSearchParams(location.search);
-      const searchTerm = queryParams.get('q');
       try {
         const placeResponse = await axios.get(
-          `/tour/locations?keyword=${searchTerm}&lastIdx=${lastPlaceIdx}`,
+          `/tour/locations?city=${city}&keyword=${searchTerm}&lastIdx=${lastPlaceIdx}`,
         );
+
         setPlaceSearchResults((prevData) => [
           ...prevData,
           ...placeResponse.data,
@@ -47,6 +49,7 @@ const SearchResults: React.FC<Props> = ({ tab }) => {
         setLastPlaceIdx(
           (prevLastIdx) => prevLastIdx + placeResponse.data.length,
         );
+
       } catch (error) {
         console.error('Failed to fetch place search results:', error);
       }
@@ -84,13 +87,10 @@ const SearchResults: React.FC<Props> = ({ tab }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const queryParams = new URLSearchParams(location.search);
-      const searchTerm = queryParams.get('q');
-
       try {
         if (tab === '일정 보기') {
           const planResponse = await axios.get(
-            `/tour/schedules?keyword=${searchTerm}`,
+            `/tour/schedules?city=${city}&keyword=${searchTerm}`,
           );
           setPlanSearchResults(planResponse.data);
         }
