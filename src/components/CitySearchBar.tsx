@@ -23,7 +23,7 @@ const SearchBar: React.FC = () => {
         <div className="w-11/12 h-full rounded-md shadow-xl flex items-center">
           <input
             type="text"
-            className="text-gray-900 text-md rounded-lg block w-full ps-5 p-2.5 font-BMJUA focus:outline-0"
+            className="text-gray-900 text-xs sm:text-sm md:text-md lg:text-lg xl:text-xl rounded-lg block w-full ps-5 p-2.5 font-BMJUA focus:outline-0"
             placeholder="여행 도시를 검색해보세요!"
             onChange={(e) => setSearchTerm(e.target.value)}
             value={searchTerm}

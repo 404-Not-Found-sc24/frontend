@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import ScheduleCard from '../components/ScheduleCard';
 import { useAuth } from '../context/AuthContext';
 import axios, { AxiosError } from 'axios';
@@ -31,6 +31,7 @@ const MyPage: React.FC = () => {
 
   const { refreshAccessToken } = useAuth();
   const accessToken = localStorage.getItem('accessToken');
+  const navigate = useNavigate();
 
   const getSchedules = async () => {
     try {
@@ -86,6 +87,14 @@ const MyPage: React.FC = () => {
     }
   }
 
+  const navigateToTravel = (curr: string) => {
+    navigate('/traveldes', {
+      state: {
+        curr: curr,
+      },
+    });
+  };
+
   useEffect(() => {
     getSchedules();
     getUserInfo();
@@ -128,8 +137,10 @@ const MyPage: React.FC = () => {
                 {schedules.length}
               </h1>
             </div>
-            <button className="bg-main-red-color text-white rounded-full px-3 py-1">
-              + 일정 추가
+            <button className="bg-main-red-color text-white rounded-full px-3 py-1"
+            onClick={() => navigateToTravel('schedule')}
+            >
+                + 일정 추가
             </button>
           </div>
           <div>
