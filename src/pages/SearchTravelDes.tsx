@@ -85,11 +85,11 @@ const SearchTravelDes: React.FC = () => {
           <CitySearchBar />
         </div>
       </div>
-      <div className="container mx-auto mt-24 mb-24 grid grid-cols-4 gap-24">
+      <div className="w-4/5 container mx-auto sm:my-6 md:my-12 lg:my-16 xl:my-20 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
         {placeSearchResults.map((place: CityData, index) => (
           <button
             key={index}
-            className="relative flex flex-col w-80 h-80"
+            className="relative flex flex-col w-full aspect-square"
             onClick={() => handleOpenModal(place.cityName)}
           >
             <img
@@ -97,7 +97,7 @@ const SearchTravelDes: React.FC = () => {
               alt={place.cityName + '이미지'}
               className="w-full h-full rounded-4 object-cover"
             />
-            <div className="absolute bottom-0 right-0 text-4xl font-['BMHANNApro'] text-white bg-black bg-opacity-50 p-2 rounded-tl rounded-br">
+            <div className="absolute bottom-0 right-0 text-lg sm:text-lg md:text-xl lg:text-2xl xl:text-2xl font-['BMHANNApro'] text-white bg-black bg-opacity-50 p-2 rounded-tl rounded-br">
               {place.cityName}
             </div>
           </button>

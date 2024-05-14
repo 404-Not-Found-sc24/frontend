@@ -22,6 +22,10 @@ const Travledes: React.FC = () => {
     });
   };
 
+  const cities = [
+    "경기도", "강원도", "충청북도", "충청남도", "경상북도", "경상남도", "전라북도", "전라남도", "제주도"
+  ]
+
   return (
     <div>
       <div className="w-full flex justify-center my-10">
@@ -29,137 +33,36 @@ const Travledes: React.FC = () => {
           <CitySearchBar />
         </div>
       </div>
-      <div className="container mx-auto mt-24 mb-24 grid grid-cols-5 md:grid-cols-5 gap-8">
+      <div className="w-4/5 container mx-auto sm:my-6 md:my-12 lg:my-16 xl:my-20 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
         <button
-          className="relative flex flex-col"
+          className="relative flex flex-col w-full aspect-square"
           onClick={() => navigateToSearchTravelmajor('광역시', '특별')}
         >
           <img
             src={process.env.PUBLIC_URL + '/image/광역시.jpg'}
             alt="서울, 광역시 이미지"
-            className="rounded-4 w-full h-full overflow-hidden object-cover"
+            className="w-full h-full rounded-4 object-cover"
           />
-          <div className="absolute bottom-0 right-0 text-4xl font-['BMHANNApro'] text-white bg-black bg-opacity-50 p-2 rounded-tl rounded-br">
+          <div className="absolute bottom-0 right-0 text-lg sm:text-lg md:text-xl lg:text-2xl xl:text-2xl font-['BMHANNApro'] text-white bg-black bg-opacity-50 p-2 rounded-tl rounded-br">
             서울, 광역시
           </div>
         </button>
-        <button
-          className="relative flex flex-col"
-          onClick={() => navigateToSearchTravel('경기도')}
-        >
-          <img
-            src={process.env.PUBLIC_URL + '/image/경기도.jpg'}
-            alt="경기도 이미지"
-            className="rounded-4 mt-20"
-          />
-          <div className="absolute bottom-0 right-0 text-4xl font-['BMHANNApro'] text-white bg-black bg-opacity-50 p-2 rounded-tl rounded-br">
-            경기도
-          </div>
-        </button>
-        <button
-          className="relative flex-col"
-          onClick={() => navigateToSearchTravel('강원도')}
-        >
-          <img
-            src={process.env.PUBLIC_URL + '/image/강원도.jpg'}
-            alt="강원도 이미지"
-            className="rounded-4 mt-20"
-          />
-          <div className="absolute bottom-0 right-0 text-4xl font-['BMHANNApro'] text-white bg-black bg-opacity-50 p-2 rounded-tl rounded-br">
-            강원도
-          </div>
-        </button>
-        <button
-          className="relative flex flex-col"
-          onClick={() => navigateToSearchTravel('충청북도')}
-        >
-          <img
-            src={process.env.PUBLIC_URL + '/image/충청북도.jpg'}
-            alt="충청북도 이미지"
-            className="rounded-4 mt-16"
-          />
-          <div className="absolute bottom-0 right-0 text-4xl font-['BMHANNApro'] text-white bg-black bg-opacity-50 p-2 rounded-tl rounded-br">
-            충청북도
-          </div>
-        </button>
-        <button
-          className="relative flex flex-col"
-          onClick={() => navigateToSearchTravel('충청남도')}
-        >
-          <img
-            src={process.env.PUBLIC_URL + '/image/충청남도.jpg'}
-            alt="충청남도 이미지"
-            className="rounded-4 mt-16"
-          />
-          <div className="absolute bottom-0 right-0 text-4xl font-['BMHANNApro'] text-white bg-black bg-opacity-50 p-2 rounded-tl rounded-br">
-            충청남도
-          </div>
-        </button>
-        <button
-          className="relative flex flex-col"
-          onClick={() => navigateToSearchTravel('경상북도')}
-        >
-          <img
-            src={process.env.PUBLIC_URL + '/image/경상북도.jpg'}
-            alt="경상북도 이미지"
-            className="rounded-4 mt-16"
-          />
-          <div className="absolute bottom-0 right-0 text-4xl font-['BMHANNApro'] text-white bg-black bg-opacity-50 p-2 rounded-tl rounded-br">
-            경상북도
-          </div>
-        </button>
-        <button
-          className="relative flex flex-col"
-          onClick={() => navigateToSearchTravel('경상남도')}
-        >
-          <img
-            src={process.env.PUBLIC_URL + '/image/경상남도.jpg'}
-            alt="경상남도 이미지"
-            className="rounded-4 mt-16"
-          />
-          <div className="absolute bottom-0 right-0 text-4xl font-['BMHANNApro'] text-white bg-black bg-opacity-50 p-2 rounded-tl rounded-br">
-            경상남도
-          </div>
-        </button>
-        <button
-          className="relative flex flex-col"
-          onClick={() => navigateToSearchTravel('전라북도')}
-        >
-          <img
-            src={process.env.PUBLIC_URL + '/image/전라북도.jpg'}
-            alt="전라북도 이미지"
-            className="rounded-4 mt-16"
-          />
-          <div className="absolute bottom-0 right-0 text-4xl font-['BMHANNApro'] text-white bg-black bg-opacity-50 p-2 rounded-tl rounded-br">
-            전라북도
-          </div>
-        </button>
-        <button
-          className="relative flex flex-col"
-          onClick={() => navigateToSearchTravel('전라남도')}
-        >
-          <img
-            src={process.env.PUBLIC_URL + '/image/전라남도.jpg'}
-            alt="전라남도 이미지"
-            className="rounded-4 mt-16"
-          />
-          <div className="absolute bottom-0 right-0 text-4xl font-['BMHANNApro'] text-white bg-black bg-opacity-50 p-2 rounded-tl rounded-br">
-            전라남도
-          </div>
-        </button>
-        <button
-          className="relative flex flex-col"
-          onClick={() => navigateToSearchTravel('제주')}
-        >
-          <img
-            src={process.env.PUBLIC_URL + '/image/제주도.jpg'}
-            alt="제주 이미지"
-            className="rounded-4 w-full h-full overflow-hidden object-cover"
-          />
-          <div className="absolute bottom-0 right-0 text-4xl font-['BMHANNApro'] text-white bg-black bg-opacity-50 p-2 rounded-tl rounded-br">
-            제주
-          </div>
-        </button>
+        {cities.map((city: string, index) => (
+          <button
+            className="relative flex flex-col w-full aspect-square"
+            onClick={() => navigateToSearchTravel(city)}
+          >
+            <img
+              src={process.env.PUBLIC_URL + `/image/${city}.jpg`}
+              alt={`${city} 이미지`}
+              className="w-full h-full rounded-4 object-cover"
+            />
+            <div className="absolute bottom-0 right-0 text-lg sm:text-lg md:text-xl lg:text-2xl xl:text-2xl font-['BMHANNApro'] text-white bg-black bg-opacity-50 p-2 rounded-tl rounded-br">
+              {city}
+            </div>
+          </button>
+        ))}
+        
       </div>
     </div>
   );
