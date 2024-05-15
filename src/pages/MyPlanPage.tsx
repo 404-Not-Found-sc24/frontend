@@ -15,7 +15,7 @@ interface PlanData {
   diaryId: number;
   title: string;
   content: string;
-  images: { imageUrl: string }[];
+  imageUrl: string;
 }
 
 const MyPlanPage: React.FC = () => {

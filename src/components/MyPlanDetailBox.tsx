@@ -11,7 +11,7 @@ interface PlanData {
   diaryId: number;
   title: string;
   content: string;
-  images: { imageUrl: string }[];
+  imageUrl: string;
 }
 
 interface PlanDetailBoxProps {
@@ -26,12 +26,13 @@ const MyPlanDetailBox: React.FC<PlanDetailBoxProps> = ({
   const navigate = useNavigate();
 
   const toDiaryDetail = () => {
+    console.log(scheduleData);
     navigate('/mydiarydetail', {
       state: { PlanData: scheduleData, planName: planName },
     });
   };
 
-  const { time, locationName, content, images } = scheduleData;
+  const { time, locationName, content, imageUrl } = scheduleData;
 
   return (
     <div
@@ -45,16 +46,12 @@ const MyPlanDetailBox: React.FC<PlanDetailBoxProps> = ({
         <div className="w-[22%] font-['BMJUA'] text-2xl">{locationName}</div>
         <div className="w-[43%] font-['Nanum Gothic']">{content}</div>
         <div className="w-[25%]">
-          {images &&
-            images.map((image: { imageUrl: string }, index: number) => (
-              <img
-                key={index}
-                src={image.imageUrl}
-                width="250px"
-                alt="지역소개사진"
-                className="border-2 border-black"
-              />
-            ))}
+          <img
+            src={imageUrl}
+            width="250px"
+            alt="지역소개사진"
+            className="border-2 border-black"
+          />
         </div>
       </div>
     </div>
