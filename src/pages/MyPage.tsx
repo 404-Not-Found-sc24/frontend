@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import ScheduleCard from '../components/ScheduleCard';
 import { useAuth } from '../context/AuthContext';
 import axios, { AxiosError } from 'axios';
@@ -15,11 +15,23 @@ interface ScheduleData {
   imageUrl: string;
 }
 
+interface UserInfo {
+  memberId: number;
+  name: string;
+  nickname: string;
+  email: string;
+  phone: string;
+  role: string;
+  imageUrl: string;
+}
+
 const MyPage: React.FC = () => {
   const [schedules, setSchedules] = useState<ScheduleData[]>([]);
+  const [userInfo, setUserInfo] = useState<UserInfo>();
 
   const { refreshAccessToken } = useAuth();
   const accessToken = localStorage.getItem('accessToken');
+  const navigate = useNavigate();
 
   const getSchedules = async () => {
     try {
@@ -48,8 +60,44 @@ const MyPage: React.FC = () => {
     }
   };
 
+  const getUserInfo = async () => {
+    try {
+      const response = await axios.get('/auth', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      setUserInfo(response.data);
+    } catch (error) {
+      if (
+        (error as AxiosError).response &&
+        (error as AxiosError).response?.status === 401
+      ) {
+        try {
+          await refreshAccessToken();
+          // 새로운 액세스 토큰으로 다시 요청을 보냅니다.
+          // 여기에서는 재시도 로직을 추가할 수 있습니다.
+        } catch (refreshError) {
+          console.error('Failed to refresh access token:', refreshError);
+          // 액세스 토큰 갱신에 실패한 경우 사용자에게 알립니다.
+        }
+      } else {
+        console.error('일정 조회 중 오류 발생:', error);
+      }
+    }
+  }
+
+  const navigateToTravel = (curr: string) => {
+    navigate('/traveldes', {
+      state: {
+        curr: curr,
+      },
+    });
+  };
+
   useEffect(() => {
     getSchedules();
+    getUserInfo();
   }, [refreshAccessToken]);
 
   return (
@@ -57,12 +105,20 @@ const MyPage: React.FC = () => {
       <div className="h-[22rem]">
         <div className="w-full h-44 bg-main-red-color"></div>
         <div className="relative flex justify-center">
-          <img
-            src={`${process.env.PUBLIC_URL}/image/user.png`}
-            alt="유저 기본 이미지"
-            className="absolute w-24 h-24 -top-10 bg-white rounded-full"
-          ></img>
-          <h1 className="absolute top-16 text-3xl font-medium">나영이</h1>
+          {userInfo?.imageUrl == null ?
+            <img
+              src={`${process.env.PUBLIC_URL}/image/user.png`}
+              alt="유저 기본 이미지"
+              className="absolute w-24 h-24 -top-10 bg-white rounded-full"
+            />
+            :
+            <img
+              src={userInfo.imageUrl}
+              alt="유저 프로필 이미지"
+              className="absolute w-24 h-24 -top-10 bg-white rounded-full"
+            />
+          }
+          <h1 className="absolute top-16 text-3xl font-medium">{userInfo?.nickname}</h1>
           <Link
             to="/"
             className="text-ms text-main-green-color font-Nanum Gothic underline underline-offset-4 absolute top-28"
@@ -81,8 +137,10 @@ const MyPage: React.FC = () => {
                 {schedules.length}
               </h1>
             </div>
-            <button className="bg-main-red-color text-white rounded-full px-3 py-1">
-              + 일정 추가
+            <button className="bg-main-red-color text-white rounded-full px-3 py-1"
+            onClick={() => navigateToTravel('schedule')}
+            >
+                + 일정 추가
             </button>
           </div>
           <div>

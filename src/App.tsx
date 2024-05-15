@@ -23,6 +23,7 @@ import MyPlan from './pages/MyPlan';
 import ScheduleEx from './pages/ScheduleEx';
 import MyPlanPage from './pages/MyPlanPage';
 import ViewNotice from "./pages/ViewNotice";
+import MyDiaryDetail from './pages/MyDiaryDetail';
 
 function App() {
   return (
@@ -50,6 +51,7 @@ function App() {
           <Route path="/traveldes" element={<Travledes />} />
           <Route path="/plandetail" element={<PlanDetail />} />
           <Route path="/diarydetail" element={<DiaryDetail />} />
+          <Route path="/mydiarydetail" element={<MyDiaryDetail />} />
           <Route
             path="/addplaceform"
             element={

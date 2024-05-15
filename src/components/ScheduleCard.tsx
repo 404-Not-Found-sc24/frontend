@@ -34,7 +34,12 @@ const ScheduleCard: React.FC<ScheduleCardProps> = (props) => {
         <div className='w-full flex p-5 h-44 shadow-md'>
             <div className='flex w-full'>
                 <div className='w-60 h-full mr-5'>
-                    <img src={`${process.env.PUBLIC_URL}/image/image 15.png`} alt="" className='h-full max-w-60'></img>
+                    {
+                    imageUrl !== null ? 
+                    <img src={imageUrl} alt="" className='h-full w-full'></img>
+                    :
+                    <div className='flex h-full w-full border-2 text-center justify-center items-center'>사진이 없습니다.</div>
+                    }
                 </div>
                 <div className='flex flex-col w-full'>
                     <div className='flex flex-row'>
