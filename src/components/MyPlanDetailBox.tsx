@@ -15,7 +15,7 @@ interface PlanData {
 }
 
 interface PlanDetailBoxProps {
-  scheduleData: PlanData | undefined;
+  scheduleData: PlanData;
   planName: string;
 }
 
@@ -23,13 +23,9 @@ const MyPlanDetailBox: React.FC<PlanDetailBoxProps> = ({
   scheduleData,
   planName,
 }) => {
-  if (!scheduleData) {
-    return null;
-  }
   const navigate = useNavigate();
 
   const toDiaryDetail = () => {
-    console.log(scheduleData);
     navigate('/mydiarydetail', {
       state: { PlanData: scheduleData, planName: planName },
     });
