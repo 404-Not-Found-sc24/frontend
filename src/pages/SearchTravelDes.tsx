@@ -16,6 +16,7 @@ const SearchTravelDes: React.FC = () => {
   const [placeSearchResults, setPlaceSearchResults] = useState<CityData[]>([]);
   const location = useLocation();
   const cityparam = { ...location.state };
+  const [curr, setCurr] = useState('');
   const { accessToken } = useAuth();
 
   const handleOpenModal = useCallback((city: string) => {
@@ -28,10 +29,16 @@ const SearchTravelDes: React.FC = () => {
     setCity('');
   }, []);
 
+  useEffect (() => {
+    const cityparam = { ...location.state };
+    setCurr(cityparam.curr);
+  }, []);
+
   useEffect(() => {
     const fetchData = async () => {
       const queryParams = new URLSearchParams(location.search);
       const searchTerm = queryParams.get('q') || '';
+      const cityparam = { ...location.state };
 
       if (searchTerm) {
         try {
@@ -77,6 +84,8 @@ const SearchTravelDes: React.FC = () => {
   }, [location.search]);
 
   return (
+    console.log("curr: ", curr),
+    console.log("res", placeSearchResults),
     <div>
       <div className="w-full flex justify-center my-10">
         <div className="w-2/3 sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/2">
@@ -84,7 +93,7 @@ const SearchTravelDes: React.FC = () => {
         </div>
       </div>
       <div className="w-4/5 container mx-auto sm:my-6 md:my-12 lg:my-12 xl:my-20 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
-        {cityparam.curr === 'schedule' && placeSearchResults.map((place: CityData, index) => (
+        {curr === 'schedule' && placeSearchResults.map((place: CityData, index) => (
           <button
             key={index}
             className="relative flex flex-col w-full aspect-square"
@@ -100,7 +109,7 @@ const SearchTravelDes: React.FC = () => {
             </div>
           </button>
         ))}
-        {cityparam.curr === 'tour' && placeSearchResults.map((place: CityData, index) => (
+        {curr === 'tour' && placeSearchResults.map((place: CityData, index) => (
           <Link
             to={`/searchplace?city=${place.cityName}`}
             key={index}
