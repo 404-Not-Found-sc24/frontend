@@ -4,6 +4,7 @@ import 'ag-grid-community/styles/ag-theme-alpine.css';
 import {AgGridReact, AgGridReactProps} from 'ag-grid-react';
 import axios from "axios";
 import "../index.css"
+import {useNavigate} from "react-router-dom";
 
 interface Event {
     title: any;
@@ -19,6 +20,7 @@ const Event: React.FC = () => {
     const [rowsNoticeData, setRowsNoticeData] = useState([]);
     const [rowsEventData, setRowsEventData] = useState([]);
     const [rowsPromotionData, setRowsPromotionData] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         getNoticeData();
@@ -81,6 +83,19 @@ const Event: React.FC = () => {
         setActiveTab(tab);
     };
 
+    const handleTitleClick = (event: any) => {
+        const clickedRowData = event.data;
+        navigate('/notice/view', {
+            state: {
+                title: clickedRowData.title,
+                content: clickedRowData.content,
+                createdDate: clickedRowData.createdDate,
+                updatedDate: clickedRowData.updatedDate,
+                memberName: clickedRowData.memberName,
+            },
+        });
+    };
+
     const gridOptions: AgGridReactProps<Event> = {
         columnDefs: [
             { headerName: '번호', valueGetter: (params) => params.node && params.node.rowIndex != null ? params.node.rowIndex + 1 : '' , width: 70, cellStyle: {textAlign: 'center'}},
@@ -93,7 +108,8 @@ const Event: React.FC = () => {
         defaultColDef: {
             sortable: true,
             headerClass: "centered",
-        }
+        },
+        onCellClicked: handleTitleClick,
     };
 
     const rowNoticeData = rowsNoticeData && rowsNoticeData.map((v: any) => {

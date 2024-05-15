@@ -10,7 +10,7 @@ import SearchBar from '../components/SearchBar';
 import Map from '../components/Map';
 import {MapProvider} from '../context/MapContext';
 import {useAuth} from "../context/AuthContext";
-import {toast} from "react-toastify";
+import {toast, ToastContainer} from "react-toastify";
 
 const MakePlan = () => {
     const location = useLocation();
@@ -139,7 +139,9 @@ const MakePlan = () => {
                 .then((response) => {
                     console.log(response);
                     notifySuccess();
-                    navigate('/');
+                    setTimeout(() => {
+                        navigate('/');
+                    }, 3000);
                 });
         } catch (error) {
             if (
@@ -158,6 +160,7 @@ const MakePlan = () => {
 
     return (
         <div className="w-full h-[864px] flex">
+            <ToastContainer />
             <div className="w-1/2 h-full flex">
                 <div className="w-1/2 h-full flex flex-col">
                     <div className="flex">

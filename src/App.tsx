@@ -22,6 +22,7 @@ import MyPage from './pages/MyPage';
 import MyPlan from './pages/MyPlan';
 import ScheduleEx from './pages/ScheduleEx';
 import MyPlanPage from './pages/MyPlanPage';
+import ViewNotice from "./pages/ViewNotice";
 
 function App() {
   return (
@@ -60,6 +61,7 @@ function App() {
             }
           />
           <Route path="/event" element={<EventPage />} />
+            <Route path="/notice/view" element={<ViewNotice />} />
           <Route path="myplan" element={<MyPlan />} />
           <Route path="/mypage" element={<MyPage />} />
           <Route path="/myplanpage" element={<MyPlanPage />} />
