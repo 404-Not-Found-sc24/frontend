@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Map from '../components/Map';
 import { MapProvider } from '../context/MapContext';
 import { useLocation, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 interface PlanData {
   placeId: number;
@@ -12,19 +13,52 @@ interface PlanData {
   diaryId: number;
   title: string;
   content: string;
-  images: { imageUrl: string }[];
+  imageUrl: string;
+}
+
+interface Diary {
+  userName: string;
+  title: string;
+  date: string;
+  weather: string;
+  content: string;
+  imageUrl: string;
 }
 
 const MyDiaryDetail: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('1');
   const navigate = useNavigate();
   const location = useLocation();
   const PlanData = location.state.PlanData;
   const planName = location.state.planName;
+  const [Diarydata, setDiaryData] = useState<Diary[]>([]);
+
+  const getData = async () => {
+    console.log(PlanData);
+    try {
+      await axios
+        .get(`/tour/diary/${PlanData.diaryId}`, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+        .then((response) => {
+          console.log(response.data);
+          setDiaryData(response.data);
+        });
+    } catch (e) {
+      console.error('Error:', e);
+    }
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
 
   const naviBack = () => {
+    console.log(PlanData.imageUrl);
     console.log(PlanData);
     console.log(planName);
+    console.log(Diarydata);
     window.history.back();
   };
 
@@ -67,11 +101,11 @@ const MyDiaryDetail: React.FC = () => {
                 </div>
                 <div className="flex justify-center h-fit m-5">
                   <img
-                    src=""
-                    width="400px"
-                    height="300px"
+                    src={PlanData.imageUrl}
+                    width="250px"
                     alt="지역소개사진"
-                  ></img>
+                    className="w-full h-full"
+                  />
                 </div>
                 <div className="mx-10 my-5 h-full">
                   <div className="flex justify-between">
