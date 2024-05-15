@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import Map from '../components/Map';
 import PlanDetailBox from '../components/PlanDetailBox';
 import { MapProvider } from '../context/MapContext';
-import axios from 'axios';
-import { useLocation, useNavigate } from 'react-router-dom';
+import axios, { AxiosError } from 'axios';
+import { useLocation } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { toast } from 'react-toastify';
 
 interface ScheduleData {
   placeId: number;
@@ -20,12 +22,7 @@ interface ScheduleData {
 const ScheduleEx: React.FC = () => {
   const location = useLocation();
   const [scheduleData, setScheduleData] = useState<ScheduleData[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const navigate = useNavigate();
-  const [tripDays, setTripDays] = useState<number>(0);
   const [activeTab, setActiveTab] = useState<number>(1);
-  const [res, setRes] = useState([]);
   const plan = location.state.plan;
   const queryParams = new URLSearchParams(location.search);
   const scheduleId = queryParams.get('scheduleId');
@@ -33,7 +30,20 @@ const ScheduleEx: React.FC = () => {
   const endDate = new Date(plan.endDate);
   const timeDiff = Math.abs(endDate.getTime() - startDate.getTime());
   const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1;
+  const { refreshAccessToken } = useAuth();
+  const accessToken = localStorage.getItem('accessToken');
 
+  const notifySuccess = () =>
+    toast.success('일정이 성공적으로 저장되었습니다.', {
+      position: 'top-center',
+    });
+  const notifyError = () =>
+    toast.error('일정 작성 중 오류가 발생했습니다.', {
+      position: 'top-center',
+    });
+  const handleTabClick = (tab: number) => {
+    setActiveTab(tab);
+  };
   // Tab 생성
   const generateTabs = () => {
     const tabs = [];
@@ -56,12 +66,32 @@ const ScheduleEx: React.FC = () => {
   useEffect(() => {
     const fetchScheduleData = async () => {
       try {
-        const response = await axios.get(`/schedule/schedules/${scheduleId}`);
+        const response = await axios.get(`/schedule/schedules/${scheduleId}`, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
         setScheduleData(response.data);
-        setLoading(false);
       } catch (error) {
-        setError('일정 데이터를 불러오는 중 오류가 발생했습니다.');
-        setLoading(false);
+        if (
+          (error as AxiosError).response &&
+          (error as AxiosError).response?.status === 401
+        ) {
+          try {
+            await refreshAccessToken();
+            // 새로운 액세스 토큰으로 다시 요청을 보냅니다.
+            // 여기에서는 재시도 로직을 추가할 수 있습니다.
+          } catch (refreshError) {
+            console.error('Failed to refresh access token:', refreshError);
+            // 액세스 토큰 갱신에 실패한 경우 사용자에게 알립니다.
+          }
+        } else {
+          console.error(
+            '일정 데이터를 불러오는 중 오류가 발생했습니다.',
+            error,
+          );
+        }
       }
     };
 
@@ -70,16 +100,36 @@ const ScheduleEx: React.FC = () => {
 
   const copySchedule = async () => {
     try {
-      // 복사된 일정 데이터를 MyPlan 페이지로 전달하고 페이지를 이동합니다.
-      navigate('/myplan', { state: { copiedSchedule: scheduleData } });
+      // 복사된 일정 데이터를 서버에 전송하여 저장합니다.
+      const response = await axios.post(
+        `/tour/schedules/${scheduleId}`,
+        { name: plan.name, startDate: plan.startDate, endDate: plan.endDate },
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        },
+      );
+      // 저장이 완료되면 사용자에게 알립니다. (예: 모달, 알림 등)
+      console.log('일정이 성공적으로 복사되었습니다:', response.data);
+      notifySuccess();
     } catch (error) {
-      console.error('일정을 복사하는 중 오류가 발생했습니다:', error);
-      // 에러 처리 (예: 사용자에게 알림)
+      if (
+        (error as AxiosError).response &&
+        (error as AxiosError).response?.status === 401
+      ) {
+        try {
+          await refreshAccessToken();
+          // 새로운 액세스 토큰으로 다시 요청을 보냅니다.
+          // 여기에서는 재시도 로직을 추가할 수 있습니다.
+        } catch (refreshError) {
+          console.error('Failed to refresh access token:', refreshError);
+          notifyError();
+          // 액세스 토큰 갱신에 실패한 경우 사용자에게 알립니다.
+        }
+      } else {
+        console.error('일정 복사 중 오류 발생:', error);
+        notifyError();
+      }
     }
-  };
-
-  const handleTabClick = (tab: number) => {
-    setActiveTab(tab);
   };
 
   const naviBack = () => {
@@ -108,7 +158,7 @@ const ScheduleEx: React.FC = () => {
                 onClick={copySchedule}
                 className="w-20 h-7 bg-black rounded-2xl text-white font-['Nanum Gothic'] text-sm font-semibold"
               >
-                가져오기
+                일정 복사
               </button>
             </div>
             {Array.from({ length: diffDays }, (_, index) => (
