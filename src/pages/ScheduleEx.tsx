@@ -11,7 +11,7 @@ interface ScheduleData {
   locationName: string;
   date: string;
   time: string;
-  recordId: number;
+  diaryId: number;
   title: string;
   content: string;
   images: { imageUrl: string }[];
