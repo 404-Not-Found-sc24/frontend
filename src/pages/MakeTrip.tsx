@@ -12,10 +12,12 @@ import { toast } from 'react-toastify';
 interface props {
   isOpen: boolean;
   city: string;
+  cityDetail: string;
+  imageUrl: string;
   handleCloseModal: () => void;
 }
 
-const MakeTrip = ({ isOpen, city, handleCloseModal }: props) => {
+const MakeTrip = ({ isOpen, city, cityDetail, imageUrl, handleCloseModal }: props) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [step, setStep] = useState(1);
   const [startDate, setStartDate] = useState<Date | null>(null);
@@ -27,7 +29,6 @@ const MakeTrip = ({ isOpen, city, handleCloseModal }: props) => {
   const [share, setShare] = useState(0);
 
   useEffect(() => {
-    console.log('city ', city, 'title ', title, 'scheduleId ', scheduleId);
   }, [city, scheduleId]);
 
   useEffect(() => {
@@ -206,9 +207,11 @@ const MakeTrip = ({ isOpen, city, handleCloseModal }: props) => {
                 <div className="font-['Nanum Gothic'] text-3xl font-semibold text-black mb-5">
                   {city}
                 </div>
-                <div className="flex justify-between items-center">
-                  <div>서울은 ~~</div>
-                  <img src="" width="400px" alt="지역소개사진"></img>
+                <div className="flex justify-between items-center w-full h-full">
+                  <div className="mr-5 w-full h-full">{cityDetail}</div>
+                  <div className="w-full h-full flex justify-center">
+                    <img src={imageUrl} className="max-h-80 object-cover" alt="지역소개사진"></img>
+                  </div>
                 </div>
                 <div className="flex justify-center mt-10">
                   <button

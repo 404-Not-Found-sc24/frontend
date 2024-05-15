@@ -7,21 +7,26 @@ import { useAuth } from '../context/AuthContext';
 
 interface CityData {
   cityName: string;
+  cityDetail: string;
   imageUrl: string;
 }
 
 const SearchTravelDes: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [city, setCity] = useState('');
+  const [cityDetail, setCityDetail] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
   const [placeSearchResults, setPlaceSearchResults] = useState<CityData[]>([]);
   const location = useLocation();
   const cityparam = { ...location.state };
   const [curr, setCurr] = useState('');
   const { accessToken } = useAuth();
 
-  const handleOpenModal = useCallback((city: string) => {
+  const handleOpenModal = useCallback((city: string, cityDetail: string, imageUrl: string) => {
     setIsOpen(true);
     setCity(city);
+    setCityDetail(cityDetail);
+    setImageUrl(imageUrl);
   }, []);
 
   const handleCloseModal = useCallback(() => {
@@ -97,7 +102,7 @@ const SearchTravelDes: React.FC = () => {
           <button
             key={index}
             className="relative flex flex-col w-full aspect-square"
-            onClick={() => handleOpenModal(place.cityName)}
+            onClick={() => handleOpenModal(place.cityName, place.cityDetail, place.imageUrl)}
           >
             <img
               src={place.imageUrl}
@@ -129,6 +134,8 @@ const SearchTravelDes: React.FC = () => {
       <MakeTrip
         isOpen={isOpen}
         city={city}
+        cityDetail={cityDetail}
+        imageUrl={imageUrl}
         handleCloseModal={handleCloseModal}
       />
     </div>
