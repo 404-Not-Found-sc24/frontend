@@ -5,6 +5,7 @@ import '../index.css';
 import { ToastContainer, toast } from 'react-toastify';
 import { MapProvider } from '../context/MapContext';
 import { useAuth } from '../context/AuthContext';
+import { useLocation } from 'react-router-dom';
 
 const MakeDiary: React.FC = () => {
   const [title, setTitle] = useState('');
@@ -15,6 +16,8 @@ const MakeDiary: React.FC = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
   const [showUploadMessage, setShowUploadMessage] = useState<boolean>(true);
   const { accessToken, refreshAccessToken } = useAuth();
+  const location = useLocation();
+  const PlanData = location.state.PlanData;
 
   const notifySuccess = () =>
     toast.success('일기가 성공적으로 작성되었습니다.', {
@@ -24,6 +27,10 @@ const MakeDiary: React.FC = () => {
     toast.error('일기 작성 중 오류가 발생했습니다.', {
       position: 'top-center',
     });
+
+  const navisuccess = () => {
+    window.history.back();
+  };
 
   const handleSubmit = async () => {
     try {
@@ -35,14 +42,21 @@ const MakeDiary: React.FC = () => {
         formData.append('images', image);
       });
 
-      const response = await axios.post('schedule/diary/10', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${accessToken}`,
+      console.log(PlanData);
+
+      const response = await axios.post(
+        `schedule/diary/${PlanData.placeID}`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${accessToken}`,
+          },
         },
-      });
+      );
       console.log('일기가 성공적으로 작성되었습니다:', response.data);
       notifySuccess();
+      navisuccess();
     } catch (error) {
       if (
         (error as AxiosError).response &&
@@ -129,7 +143,7 @@ const MakeDiary: React.FC = () => {
             ></button>
           </div>
           <div className="w-full my-2 shadow-xl border p-10">
-            <div className="flex w-full font-BMJUA">
+            <div className="flex-row xl:flex w-full font-BMJUA">
               <div className="flex items-center">
                 일기 제목 :
                 <input
@@ -137,7 +151,7 @@ const MakeDiary: React.FC = () => {
                   placeholder="일기 제목"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-72 p-2 mx-2 my-2 border-2 border-main-red-color rounded-md"
+                  className="2xl:w-72 w-36  p-2 mx-2 my-2 border-2 border-main-red-color rounded-md"
                 />
               </div>
               <div className="flex items-center ml-auto">
@@ -147,7 +161,7 @@ const MakeDiary: React.FC = () => {
                   placeholder="날씨"
                   value={weather}
                   onChange={(e) => setWeather(e.target.value)}
-                  className="w-30 p-2 mx-2 my-2 border-2 border-main-red-color rounded-md"
+                  className="2xl:w-32 w-20  p-2 mx-2 my-2 border-2 border-main-red-color rounded-md"
                 />
               </div>
             </div>

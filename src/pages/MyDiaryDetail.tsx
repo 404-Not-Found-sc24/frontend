@@ -22,10 +22,6 @@ const MyDiaryDetail: React.FC = () => {
   const PlanData = location.state.PlanData;
   const planName = location.state.planName;
 
-  const handleTabClick = (tab: string) => {
-    setActiveTab(tab);
-  };
-
   const naviBack = () => {
     console.log(PlanData);
     console.log(planName);
