@@ -3,8 +3,8 @@ import { useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { MapProvider } from '../context/MapContext';
 import Map from '../components/Map';
-import PlanDetailBox from '../components/PlanDetailBox';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
+import MyPlanDetailBox from '../components/MyPlanDetailBox';
 
 interface PlanData {
   placeId: number;
@@ -12,7 +12,7 @@ interface PlanData {
   locationName: string;
   date: string;
   time: string;
-  recordId: number;
+  diaryId: number;
   title: string;
   content: string;
   images: { imageUrl: string }[];
@@ -22,8 +22,9 @@ const MyPlanPage: React.FC = () => {
   const location = useLocation();
   const plan = location.state.data;
   const scheduleId = location.state.data.scheduleId;
+  const accessToken = localStorage.getItem('accessToken');
   const [activeTab, setActiveTab] = useState<number>(1);
-  const { accessToken, refreshAccessToken } = useAuth();
+  const { refreshAccessToken } = useAuth();
   const [planData, setPlanData] = useState<PlanData[]>([]);
   const startDate = new Date(plan.startDate);
   const endDate = new Date(plan.endDate);
@@ -54,10 +55,28 @@ const MyPlanPage: React.FC = () => {
   useEffect(() => {
     const fetchScheduleData = async () => {
       try {
-        const response = await axios.get(`/schedule/schedules/${scheduleId}`);
+        const response = await axios.get(`/schedule/schedules/${scheduleId}`, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
         setPlanData(response.data);
-      } catch (error) {
-        console.error('일정 데이터를 불러오는 중 오류가 발생했습니다.', error);
+      } catch (e) {
+        if (
+          (e as AxiosError).response &&
+          (e as AxiosError).response?.status === 401
+        ) {
+          try {
+            await refreshAccessToken();
+            // 새로운 액세스 토큰으로 다시 요청을 보냅니다.
+            // 여기에서는 재시도 로직을 추가할 수 있습니다.
+          } catch (refreshError) {
+            console.error('Failed to refresh access token:', refreshError);
+          }
+        } else {
+          console.error('일정 데이터를 불러오는 중 오류가 발생했습니다.', e);
+        }
       }
     };
 
@@ -87,7 +106,7 @@ const MyPlanPage: React.FC = () => {
             <div className="flex justify-between h-7">
               <div className="flex items-center">{generateTabs()}</div>
               <button className="w-20 h-7 bg-black rounded-2xl text-white font-['Nanum Gothic'] text-sm font-semibold">
-                일정 편집
+                일정 수정
               </button>
             </div>
             {Array.from({ length: diffDays }, (_, index) => (
@@ -108,9 +127,10 @@ const MyPlanPage: React.FC = () => {
                           index + 1,
                       )
                       .map((filteredData, dataIndex) => (
-                        <PlanDetailBox
+                        <MyPlanDetailBox
                           key={dataIndex}
                           scheduleData={filteredData}
+                          planName={plan.name}
                         />
                       ))}
                   </div>

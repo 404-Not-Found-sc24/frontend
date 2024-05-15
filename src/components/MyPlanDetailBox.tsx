@@ -16,9 +16,13 @@ interface PlanData {
 
 interface PlanDetailBoxProps {
   scheduleData: PlanData | undefined;
+  planName: string;
 }
 
-const PlanDetailBox: React.FC<PlanDetailBoxProps> = ({ scheduleData }) => {
+const MyPlanDetailBox: React.FC<PlanDetailBoxProps> = ({
+  scheduleData,
+  planName,
+}) => {
   if (!scheduleData) {
     return null;
   }
@@ -26,10 +30,11 @@ const PlanDetailBox: React.FC<PlanDetailBoxProps> = ({ scheduleData }) => {
 
   const toDiaryDetail = () => {
     console.log(scheduleData);
-    navigate('/diarydetail', {
-      state: { PlanData: scheduleData },
+    navigate('/mydiarydetail', {
+      state: { PlanData: scheduleData, planName: planName },
     });
   };
+
   const { time, locationName, content, images } = scheduleData;
 
   return (
@@ -60,4 +65,4 @@ const PlanDetailBox: React.FC<PlanDetailBoxProps> = ({ scheduleData }) => {
   );
 };
 
-export default PlanDetailBox;
+export default MyPlanDetailBox;
