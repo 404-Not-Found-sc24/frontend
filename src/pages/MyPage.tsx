@@ -95,6 +95,12 @@ const MyPage: React.FC = () => {
     });
   };
 
+  const onDeleteSchedule = (scheduleId: number) => {
+    // 일정 삭제 후 상태 업데이트
+    const updatedSchedules = schedules.filter(schedule => schedule.scheduleId !== scheduleId);
+    setSchedules(updatedSchedules);
+  };
+
   useEffect(() => {
     getSchedules();
     getUserInfo();
@@ -148,14 +154,11 @@ const MyPage: React.FC = () => {
               <div>
                 {schedules.map((data: ScheduleData, index: number) => {
                   return (
-                    <Link
-                      key={index}
-                      to="/myplanpage"
-                      state={{ data }}
+                    <div
                       className="w-full h-full flex flex-col items-center pt-3"
                     >
-                      <ScheduleCard key={index} props={data} />
-                    </Link>
+                      <ScheduleCard key={index} data={data} onDeleteSchedule={onDeleteSchedule} />
+                    </div>
                   );
                 })}
               </div>
