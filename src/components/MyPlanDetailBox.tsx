@@ -43,7 +43,7 @@ const MyPlanDetailBox: React.FC<PlanDetailBoxProps> = ({
         <div className="w-[10%] font-['BMJUA'] text-[#FF9A9A] text-xl">
           {time}
         </div>
-        <div className="w-[22%] font-['BMJUA'] text-2xl">{locationName}</div>
+        <div className="w-[22%] font-['BMJUA'] text-2xl">{locationName.length > 7 ? `${locationName.slice(0, 7)}...` : locationName}</div>
         <div className="w-[43%] font-['Nanum Gothic']">{content}</div>
         <div className="w-[25%]">
           <img

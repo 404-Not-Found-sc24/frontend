@@ -31,6 +31,7 @@ const MyPlanPage: React.FC = () => {
   const timeDiff = Math.abs(endDate.getTime() - startDate.getTime());
   const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1;
 
+  console.log(plan);
   const handleTabClick = (tab: number) => {
     setActiveTab(tab);
   };
