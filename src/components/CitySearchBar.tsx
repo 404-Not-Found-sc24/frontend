@@ -5,6 +5,7 @@ const SearchBar: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const navigate = useNavigate();
   const location = useLocation();
+  const cityparam = { ...location.state };
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -14,7 +15,11 @@ const SearchBar: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    navigate(`/searchtraveldes?q=${searchTerm}`);
+    navigate(`/searchtraveldes?q=${searchTerm}`, {
+      state: {
+        curr: cityparam.curr,
+      },
+    });
   };
 
   return (
