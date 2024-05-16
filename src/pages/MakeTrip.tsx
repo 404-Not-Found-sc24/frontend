@@ -149,16 +149,20 @@ const MakeTrip = ({ isOpen, city, cityDetail, imageUrl, handleCloseModal }: prop
     });
   }, [city, title, startDate, endDate, scheduleId]);
 
+  function formatDate(date: Date) {
+    if (!(date instanceof Date)) return '';
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 1을 더함
+    const day = String(date.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+  }
+
   const savePlan = async () => {
     try {
-      const startDateString =
-        startDate instanceof Date ? startDate.toISOString() : '';
-      const endDateString =
-        endDate instanceof Date ? endDate.toISOString() : '';
-      const startDateObject = new Date(startDateString);
-      const startPlanDate = startDateObject.toISOString().split('T')[0];
-      const endDateObject = new Date(endDateString);
-      const endPlanDate = endDateObject.toISOString().split('T')[0];
+      const startPlanDate = startDate ? formatDate(startDate) : '';
+      const endPlanDate = endDate ? formatDate(endDate) : '';
 
       console.log(title, city, startPlanDate, endPlanDate);
       const requestData = {
