@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios, { AxiosError } from 'axios';
 import { useAuth } from '../context/AuthContext';
-import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 interface ScheduleData {
     scheduleId: number;
@@ -24,15 +24,6 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({ data, onDeleteSchedule }) =
     const [differenceInDays, setDifferenceInDays] = useState<number>();
     const { accessToken, refreshAccessToken } = useAuth();
     const navigate = useNavigate();
-
-    const notifySuccess = () =>
-        toast.success('일정이 성공적으로 삭제되었습니다.', {
-            position: 'top-center',
-        });
-    const notifyError = () =>
-        toast.error('일정 삭제 중 오류가 발생했습니다.', {
-            position: 'top-center',
-        });
 
     useEffect(() => {
         checkDate();
@@ -59,6 +50,17 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({ data, onDeleteSchedule }) =
         await deleteSchedule(scheduleId);
         // 알림 또는 다른 작업 수행
     };
+
+
+  const notifySuccess = () =>
+    toast.success('일정이 성공적으로 삭제되었습니다.', {
+        position: 'top-center',
+    });
+const notifyError = () =>
+    toast.error('일정 삭제 중 오류가 발생했습니다.', {
+        position: 'top-center',
+    });
+
 
     const deleteSchedule = async (scheduleId: number) => {
         try {
