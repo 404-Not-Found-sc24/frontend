@@ -45,7 +45,7 @@ const MakeDiary: React.FC = () => {
       console.log(PlanData);
 
       const response = await axios.post(
-        `schedule/diary/${PlanData.placeID}`,
+        `schedule/diary/${PlanData.placeId}`,
         formData,
         {
           headers: {
