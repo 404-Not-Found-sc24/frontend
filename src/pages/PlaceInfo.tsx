@@ -480,11 +480,11 @@ const PlaceInfo: React.FC = () => {
           </div>
         </div>
       </div>
-      <MapProvider
+      {/*<MapProvider
         initialCenter={{ latitude: place.latitude, longitude: place.longitude }}
       >
         <Map />
-      </MapProvider>
+      </MapProvider>*/}
     </div>
   );
 };

@@ -192,9 +192,9 @@ const MakeDiary: React.FC = () => {
           </div>
         </div>
       </div>
-      <MapProvider initialCenter={{ latitude: 37.2795, longitude: 127.0438 }}>
+      {/*<MapProvider initialCenter={{ latitude: 37.2795, longitude: 127.0438 }}>
         <Map />
-      </MapProvider>
+      </MapProvider>*/}
     </div>
   );
 };

@@ -35,7 +35,7 @@ function App() {
           <Route path="/makediary" element={<MakeDiary />} />
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
-          <Route
+          {/*<Route
             path="/makeplan"
             element={
               <MapProvider
@@ -44,7 +44,7 @@ function App() {
                 <MakePlan />
               </MapProvider>
             }
-          />
+          />*/}
           <Route path="/placeinfo" element={<PlaceInfo />} />
           <Route path="/searchplace" element={<SearchPlace />} />
           <Route path="/searchtraveldes" element={<SearchTravelDes />} />
@@ -52,7 +52,7 @@ function App() {
           <Route path="/plandetail" element={<PlanDetail />} />
           <Route path="/diarydetail" element={<DiaryDetail />} />
           <Route path="/mydiarydetail" element={<MyDiaryDetail />} />
-          <Route
+          {/*<Route
             path="/addplaceform"
             element={
               <MapProvider
@@ -61,7 +61,7 @@ function App() {
                 <AddPlaceForm />
               </MapProvider>
             }
-          />
+          />*/}
           <Route path="/event" element={<EventPage />} />
             <Route path="/notice/view" element={<ViewNotice />} />
           <Route path="myplan" element={<MyPlan />} />
