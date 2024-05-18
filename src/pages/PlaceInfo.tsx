@@ -19,6 +19,7 @@ const PlaceInfo: React.FC = () => {
   const [scheduleRes, setScheduleRes] = useState<ScheduleData[]>([]);
   const [diariesRes, setDiariesRes] = useState<DiariesData[]>([]);
   const place = location.state.place;
+  const curr = 'main';
 
   console.log(place);
 
@@ -72,14 +73,14 @@ const PlaceInfo: React.FC = () => {
   const getDiariesData = async () => {
     try {
       await axios
-          .get(`/tour/diaries/${place.locationId}`, {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          })
-          .then((response) => {
-            setDiariesRes(response.data);
-          });
+        .get(`/tour/diaries/${place.locationId}`, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+        .then((response) => {
+          setDiariesRes(response.data);
+        });
     } catch (e) {
       console.error('Error:', e);
     }
@@ -94,7 +95,7 @@ const PlaceInfo: React.FC = () => {
         ></i>
         <div className="w-full flex justify-center mt-5">
           <div className="w-5/6">
-            <SearchBar />
+            <SearchBar curr={curr} />
           </div>
         </div>
         <div className="flex max-w-2xl mx-auto pt-4">
@@ -431,15 +432,15 @@ const PlaceInfo: React.FC = () => {
               </div>
             )}
             {activeTab === '일기 보기' && (
-                <div>
-                  {diariesRes.map((data: DiariesData, index: number) => {
-                    return (
-                        <div className="w-full h-full flex flex-col items-center pt-3">
-                          <SearchResultDiary key={index} props={data} />
-                        </div>
-                    );
-                  })}
-                </div>
+              <div>
+                {diariesRes.map((data: DiariesData, index: number) => {
+                  return (
+                    <div className="w-full h-full flex flex-col items-center pt-3">
+                      <SearchResultDiary key={index} props={data} />
+                    </div>
+                  );
+                })}
+              </div>
             )}
             {activeTab === '일정 보기' && (
               <div>
