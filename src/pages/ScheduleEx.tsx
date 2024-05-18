@@ -5,7 +5,7 @@ import { MapProvider } from '../context/MapContext';
 import axios, { AxiosError } from 'axios';
 import { useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 
 interface ScheduleData {
   placeId: number;
@@ -138,6 +138,7 @@ const ScheduleEx: React.FC = () => {
 
   return (
     <div className="flex w-full h-[864px]">
+      <ToastContainer />
       <div className="w-1/2 h-full">
         <div className="flex">
           <i className="backArrow ml-2 cursor-pointer" onClick={naviBack}></i>
