@@ -9,6 +9,7 @@ const SearchPlace: React.FC = () => {
   const [activeTab, setActiveTab] = useState('장소 보기');
   const [searchTerm, setSearchTerm] = useState<string>('');
   const location = useLocation();
+  const curr = 'main';
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -25,7 +26,7 @@ const SearchPlace: React.FC = () => {
       <div className="w-1/2 h-full">
         <div className="w-full flex justify-center mt-10">
           <div className="w-11/12">
-            <SearchBar />
+            <SearchBar curr={curr} />
           </div>
         </div>
         <div className="flex max-w-2xl mx-auto pt-4">
