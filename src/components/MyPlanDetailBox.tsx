@@ -43,15 +43,23 @@ const MyPlanDetailBox: React.FC<PlanDetailBoxProps> = ({
         <div className="w-[10%] font-['BMJUA'] text-[#FF9A9A] text-xl">
           {time}
         </div>
-        <div className="w-[22%] font-['BMJUA'] text-2xl">{locationName.length > 7 ? `${locationName.slice(0, 7)}...` : locationName}</div>
+        <div className="w-[22%] font-['BMJUA'] text-2xl">{locationName.length > 7 ? `${locationName.slice(0, 6)}...` : locationName}</div>
         <div className="w-[43%] font-['Nanum Gothic']">{content}</div>
         <div className="w-[25%]">
-          <img
-            src={imageUrl}
-            width="250px"
-            alt="지역소개사진"
-            className="border-2 border-black"
-          />
+          {imageUrl ? (
+              <img
+                  src={imageUrl}
+                  width="250px"
+                  alt="일기사진"
+                  className="border-2 border-black"
+              />
+          ) : (
+              <div
+                  className="w-[100%] h-[60px] border-2 text-center flex items-center justify-center">
+              No Image
+              </div>
+          )}
+
         </div>
       </div>
     </div>

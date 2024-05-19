@@ -96,7 +96,7 @@ const MyPlanPage: React.FC = () => {
 
   const initialCenter = planData.length > 0
       ? { latitude: planData[0].latitude, longitude: planData[0].longitude }
-      : { latitude: 37.2795, longitude: 127.0438 }; // 기본 값
+      : { latitude: 37.2795, longitude: 127.0438 };
 
   const naviBack = () => {
     window.history.back();

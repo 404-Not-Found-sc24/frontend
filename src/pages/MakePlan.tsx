@@ -1,20 +1,20 @@
 import * as React from 'react';
-import {useEffect, useMemo, useState} from 'react';
-import {useLocation, useNavigate} from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import '../index.css';
 import PlaceBox from '../components/PlaceBox';
 import DayPlace from '../components/DayPlace';
-import axios, {AxiosError} from 'axios';
+import axios, { AxiosError } from 'axios';
 import Place from '../../types/Place';
 import SearchBar from '../components/SearchBar';
 import Map from '../components/Map';
-import {MapProvider} from '../context/MapContext';
-import {useAuth} from "../context/AuthContext";
-import {toast, ToastContainer} from "react-toastify";
+import { MapProvider } from '../context/MapContext';
+import { useAuth } from "../context/AuthContext";
+import { toast, ToastContainer } from "react-toastify";
 
 const MakePlan = () => {
     const location = useLocation();
-    const tripInfo = {...location.state};
+    const tripInfo = { ...location.state };
     const navigate = useNavigate();
     const [tripDays, setTripDays] = useState<number>(0);
     const [keyword, setKeyword] = useState('');
@@ -22,28 +22,28 @@ const MakePlan = () => {
     const [activeTab, setActiveTab] = useState<number>(1);
     const [res, setRes] = useState([]);
     const [selectedPlaces, setSelectedPlaces] = useState<Place[][]>([]);
-    const {accessToken, refreshAccessToken} = useAuth();
+    const [initialMarkers, setInitialMarkers] = useState<{ placeId: number, latitude: number, longitude: number }[]>([]);
+    const [initialCenter, setInitialCenter] = useState<{ latitude: number, longitude: number }>({ latitude: 37.2795, longitude: 127.0438 });
+    const { accessToken, refreshAccessToken } = useAuth();
 
     console.log(tripInfo);
 
     useEffect(() => {
         getData();
         if (tripInfo.startDate && tripInfo.endDate) {
-            const differenceInTime =
-                tripInfo.endDate.getTime() - tripInfo.startDate.getTime();
-            const differenceInDays = Math.floor(
-                differenceInTime / (1000 * 3600 * 24),
-            );
+            const differenceInTime = new Date(tripInfo.endDate).getTime() - new Date(tripInfo.startDate).getTime();
+            const differenceInDays = Math.floor(differenceInTime / (1000 * 3600 * 24));
             const tripDays = differenceInDays + 1;
             setTripDays(tripDays);
 
-            const newTripPlaces = Array.from(
-                {length: tripDays},
-                () => [] as Place[],
-            );
+            const newTripPlaces = Array.from({ length: tripDays }, () => [] as Place[]);
             setSelectedPlaces(newTripPlaces);
         }
     }, []);
+
+    useEffect(() => {
+        updateMarkersAndCenter();
+    }, [selectedPlaces, activeTab]);
 
     const addSelectedPlace = (selectedPlace: Place, dayIndex: number) => {
         setSelectedPlaces((prevSelectedPlaces) => {
@@ -77,7 +77,7 @@ const MakePlan = () => {
         }
         return tabs;
     };
-  
+
     const getData = async () => {
         console.log(tripInfo.city);
         console.log(keyword);
@@ -96,6 +96,7 @@ const MakePlan = () => {
             console.error(e);
         }
     };
+
     const handleTabClick = (index: number) => {
         console.log(index);
         setActiveTab(index); // 클릭한 탭의 인덱스를 상태로 설정
@@ -110,13 +111,28 @@ const MakePlan = () => {
             position: 'top-center',
         });
 
+    const updateMarkersAndCenter = () => {
+        const activePlaces = selectedPlaces[activeTab - 1] || [];
+        const markers = activePlaces.map(({ locationId, latitude, longitude }) => ({
+            placeId: locationId,
+            latitude,
+            longitude,
+        }));
+        const center = activePlaces.length > 0
+            ? { latitude: activePlaces[0].latitude, longitude: activePlaces[0].longitude }
+            : { latitude: 37.2795, longitude: 127.0438 };
+
+        setInitialMarkers(markers);
+        setInitialCenter(center);
+    };
+
     const addPlace = async () => {
         try {
             const postData = selectedPlaces.flatMap((innerArray, index) => {
                 const startDate = new Date(tripInfo.startDate);
                 console.log(startDate);
                 const currentDate = new Date(startDate);
-                currentDate.setDate(startDate.getDate() + index + 1); // 시작 날짜에 인덱스를 더한 값
+                currentDate.setDate(startDate.getDate() + index); // 인덱스를 더한 날짜를 설정
                 console.log(currentDate);
 
                 return innerArray.map((place, innerIndex) => ({
@@ -126,7 +142,6 @@ const MakePlan = () => {
                     time: "00:00", // 예시: 방문 예정 시간
                 }));
             });
-
 
             console.log(postData);
             await axios
@@ -154,6 +169,7 @@ const MakePlan = () => {
                     console.error('Failed to refresh access token:', refreshError);
                 }
             } else {
+                console.error('Error adding places:', error);
             }
         }
     };
@@ -165,15 +181,15 @@ const MakePlan = () => {
                 <div className="w-1/2 h-full flex flex-col">
                     <div className="flex">
                         <i className="backArrow ml-2 cursor-pointer" onClick={naviBack}></i>
-                        <div
-                            className="font-['Nanum Gothic'] text-3xl font-semibold text-black ml-2 w-72 flex items-center">{tripInfo.city}</div>
+                        <div className="font-['Nanum Gothic'] text-3xl font-semibold text-black ml-2 w-72 flex items-center">
+                            {tripInfo.city}
+                        </div>
                     </div>
-                    <SearchBar/>
+                    <SearchBar />
                     <div className="flex justify-center h-[720px] overscroll-y-auto">
                         <div className="w-11/12 grid grid-cols-2 justify-items-center items-center gap-3 mt-4 overflow-y-auto">
                             {res.map((place: Place, index: number) => (
-                                <PlaceBox key={index} place={place}
-                                          addSelectedPlace={() => addSelectedPlace(place, activeTab)}/>
+                                <PlaceBox key={index} place={place} addSelectedPlace={() => addSelectedPlace(place, activeTab)} />
                             ))}
                         </div>
                     </div>
@@ -184,7 +200,7 @@ const MakePlan = () => {
                     </div>
                     <div className="flex flex-col w-full h-full border-4 border-[#FF9A9A] justify-between">
                         <div className="tab-content">
-                            {Array.from({length: tripDays}, (_, tabIndex) => (
+                            {Array.from({ length: tripDays }, (_, tabIndex) => (
                                 <div
                                     key={tabIndex + 1}
                                     id={`content${tabIndex + 1}`}
@@ -201,22 +217,24 @@ const MakePlan = () => {
                                                         removePlace={() => removePlace(activeTab, index)}
                                                     />
                                                 ))}
-                                            </div>)}
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             ))}
                         </div>
                         <div className="h-[100px] w-full flex justify-center items-center">
                             <button className="h-1/2 bg-black text-white px-10 rounded-md text-xl font-['BMJUA']"
-                            onClick={addPlace}>추가</button>
+                                    onClick={addPlace}>추가</button>
                         </div>
                     </div>
                 </div>
             </div>
-            {/*<MapProvider initialCenter={{latitude: 37.2795, longitude: 127.0438}}>
-                <Map/>
-            </MapProvider>*/}
+            <MapProvider initialMarkers={initialMarkers} initialCenter={initialCenter}>
+                <Map />
+            </MapProvider>
         </div>
     );
 };
+
 export default MakePlan;

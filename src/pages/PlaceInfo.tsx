@@ -35,8 +35,15 @@ const PlaceInfo: React.FC = () => {
     setActiveTab(tab);
   };
 
+  const initialMarkers = place
+      ? [{ placeId: place.placeId, latitude: place.latitude, longitude: place.longitude }]
+      : [];
+
+  const initialCenter = place
+      ? { latitude: place.latitude, longitude: place.longitude }
+      : { latitude: 37.2795, longitude: 127.0438 };
+  
   const naviBack = () => {
-    window.history.back();
     window.history.back();
   };
 
@@ -480,11 +487,9 @@ const PlaceInfo: React.FC = () => {
           </div>
         </div>
       </div>
-      {/*<MapProvider
-        initialCenter={{ latitude: place.latitude, longitude: place.longitude }}
-      >
+      <MapProvider initialMarkers={initialMarkers} initialCenter={initialCenter}>
         <Map />
-      </MapProvider>*/}
+      </MapProvider>
     </div>
   );
 };

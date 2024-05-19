@@ -19,6 +19,16 @@ const MakeDiary: React.FC = () => {
   const location = useLocation();
   const PlanData = location.state.PlanData;
 
+  console.log(PlanData);
+
+  const initialMarkers = PlanData
+      ? [{ placeId: PlanData.placeId, latitude: PlanData.latitude, longitude: PlanData.longitude }]
+      : [];
+
+  const initialCenter = PlanData
+      ? { latitude: PlanData.latitude, longitude: PlanData.longitude }
+      : { latitude: 37.2795, longitude: 127.0438 };
+
   const notifySuccess = () =>
     toast.success('일기가 성공적으로 작성되었습니다.', {
       position: 'top-center',
@@ -192,9 +202,9 @@ const MakeDiary: React.FC = () => {
           </div>
         </div>
       </div>
-      {/*<MapProvider initialCenter={{ latitude: 37.2795, longitude: 127.0438 }}>
+      <MapProvider initialMarkers={initialMarkers} initialCenter={initialCenter}>
         <Map />
-      </MapProvider>*/}
+      </MapProvider>
     </div>
   );
 };
