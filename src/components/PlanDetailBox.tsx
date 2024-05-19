@@ -19,11 +19,11 @@ interface PlanDetailBoxProps {
 }
 
 const PlanDetailBox: React.FC<PlanDetailBoxProps> = ({ scheduleData }) => {
+  const navigate = useNavigate();
+
   if (!scheduleData) {
     return null;
   }
-
-  const navigate = useNavigate();
 
   const toDiaryDetail = () => {
     console.log(scheduleData);
