@@ -2,12 +2,12 @@ import React from 'react';
 import SearchBar from '../components/SearchBar';
 
 const Main: React.FC = () => {
+  const curr = 'main';
   return (
-      <div>
-        <div className="w-full flex justify-center mt-10">
-          <div className="w-2/3 sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/2">
-            <SearchBar />
-          </div>
+    <div>
+      <div className="w-full flex justify-center mt-10">
+        <div className="w-2/3 sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/2">
+          <SearchBar curr={curr} />
         </div>
           <div className="flex justify-center mt-[5%]">
               <div className="container flex flex-row justify-between w-[80%] mt-12">
@@ -27,6 +27,7 @@ const Main: React.FC = () => {
               </div>
           </div>
       </div>
+    </div>
   );
 };
 

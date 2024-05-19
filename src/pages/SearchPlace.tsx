@@ -15,6 +15,7 @@ const SearchPlace: React.FC = () => {
     longitude: 127.0438,
   });
   const location = useLocation();
+  const curr = 'main';
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -43,12 +44,11 @@ const SearchPlace: React.FC = () => {
   }));
 
   return (
-      <div className="w-full h-screen flex">
-        <div className="w-1/2 h-full">
-          <div className="w-full flex justify-center mt-10">
-            <div className="w-11/12">
-              <SearchBar />
-            </div>
+    <div className="w-full h-screen flex">
+      <div className="w-1/2 h-full">
+        <div className="w-full flex justify-center mt-10">
+          <div className="w-11/12">
+            <SearchBar curr={curr} />
           </div>
           <div className="flex max-w-2xl mx-auto pt-4">
             <div
