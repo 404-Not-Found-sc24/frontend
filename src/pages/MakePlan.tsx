@@ -123,7 +123,7 @@ const MakePlan = () => {
   const addPlace = async () => {
     try {
       const postData = selectedPlaces.flatMap((innerArray, index) => {
-        const startDate = new Date(tripInfo.startDate);
+        const startDate = new Date(tripdataRef.current.startDate);
         console.log(startDate);
         const currentDate = new Date(startDate);
         currentDate.setDate(startDate.getDate() + index + 1); // 시작 날짜에 인덱스를 더한 값
@@ -139,7 +139,7 @@ const MakePlan = () => {
 
       console.log(postData);
       await axios
-        .post('/schedule/place/' + tripInfo.scheduleId, postData, {
+        .post('/schedule/place/' + tripdataRef.current.scheduleId, postData, {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -168,8 +168,6 @@ const MakePlan = () => {
   };
 
   useEffect(() => {
-    console.log(tripInfo);
-    console.log(tripdataRef);
     if (tripdataRef.current.startDate && tripdataRef.current.endDate) {
       const differenceInTime =
         tripdataRef.current.endDate.getTime() -
@@ -186,7 +184,9 @@ const MakePlan = () => {
       );
       setSelectedPlaces(newTripPlaces);
     }
+  }, []);
 
+  useEffect(() => {
     const placeOptions = {
       root: null,
       rootMargin: '0px',
@@ -297,7 +297,7 @@ const MakePlan = () => {
           </div>
         </div>
       </div>
-        {/*<MapProvider initialCenter={{ latitude: 37.2795, longitude: 127.0438 }}>
+      {/*<MapProvider initialCenter={{ latitude: 37.2795, longitude: 127.0438 }}>
         <Map />
       </MapProvider>*/}
     </div>
