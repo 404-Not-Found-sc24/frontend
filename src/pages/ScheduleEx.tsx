@@ -16,7 +16,7 @@ interface ScheduleData {
   diaryId: number;
   title: string;
   content: string;
-  images: { imageUrl: string }[];
+  imageUrl: string;
   longitude: number;
   latitude: number;
 }
@@ -35,14 +35,20 @@ const ScheduleEx: React.FC = () => {
   const { refreshAccessToken } = useAuth();
   const accessToken = localStorage.getItem('accessToken');
 
-  const initialMarkers = scheduleData.map(({ placeId, latitude, longitude }) => ({
-    placeId,
-    latitude,
-    longitude,
-  }));
+  const initialMarkers = scheduleData.map(
+    ({ placeId, latitude, longitude }) => ({
+      placeId,
+      latitude,
+      longitude,
+    }),
+  );
 
-  const initialCenter = scheduleData.length > 0
-      ? { latitude: scheduleData[0].latitude, longitude: scheduleData[0].longitude }
+  const initialCenter =
+    scheduleData.length > 0
+      ? {
+          latitude: scheduleData[0].latitude,
+          longitude: scheduleData[0].longitude,
+        }
       : { latitude: 37.2795, longitude: 127.0438 };
 
   const notifySuccess = () =>
@@ -204,7 +210,10 @@ const ScheduleEx: React.FC = () => {
           </div>
         </div>
       </div>
-      <MapProvider initialMarkers={initialMarkers} initialCenter={initialCenter}>
+      <MapProvider
+        initialMarkers={initialMarkers}
+        initialCenter={initialCenter}
+      >
         <Map />
       </MapProvider>
     </div>

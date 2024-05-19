@@ -1,5 +1,5 @@
-import React, {useState, useEffect, useMemo} from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useState, useEffect, useMemo } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { MapProvider } from '../context/MapContext';
 import Map from '../components/Map';
@@ -33,6 +33,7 @@ const MyPlanPage: React.FC = () => {
   const endDate = new Date(plan.endDate);
   const timeDiff = Math.abs(endDate.getTime() - startDate.getTime());
   const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1;
+  const navigate = useNavigate();
 
   const handleTabClick = (tab: number) => {
     setActiveTab(tab);
@@ -42,15 +43,15 @@ const MyPlanPage: React.FC = () => {
     const tabs = [];
     for (let i = 1; i <= diffDays; i++) {
       tabs.push(
-          <button
-              key={i}
-              className={`w-16 h-full bg-[#FF9A9A] rounded-2xl text-white font-['BMJUA'] text-sm mr-2 ${
-                  activeTab === i ? '' : 'opacity-50'
-              }`}
-              onClick={() => handleTabClick(i)}
-          >
-            {`${i}일차`}
-          </button>,
+        <button
+          key={i}
+          className={`w-16 h-full bg-[#FF9A9A] rounded-2xl text-white font-['BMJUA'] text-sm mr-2 ${
+            activeTab === i ? '' : 'opacity-50'
+          }`}
+          onClick={() => handleTabClick(i)}
+        >
+          {`${i}일차`}
+        </button>,
       );
     }
     return tabs;
@@ -69,8 +70,8 @@ const MyPlanPage: React.FC = () => {
         setLoading(false); // 데이터 로드 완료
       } catch (e) {
         if (
-            (e as AxiosError).response &&
-            (e as AxiosError).response?.status === 401
+          (e as AxiosError).response &&
+          (e as AxiosError).response?.status === 401
         ) {
           try {
             await refreshAccessToken();
@@ -90,15 +91,19 @@ const MyPlanPage: React.FC = () => {
 
   const getPlacesByDay = (day: number) => {
     return planData.filter(
-        (data) =>
-            Math.ceil(
-                Math.abs(new Date(data.date).getTime() - startDate.getTime()) /
-                (1000 * 3600 * 24) + 1
-            ) === day
+      (data) =>
+        Math.ceil(
+          Math.abs(new Date(data.date).getTime() - startDate.getTime()) /
+            (1000 * 3600 * 24) +
+            1,
+        ) === day,
     );
   };
 
-  const activePlaces = useMemo(() => getPlacesByDay(activeTab), [activeTab, planData]);
+  const activePlaces = useMemo(
+    () => getPlacesByDay(activeTab),
+    [activeTab, planData],
+  );
 
   console.log(activePlaces);
   const initialMarkers = activePlaces.map((place) => ({
@@ -108,12 +113,25 @@ const MyPlanPage: React.FC = () => {
   }));
 
   const initialCenter =
-      activePlaces.length > 0
-          ? {
-            latitude: activePlaces[0].latitude,
-            longitude: activePlaces[0].longitude,
-          }
-          : { latitude: 37.2795, longitude: 127.0438 };
+    activePlaces.length > 0
+      ? {
+          latitude: activePlaces[0].latitude,
+          longitude: activePlaces[0].longitude,
+        }
+      : { latitude: 37.2795, longitude: 127.0438 };
+
+  const navieditplan = () => {
+    navigate('/makeplan', {
+      state: {
+        startDate: plan.startDate,
+        endDate: plan.endDate,
+        city: plan.location,
+        name: plan.title,
+        scheduleId: plan.scheduleId,
+        planData: planData,
+      },
+    });
+  };
 
   const naviBack = () => {
     window.history.back();
@@ -124,62 +142,72 @@ const MyPlanPage: React.FC = () => {
   }
 
   return (
-      <div className="flex w-full h-[90%]">
-        <div className="w-1/2 h-full">
-          <div className="flex w-full">
-            <i className="backArrow ml-2 cursor-pointer w-[10%]" onClick={naviBack}></i>
-            <div className="flex items-center w-[90%]">
-              <div className="font-['BMJUA'] text-3xl text-black ml-2 flex items-center">
-                {plan.name}
-              </div>
-              <div className="font-['BMJUA'] text-xl text-[#ED661A] ml-5 flex items-center">
-                {plan.startDate} ~ {plan.endDate}
-              </div>
+    <div className="flex w-full h-[90%]">
+      <div className="w-1/2 h-full">
+        <div className="flex w-full">
+          <i
+            className="backArrow ml-2 cursor-pointer w-[10%]"
+            onClick={naviBack}
+          ></i>
+          <div className="flex items-center w-[90%]">
+            <div className="font-['BMJUA'] text-3xl text-black ml-2 flex items-center">
+              {plan.name}
             </div>
-          </div>
-          <div className="w-full flex justify-center">
-            <div className="w-11/12 h-full pt-3 pb-5 flex flex-col">
-              <div className="flex justify-between h-7">
-                <div className="flex items-center">{generateTabs()}</div>
-                <button className="w-20 h-7 bg-black rounded-2xl text-white font-['Nanum Gothic'] text-sm font-semibold">
-                  일정 수정
-                </button>
-              </div>
-              {Array.from({ length: diffDays }, (_, index) => (
-                  <div key={index}>
-                    {activeTab === index + 1 && (
-                        <div>
-                          {planData
-                              .filter(
-                                  (data) =>
-                                      Math.ceil(
-                                          Math.abs(
-                                              new Date(data.date).getTime() -
-                                              startDate.getTime(),
-                                          ) /
-                                          (1000 * 3600 * 24) +
-                                          1,
-                                      ) ===
-                                      index + 1,
-                              )
-                              .map((filteredData, dataIndex) => (
-                                  <MyPlanDetailBox
-                                      key={dataIndex}
-                                      scheduleData={filteredData}
-                                      planName={plan.name}
-                                  />
-                              ))}
-                        </div>
-                    )}
-                  </div>
-              ))}
+            <div className="font-['BMJUA'] text-xl text-[#ED661A] ml-5 flex items-center">
+              {plan.startDate} ~ {plan.endDate}
             </div>
           </div>
         </div>
-        <MapProvider key={JSON.stringify(initialMarkers)} initialCenter={initialCenter} initialMarkers={initialMarkers}>
-          <Map />
-        </MapProvider>
+        <div className="w-full flex justify-center">
+          <div className="w-11/12 h-full pt-3 pb-5 flex flex-col">
+            <div className="flex justify-between h-7">
+              <div className="flex items-center">{generateTabs()}</div>
+              <button
+                onClick={navieditplan}
+                className="w-20 h-7 bg-black rounded-2xl text-white font-['Nanum Gothic'] text-sm font-semibold"
+              >
+                일정 수정
+              </button>
+            </div>
+            {Array.from({ length: diffDays }, (_, index) => (
+              <div key={index}>
+                {activeTab === index + 1 && (
+                  <div>
+                    {planData
+                      .filter(
+                        (data) =>
+                          Math.ceil(
+                            Math.abs(
+                              new Date(data.date).getTime() -
+                                startDate.getTime(),
+                            ) /
+                              (1000 * 3600 * 24) +
+                              1,
+                          ) ===
+                          index + 1,
+                      )
+                      .map((filteredData, dataIndex) => (
+                        <MyPlanDetailBox
+                          key={dataIndex}
+                          scheduleData={filteredData}
+                          planName={plan.name}
+                        />
+                      ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
+      <MapProvider
+        key={JSON.stringify(initialMarkers)}
+        initialCenter={initialCenter}
+        initialMarkers={initialMarkers}
+      >
+        <Map />
+      </MapProvider>
+    </div>
   );
 };
 

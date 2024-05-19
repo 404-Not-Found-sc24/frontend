@@ -11,14 +11,18 @@ interface PlanData {
   diaryId: number;
   title: string;
   content: string;
-  images: { imageUrl: string }[];
+  imageUrl: string;
 }
 
 interface PlanDetailBoxProps {
-  scheduleData: PlanData;
+  scheduleData: PlanData | undefined;
 }
 
 const PlanDetailBox: React.FC<PlanDetailBoxProps> = ({ scheduleData }) => {
+  if (!scheduleData) {
+    return null;
+  }
+
   const navigate = useNavigate();
 
   const toDiaryDetail = () => {
@@ -27,7 +31,7 @@ const PlanDetailBox: React.FC<PlanDetailBoxProps> = ({ scheduleData }) => {
       state: { PlanData: scheduleData },
     });
   };
-  const { time, locationName, content, images } = scheduleData;
+  const { time, locationName, content, imageUrl } = scheduleData;
 
   return (
     <div
@@ -41,16 +45,18 @@ const PlanDetailBox: React.FC<PlanDetailBoxProps> = ({ scheduleData }) => {
         <div className="w-[22%] font-['BMJUA'] text-2xl">{locationName}</div>
         <div className="w-[43%] font-['Nanum Gothic']">{content}</div>
         <div className="w-[25%]">
-          {images &&
-            images.map((image: { imageUrl: string }, index: number) => (
-              <img
-                key={index}
-                src={image.imageUrl}
-                width="250px"
-                alt="지역소개사진"
-                className="border-2 border-black"
-              />
-            ))}
+          {imageUrl ? (
+            <img
+              src={imageUrl}
+              width="250px"
+              alt="지역소개사진"
+              className="border-2"
+            />
+          ) : (
+            <div className="border-2 flex w-full h-[20%] text-gray-600 justify-center items-center">
+              사진이 없습니다.
+            </div>
+          )}
         </div>
       </div>
     </div>
