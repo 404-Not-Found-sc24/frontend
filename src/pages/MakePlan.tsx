@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import '../index.css';
 import PlaceBox from '../components/PlaceBox';
@@ -9,50 +9,50 @@ import Place from '../../types/Place';
 import SearchBar from '../components/SearchBar';
 import Map from '../components/Map';
 import { MapProvider } from '../context/MapContext';
-import { useAuth } from "../context/AuthContext";
-import { toast, ToastContainer } from "react-toastify";
+import { useAuth } from '../context/AuthContext';
+import { toast, ToastContainer } from 'react-toastify';
 
 const MakePlan = () => {
-    const location = useLocation();
-    const tripInfo = { ...location.state };
-    const navigate = useNavigate();
-    const [tripDays, setTripDays] = useState<number>(0);
-    const [keyword, setKeyword] = useState('');
-    const [lastIdx, setLastIdx] = useState<number>(0);
-    const [activeTab, setActiveTab] = useState<number>(1);
-    const [res, setRes] = useState([]);
-    const [selectedPlaces, setSelectedPlaces] = useState<Place[][]>([]);
-    const [initialMarkers, setInitialMarkers] = useState<{ placeId: number, latitude: number, longitude: number }[]>([]);
-    const [initialCenter, setInitialCenter] = useState<{ latitude: number, longitude: number }>({ latitude: 37.2795, longitude: 127.0438 });
-    const { accessToken, refreshAccessToken } = useAuth();
+  const location = useLocation();
+  const tripInfo = { ...location.state };
+  tripInfo.startDate = new Date(tripInfo.startDate);
+  tripInfo.endDate = new Date(tripInfo.endDate);
+  const tripdataRef = useRef(tripInfo);
+  const navigate = useNavigate();
+  const [tripDays, setTripDays] = useState<number>(0);
+  const [keyword, setKeyword] = useState('');
+  const [lastIdx, setLastIdx] = useState<number>(0);
+  const [activeTab, setActiveTab] = useState<number>(1);
+  const [res, setRes] = useState<Place[]>([]);
+  const [selectedPlaces, setSelectedPlaces] = useState<Place[][]>([]);
+  const { accessToken, refreshAccessToken } = useAuth();
+  const placeLoadMoreRef = useRef<HTMLDivElement>(null);
+  const placeObserver = useRef<IntersectionObserver>();
+  const curr = 'makeplan';
+  const queryParams = new URLSearchParams(location.search);
+  const searchTerm = queryParams.get('q') || '';
+  const city = queryParams.get('city') || '';
+  const isLoading = useRef<boolean>(false);
 
   console.log(tripInfo);
 
-    useEffect(() => {
-        getData();
-        if (tripInfo.startDate && tripInfo.endDate) {
-            const differenceInTime = new Date(tripInfo.endDate).getTime() - new Date(tripInfo.startDate).getTime();
-            const differenceInDays = Math.floor(differenceInTime / (1000 * 3600 * 24));
-            const tripDays = differenceInDays + 1;
-            setTripDays(tripDays);
+  const fetchPlaceDataOnScroll = async () => {
+    if (!isLoading.current) {
+      isLoading.current = true;
+      try {
+        const placeResponse = await axios.get(
+          `/tour/locations?city=${city}&keyword=${searchTerm}&lastIdx=${lastIdx}`,
+        );
 
-            const newTripPlaces = Array.from({ length: tripDays }, () => [] as Place[]);
-            setSelectedPlaces(newTripPlaces);
-        }
-    }, []);
-
-    useEffect(() => {
-        updateMarkersAndCenter();
-    }, [selectedPlaces, activeTab]);
-
-    const addSelectedPlace = (selectedPlace: Place, dayIndex: number) => {
-        setSelectedPlaces((prevSelectedPlaces) => {
-            const newSelectedPlaces = [...prevSelectedPlaces];
-            newSelectedPlaces[dayIndex - 1].push(selectedPlace);
-            return newSelectedPlaces;
-        });
-        console.log(selectedPlaces);
-    };
+        setRes((prevData) => [...prevData, ...placeResponse.data]);
+        setLastIdx((prevLastIdx) => prevLastIdx + placeResponse.data.length);
+      } catch (error) {
+        console.error('Failed to fetch place search results:', error);
+      } finally {
+        isLoading.current = false;
+      }
+    }
+  };
 
   const getData = async () => {
     console.log(tripdataRef.current.city);
@@ -72,7 +72,6 @@ const MakePlan = () => {
       console.error('Failed to fetch place search results:', error);
     }
   };
-
 
   const addSelectedPlace = (selectedPlace: Place, dayIndex: number) => {
     setSelectedPlaces((prevSelectedPlaces) => {
@@ -298,9 +297,9 @@ const MakePlan = () => {
           </div>
         </div>
       </div>
-      <MapProvider initialMarkers={initialMarkers} initialCenter={initialCenter}>
-                <Map />
-            </MapProvider>
+        {/*<MapProvider initialCenter={{ latitude: 37.2795, longitude: 127.0438 }}>
+        <Map />
+      </MapProvider>*/}
     </div>
   );
 };
