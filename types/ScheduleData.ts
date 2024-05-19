@@ -5,6 +5,8 @@ type ScheduleData = {
     endDate: string;
     username: string;
     imageUrl: string;
+    location: string;
+    share: boolean;
 }
 
 export default ScheduleData;

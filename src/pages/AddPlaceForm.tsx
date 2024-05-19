@@ -20,7 +20,7 @@ const AddPlaceForm: React.FC = () => {
   const [selectedLocationMessage, setSelectedLocationMessage] = useState('');
   const [previewImages, setPreviewImages] = useState<string[]>([]);
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
-  const { setMapLocation } = useMap();
+  /*const { setMapLocation } = useMap();*/
   const { accessToken, refreshAccessToken } = useAuth();
 
   const handleChange = (
@@ -44,7 +44,7 @@ const AddPlaceForm: React.FC = () => {
     setSelectedLocationMessage(
       `선택된 장소의 위도는: ${lat}, 경도는: ${lng} 입니다.`,
     );
-    setMapLocation(lat, lng);
+    /*setMapLocation(lat, lng);*/
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -266,14 +266,14 @@ const AddPlaceForm: React.FC = () => {
           장소 추가
         </button>
       </div>
-      <MapProvider
+      {/*<MapProvider
         initialCenter={{
           latitude: placeInfo.latitude,
           longitude: placeInfo.longitude,
         }}
       >
         <Map onMapClick={handleMapClick} />
-      </MapProvider>
+      </MapProvider>*/}
     </div>
   );
 };

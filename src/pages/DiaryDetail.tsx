@@ -22,6 +22,14 @@ const DiaryDetail: React.FC = () => {
     getData();
   }, []);
 
+  const initialMarkers = Diary
+      ? [{ placeId: Diary.placeId, latitude: Diary.latitude, longitude: Diary.longitude }]
+      : [];
+
+  const initialCenter = Diary
+      ? { latitude: Diary.latitude, longitude: Diary.longitude }
+      : { latitude: 37.2795, longitude: 127.0438 };
+
   const naviBack = () => {
     window.history.back();
   };
@@ -65,9 +73,9 @@ const DiaryDetail: React.FC = () => {
                 <div className="flex justify-between h-[10%] mx-5 items-center">
                   <div className="flex w-[50%] items-center">
                     <div className="font-['BMJUA'] text-[#FF9A9A] text-xl mr-5">
-                      11:00
+                      {Diary.time}
                     </div>
-                    <div className="font-['BMJUA'] text-2xl">장소 이름</div>
+                    <div className="font-['BMJUA'] text-2xl">{Diary.locationName}</div>
                   </div>
                   <button className="w-20 h-7 bg-black rounded-2xl text-white font-['Nanum Gothic'] text-sm font-semibold">
                     가져오기
@@ -97,7 +105,7 @@ const DiaryDetail: React.FC = () => {
           </div>
         </div>
       </div>
-      <MapProvider initialCenter={{ latitude: 37.2795, longitude: 127.0438 }}>
+      <MapProvider initialMarkers={initialMarkers} initialCenter={initialCenter}>
         <Map />
       </MapProvider>
     </div>

@@ -14,6 +14,8 @@ interface PlanData {
   title: string;
   content: string;
   imageUrl: string;
+  latitude: number;
+  longitude: number;
 }
 
 interface Diary {
@@ -53,6 +55,14 @@ const MyDiaryDetail: React.FC = () => {
   useEffect(() => {
     getData();
   }, []);
+
+  const initialMarkers = PlanData
+      ? [{ placeId: PlanData.placeId, latitude: PlanData.latitude, longitude: PlanData.longitude }]
+      : [];
+
+  const initialCenter = PlanData
+      ? { latitude: PlanData.latitude, longitude: PlanData.longitude }
+      : { latitude: 37.2795, longitude: 127.0438 };
 
   const naviBack = () => {
     console.log(PlanData.imageUrl);
@@ -123,7 +133,7 @@ const MyDiaryDetail: React.FC = () => {
           </div>
         </div>
       </div>
-      <MapProvider initialCenter={{ latitude: 37.2795, longitude: 127.0438 }}>
+      <MapProvider initialMarkers={initialMarkers} initialCenter={initialCenter}>
         <Map />
       </MapProvider>
     </div>

@@ -5,7 +5,7 @@ interface ModalProps {
     children: React.ReactNode;
 }
 
-const Modal: React.FC<ModalProps> = ({ onClose, children }) => {
+const ModalBig: React.FC<ModalProps> = ({ onClose, children }) => {
     return (
         <div className="modal">
             <div className="bpopup popBig">
@@ -16,4 +16,4 @@ const Modal: React.FC<ModalProps> = ({ onClose, children }) => {
     );
 };
 
-export default Modal;
+export default ModalBig;

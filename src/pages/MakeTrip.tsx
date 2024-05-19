@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState, useEffect, useCallback, ChangeEvent } from 'react';
-import Modal from '../components/Modal';
+import ModalBig from '../components/ModalBig';
 import { Link, useNavigate } from 'react-router-dom';
 import Calendar from 'react-calendar';
 import '../Calendar.css';
@@ -204,7 +204,7 @@ const MakeTrip = ({ isOpen, city, cityDetail, imageUrl, handleCloseModal }: prop
   return (
     <>
       {modalOpen && (
-        <Modal onClose={handleCloseModal}>
+        <ModalBig onClose={handleCloseModal}>
           <>
             {step === 1 && (
               <>
@@ -356,7 +356,7 @@ const MakeTrip = ({ isOpen, city, cityDetail, imageUrl, handleCloseModal }: prop
               </div>
             )}
           </>
-        </Modal>
+        </ModalBig>
       )}
     </>
   );

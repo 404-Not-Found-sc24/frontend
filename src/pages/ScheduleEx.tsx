@@ -17,6 +17,8 @@ interface ScheduleData {
   title: string;
   content: string;
   images: { imageUrl: string }[];
+  longitude: number;
+  latitude: number;
 }
 
 const ScheduleEx: React.FC = () => {
@@ -32,6 +34,16 @@ const ScheduleEx: React.FC = () => {
   const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1;
   const { refreshAccessToken } = useAuth();
   const accessToken = localStorage.getItem('accessToken');
+
+  const initialMarkers = scheduleData.map(({ placeId, latitude, longitude }) => ({
+    placeId,
+    latitude,
+    longitude,
+  }));
+
+  const initialCenter = scheduleData.length > 0
+      ? { latitude: scheduleData[0].latitude, longitude: scheduleData[0].longitude }
+      : { latitude: 37.2795, longitude: 127.0438 };
 
   const notifySuccess = () =>
     toast.success('일정이 성공적으로 저장되었습니다.', {
@@ -192,7 +204,7 @@ const ScheduleEx: React.FC = () => {
           </div>
         </div>
       </div>
-      <MapProvider initialCenter={{ latitude: 37.2795, longitude: 127.0438 }}>
+      <MapProvider initialMarkers={initialMarkers} initialCenter={initialCenter}>
         <Map />
       </MapProvider>
     </div>

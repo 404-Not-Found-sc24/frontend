@@ -1,16 +1,21 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
 
-interface MapContextState {
+interface Marker {
+  placeId: number;
   latitude: number;
   longitude: number;
 }
 
-interface MapContextType extends MapContextState {
-  setMapLocation: (lat: number, lng: number) => void;
+interface MapContextType {
+  markers: Marker[];
+  centerPosition: { latitude: number; longitude: number };
+  addMarker: (placeId: number, lat: number, lng: number) => void;
+  removeMarker: (placeId: number) => void;
 }
 
 interface MapProviderProps {
-  initialCenter: MapContextState;
+  initialMarkers: Marker[];
+  initialCenter: { latitude: number; longitude: number };
   children: React.ReactNode;
 }
 
@@ -25,20 +30,28 @@ export const useMap = () => {
 };
 
 export const MapProvider: React.FC<MapProviderProps> = ({
-  initialCenter,
-  children,
-}) => {
-  const [mapCenter, setMapCenter] = useState<MapContextState>(initialCenter);
+                                                          initialMarkers,
+                                                          initialCenter,
+                                                          children,
+                                                        }) => {
+  const [markers, setMarkers] = useState<Marker[]>(initialMarkers);
+  const [centerPosition, setCenterPosition] = useState(initialCenter);
 
-  const setMapLocation = (lat: number, lng: number) => {
-    setMapCenter({ latitude: lat, longitude: lng });
+  const addMarker = (placeId: number, lat: number, lng: number) => {
+    setMarkers((prevMarkers) => [...prevMarkers, { placeId, latitude: lat, longitude: lng }]);
   };
 
-  console.log(mapCenter);
+  const removeMarker = (placeId: number) => {
+    setMarkers((prevMarkers) => prevMarkers.filter(marker => marker.placeId !== placeId));
+  };
+
+  useEffect(() => {
+    console.log(markers);
+  }, [markers]);
 
   return (
-    <MapContext.Provider value={{ ...mapCenter, setMapLocation }}>
-      {children}
-    </MapContext.Provider>
+      <MapContext.Provider value={{ markers, centerPosition, addMarker, removeMarker }}>
+        {children}
+      </MapContext.Provider>
   );
 };
