@@ -78,7 +78,7 @@ const MyDiaryDetail: React.FC = () => {
   };
 
   return (
-    <div className="flex w-full h-[864px]">
+    <div className="flex w-full h-[90%]">
       <div className="w-1/2 h-full">
         <div className="flex justify-between items-center">
           <div className="flex items-center">
@@ -97,7 +97,7 @@ const MyDiaryDetail: React.FC = () => {
             일기 작성
           </button>
         </div>
-        <div className="w-full h-[800px] flex justify-center">
+        <div className="w-full h-[95%] flex justify-center">
           <div className="w-5/6 h-full mb-5">
             <div className="w-full h-full flex flex-col pt-3">
               <div className="w-full h-[95%] flex flex-col py-5 rounded-md shadow-xl">
@@ -109,32 +109,40 @@ const MyDiaryDetail: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                <div className="flex justify-center h-fit m-5">
-                  <img
-                    src={PlanData.imageUrl}
-                    width="250px"
-                    alt="지역소개사진"
-                    className="w-full h-full"
-                  />
-                </div>
-                <div className="mx-10 my-5 h-full">
-                  <div className="flex justify-between">
-                    <div className="font-['Nanum Gothic'] font-bold text-lg">
-                      {PlanData.title}
+                {PlanData.title ? (
+                    <>
+                      <div className="flex justify-center h-fit m-5">
+                        <img
+                            src={PlanData.imageUrl}
+                            width="250px"
+                            alt="지역소개사진"
+                            className="w-full h-full"
+                        />
+                      </div>
+                      <div className="mx-10 my-5 h-full">
+                        <div className="flex justify-between">
+                          <div className="font-['Nanum Gothic'] font-bold text-lg">
+                            {PlanData.title}
+                          </div>
+                          <div>날씨</div>
+                        </div>
+                        <div className="font-['Nanum Gothic'] mt-3">
+                          {PlanData.content}
+                        </div>
+                      </div>
+                    </>
+                ) : (
+                    <div className="flex justify-center font-['BMJUA'] text-xl text-main-green-color h-[50%] items-center">
+                      일기를 작성해주세요!
                     </div>
-                    <div>날씨</div>
-                  </div>
-                  <div className="font-['Nanum Gothic'] mt-3">
-                    {PlanData.content}
-                  </div>
-                </div>
+                )}
               </div>
             </div>
           </div>
         </div>
       </div>
       <MapProvider initialMarkers={initialMarkers} initialCenter={initialCenter}>
-        <Map />
+        <Map/>
       </MapProvider>
     </div>
   );

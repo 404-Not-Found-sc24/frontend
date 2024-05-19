@@ -1,4 +1,12 @@
+html, body {
+  width: 100%;
+  height: 100%;
+}
 
+#root {
+  width: 100%;
+  height: 100%;
+}
 
 body {
   margin: 0;
@@ -129,8 +137,6 @@ code {
 }
 
 .backArrow {
-  width: 54px;
-  height: 54px;
   background: white url(../public/image/arrow-left-line.png) no-repeat center;
   z-index: 1;
 }
