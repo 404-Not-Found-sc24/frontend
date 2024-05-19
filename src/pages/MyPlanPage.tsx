@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useMemo} from 'react';
 import { useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { MapProvider } from '../context/MapContext';
@@ -88,15 +88,32 @@ const MyPlanPage: React.FC = () => {
     fetchScheduleData();
   }, [scheduleId]);
 
-  const initialMarkers = planData.map(({ placeId, latitude, longitude }) => ({
-    placeId,
-    latitude,
-    longitude,
+  const getPlacesByDay = (day: number) => {
+    return planData.filter(
+        (data) =>
+            Math.ceil(
+                Math.abs(new Date(data.date).getTime() - startDate.getTime()) /
+                (1000 * 3600 * 24) + 1
+            ) === day
+    );
+  };
+
+  const activePlaces = useMemo(() => getPlacesByDay(activeTab), [activeTab, planData]);
+
+  console.log(activePlaces);
+  const initialMarkers = activePlaces.map((place) => ({
+    placeId: place.locationId,
+    latitude: place.latitude,
+    longitude: place.longitude,
   }));
 
-  const initialCenter = planData.length > 0
-      ? { latitude: planData[0].latitude, longitude: planData[0].longitude }
-      : { latitude: 37.2795, longitude: 127.0438 };
+  const initialCenter =
+      activePlaces.length > 0
+          ? {
+            latitude: activePlaces[0].latitude,
+            longitude: activePlaces[0].longitude,
+          }
+          : { latitude: 37.2795, longitude: 127.0438 };
 
   const naviBack = () => {
     window.history.back();
@@ -107,11 +124,11 @@ const MyPlanPage: React.FC = () => {
   }
 
   return (
-      <div className="flex w-full h-[864px]">
+      <div className="flex w-full h-[90%]">
         <div className="w-1/2 h-full">
-          <div className="flex">
-            <i className="backArrow ml-2 cursor-pointer" onClick={naviBack}></i>
-            <div className="flex items-center">
+          <div className="flex w-full">
+            <i className="backArrow ml-2 cursor-pointer w-[10%]" onClick={naviBack}></i>
+            <div className="flex items-center w-[90%]">
               <div className="font-['BMJUA'] text-3xl text-black ml-2 flex items-center">
                 {plan.name}
               </div>
@@ -120,7 +137,7 @@ const MyPlanPage: React.FC = () => {
               </div>
             </div>
           </div>
-          <div className="w-full h-[810px] flex justify-center">
+          <div className="w-full flex justify-center">
             <div className="w-11/12 h-full pt-3 pb-5 flex flex-col">
               <div className="flex justify-between h-7">
                 <div className="flex items-center">{generateTabs()}</div>
@@ -159,7 +176,7 @@ const MyPlanPage: React.FC = () => {
             </div>
           </div>
         </div>
-        <MapProvider initialMarkers={initialMarkers} initialCenter={initialCenter}>
+        <MapProvider key={JSON.stringify(initialMarkers)} initialCenter={initialCenter} initialMarkers={initialMarkers}>
           <Map />
         </MapProvider>
       </div>
