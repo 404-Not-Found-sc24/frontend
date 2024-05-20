@@ -179,12 +179,14 @@ const AddPlaceForm: React.FC = () => {
     <div className="w-full h-[90%] flex">
       <ToastContainer />
       <div className="flex flex-col w-1/2 p-4 h-full">
-        <div className="flex items-center h-[5%]">
+        <div className="flex items-center w-full h-[5%]">
           <button
-            className="backArrow"
+            className="backArrow w-[10%] h-full"
             onClick={handleBackButtonClick}
           ></button>
-          <div className="text-2xl px-2 font-[BMJUA]">나만의 장소 추가하기</div>
+          <div className="flex w-[90%] h-full items-center text-2xl px-2 font-[BMJUA]">
+            나만의 장소 추가하기
+          </div>
         </div>
         <div className="py-5 flex flex-col items-center h-[90%]">
           <div className="relative py-2 flex flex-col w-full border h-[20%]">
@@ -226,11 +228,11 @@ const AddPlaceForm: React.FC = () => {
                 name="address"
                 value={placeInfo.address}
                 onChange={handleChange}
-                className="w-full p-2 border-2 input-field"
+                className="w-[80%] p-2 border-2 input-field"
               />
               <button
                 onClick={handleAddressSearch}
-                className="ml-2 p-2 bg-main-red-color text-white rounded-md"
+                className="w-[20%] ml-2 p-2 bg-main-red-color text-white rounded-md"
               >
                 주소 검색
               </button>
