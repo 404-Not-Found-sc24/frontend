@@ -181,7 +181,7 @@ const Event: React.FC = () => {
             </div>
             <div className="w-full flex justify-center h-[92%] pt-5">
                 {activeTab === '공지사항' && (
-                    <div className="ag-theme-alpine" style={{height: "650px", width: '60%'}}>
+                    <div className="ag-theme-alpine" style={{height: "90%", width: '70%'}}>
                         <AgGridReact
                             rowData={rowNoticeData}
                             gridOptions={gridOptions}
@@ -194,7 +194,7 @@ const Event: React.FC = () => {
                     </div>
                 )}
                 {activeTab === '이벤트' && (
-                    <div className="ag-theme-alpine" style={{height: "650px", width: '60%'}}>
+                    <div className="ag-theme-alpine" style={{height: "90%", width: '70%'}}>
                         <AgGridReact
                             rowData={rowEventData}
                             gridOptions={gridOptions}
@@ -207,7 +207,7 @@ const Event: React.FC = () => {
                     </div>
                 )}
                 {activeTab === '홍보' && (
-                    <div className="ag-theme-alpine" style={{height: "650px", width: '60%'}}>
+                    <div className="ag-theme-alpine" style={{height: "90%", width: '70%'}}>
                         <AgGridReact
                             rowData={rowPromotionData}
                             gridOptions={gridOptions}
