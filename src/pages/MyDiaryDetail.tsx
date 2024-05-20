@@ -32,7 +32,7 @@ const MyDiaryDetail: React.FC = () => {
   const location = useLocation();
   const PlanData = location.state.PlanData;
   const planName = location.state.planName;
-  const [Diarydata, setDiaryData] = useState<Diary[]>([]);
+  const [Diarydata, setDiaryData] = useState<Diary | null>(null);
 
   const getData = async () => {
     console.log(PlanData);
@@ -57,12 +57,18 @@ const MyDiaryDetail: React.FC = () => {
   }, []);
 
   const initialMarkers = PlanData
-      ? [{ placeId: PlanData.placeId, latitude: PlanData.latitude, longitude: PlanData.longitude }]
-      : [];
+    ? [
+        {
+          placeId: PlanData.placeId,
+          latitude: PlanData.latitude,
+          longitude: PlanData.longitude,
+        },
+      ]
+    : [];
 
   const initialCenter = PlanData
-      ? { latitude: PlanData.latitude, longitude: PlanData.longitude }
-      : { latitude: 37.2795, longitude: 127.0438 };
+    ? { latitude: PlanData.latitude, longitude: PlanData.longitude }
+    : { latitude: 37.2795, longitude: 127.0438 };
 
   const naviBack = () => {
     console.log(PlanData.imageUrl);
@@ -74,6 +80,7 @@ const MyDiaryDetail: React.FC = () => {
 
   const navimakediary = () => {
     console.log(PlanData);
+    console.log(Diarydata);
     navigate('/makediary', { state: { PlanData: PlanData } });
   };
 
@@ -110,39 +117,42 @@ const MyDiaryDetail: React.FC = () => {
                   </div>
                 </div>
                 {PlanData.title ? (
-                    <>
-                      <div className="flex justify-center h-fit m-5">
-                        <img
-                            src={PlanData.imageUrl}
-                            width="250px"
-                            alt="지역소개사진"
-                            className="w-full h-full"
-                        />
-                      </div>
-                      <div className="mx-10 my-5 h-full">
-                        <div className="flex justify-between">
-                          <div className="font-['Nanum Gothic'] font-bold text-lg">
-                            {PlanData.title}
-                          </div>
-                          <div>날씨</div>
-                        </div>
-                        <div className="font-['Nanum Gothic'] mt-3">
-                          {PlanData.content}
-                        </div>
-                      </div>
-                    </>
-                ) : (
-                    <div className="flex justify-center font-['BMJUA'] text-xl text-main-green-color h-[50%] items-center">
-                      일기를 작성해주세요!
+                  <>
+                    <div className="flex justify-center h-fit m-5">
+                      <img
+                        src={PlanData.imageUrl}
+                        width="250px"
+                        alt="지역소개사진"
+                        className="w-full h-full"
+                      />
                     </div>
+                    <div className="mx-10 my-5 h-full">
+                      <div className="flex justify-between">
+                        <div className="font-['Nanum Gothic'] font-bold text-lg">
+                          {PlanData.title}
+                        </div>
+                        {Diarydata && <div>{Diarydata.weather}</div>}
+                      </div>
+                      <div className="font-['Nanum Gothic'] mt-3">
+                        {PlanData.content}
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex justify-center font-['BMJUA'] text-xl text-main-green-color h-[50%] items-center">
+                    일기를 작성해주세요!
+                  </div>
                 )}
               </div>
             </div>
           </div>
         </div>
       </div>
-      <MapProvider initialMarkers={initialMarkers} initialCenter={initialCenter}>
-        <Map/>
+      <MapProvider
+        initialMarkers={initialMarkers}
+        initialCenter={initialCenter}
+      >
+        <Map />
       </MapProvider>
     </div>
   );
