@@ -100,7 +100,7 @@ const DiaryDetail: React.FC = () => {
                     <div className="font-['Nanum Gothic'] font-bold text-lg">
                       {Diary.title}
                     </div>
-                    <div>{Diary.weather}</div>
+                    <div className="font-bold font-['Nanum Gothic']">{diaryData? diaryData.weather : ''}</div>
                   </div>
                   <div className="font-['Nanum Gothic'] mt-3">
                     {Diary.content}
