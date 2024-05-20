@@ -234,18 +234,25 @@ const MakePlan = () => {
   }));
 
   return (
-      <div className="w-full h-[864px] flex">
+      <div className="w-full h-[90%] flex">
         <ToastContainer />
         <div className="w-1/2 h-full flex">
           <div className="w-1/2 h-full flex flex-col">
-            <div className="flex">
-              <i className="backArrow ml-2 cursor-pointer" onClick={naviBack}></i>
-              <div className="font-['Nanum Gothic'] text-3xl font-semibold text-black ml-2 w-72 flex items-center">
-                {tripInfo.city}
+            <div className="flex w-full h-[10%]">
+              <i
+                  className="backArrow ml-2 cursor-pointer w-[10%]"
+                  onClick={naviBack}
+              ></i>
+              <div className="flex items-center w-[90%]">
+                <div className="font-['BMJUA'] text-3xl text-black ml-2 flex items-center">
+                  {tripInfo.city}
+                </div>
               </div>
             </div>
-            <SearchBar curr={curr} />
-            <div className="flex justify-center h-[720px] overscroll-y-auto">
+            <div className="h-[10%]">
+              <SearchBar curr={curr}/>
+            </div>
+            <div className="flex justify-center h-[80%] overscroll-y-auto">
               <div className="w-11/12 grid grid-cols-2 justify-items-center items-center gap-3 mt-4 overflow-y-auto">
                 {res.map((place: Place, index: number) => (
                     <PlaceBox
