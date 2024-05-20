@@ -8,7 +8,7 @@ interface PlanBoxProps {
 }
 
 const SearchResultDiary: React.FC<PlanBoxProps> = (props) => {
-  const { diaryId, placeId, title, date, content, imageUrl } = props.props;
+  const { diaryId, placeId, title, date, content, imageUrl , userName} = props.props;
   const navigate = useNavigate();
 
   const toDiaryDetail = () => {
@@ -27,7 +27,7 @@ const SearchResultDiary: React.FC<PlanBoxProps> = (props) => {
           <img
             src={imageUrl}
             alt="지역소개사진"
-            style={{ objectFit: 'cover', width: '250px', height: '180px' }}
+            style={{ objectFit: 'contain', width: '250px', height: '180px' }}
           ></img>
         ) : (
           <div className="border-2 flex w-[250px] h-[180px] mt-2 text-gray-600 justify-center items-center">
@@ -39,7 +39,7 @@ const SearchResultDiary: React.FC<PlanBoxProps> = (props) => {
         <div className="font-['BMJUA'] text-2xl">{title}</div>
         <div className="font-['BMJUA'] text-[#ED661A] text-lg">{date}</div>
         <div className="font-['Nanum Gothic'] text-[#6E6E6E] text-sm mt-2">
-          username
+          {userName}
         </div>
         <div className="font-['Nanum Gothic'] text-black text-sm mt-2">
           {content}
