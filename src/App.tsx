@@ -43,16 +43,7 @@ function App() {
                     <Route path="/plandetail" element={<PlanDetail/>}/>
                     <Route path="/diarydetail" element={<DiaryDetail/>}/>
                     <Route path="/mydiarydetail" element={<MyDiaryDetail/>}/>
-                    {/*<Route
-            path="/addplaceform"
-            element={
-              <MapProvider
-                initialCenter={{ latitude: 37.2795, longitude: 127.0438 }}
-              >
-                <AddPlaceForm />
-              </MapProvider>
-            }
-          />*/}
+                    <Route path="/addplaceform" element={<AddPlaceForm/>}/>
                     <Route path="/event" element={<EventPage/>}/>
                     <Route path="/notice/view" element={<ViewNotice/>}/>
                     <Route path="myplan" element={<MyPlan/>}/>

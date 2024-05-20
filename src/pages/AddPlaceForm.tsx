@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios, { AxiosError } from 'axios';
 import Map from '../components/Map';
-import { MapProvider, useMap } from '../context/MapContext';
+import { MapProvider } from '../context/MapContext';
 import { useAuth } from '../context/AuthContext';
 import { ToastContainer, toast } from 'react-toastify';
 
@@ -16,17 +16,29 @@ const AddPlaceForm: React.FC = () => {
     latitude: 37.2795,
     longitude: 127.0438,
     images: [] as File[],
+    placeId: 0,
   });
   const [selectedLocationMessage, setSelectedLocationMessage] = useState('');
   const [previewImages, setPreviewImages] = useState<string[]>([]);
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
-  /*const { setMapLocation } = useMap();*/
   const { accessToken, refreshAccessToken } = useAuth();
+  const [kakaoLoaded, setKakaoLoaded] = useState(false);
+
+  useEffect(() => {
+    const checkKakaoLoaded = () => {
+      if (window.kakao && window.kakao.maps) {
+        setKakaoLoaded(true);
+      } else {
+        setTimeout(checkKakaoLoaded, 100);
+      }
+    };
+    checkKakaoLoaded();
+  }, []);
 
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >,
+      e: React.ChangeEvent<
+          HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+      >,
   ) => {
     const { name, value } = e.target;
     setPlaceInfo((prevState) => ({
@@ -41,10 +53,6 @@ const AddPlaceForm: React.FC = () => {
       latitude: lat,
       longitude: lng,
     }));
-    setSelectedLocationMessage(
-      `선택된 장소의 위도는: ${lat}, 경도는: ${lng} 입니다.`,
-    );
-    /*setMapLocation(lat, lng);*/
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -56,7 +64,7 @@ const AddPlaceForm: React.FC = () => {
       }));
 
       const imagePreviews = Array.from(files).map((file) =>
-        URL.createObjectURL(file),
+          URL.createObjectURL(file),
       );
       setPreviewImages(imagePreviews);
     }
@@ -90,8 +98,8 @@ const AddPlaceForm: React.FC = () => {
       // 성공적으로 제출되었을 경우 처리
     } catch (error) {
       if (
-        (error as AxiosError).response &&
-        (error as AxiosError).response?.status === 401
+          (error as AxiosError).response &&
+          (error as AxiosError).response?.status === 401
       ) {
         try {
           await refreshAccessToken();
@@ -119,162 +127,187 @@ const AddPlaceForm: React.FC = () => {
 
   const handlePrevImage = () => {
     setCurrentImageIndex((prevIndex) =>
-      prevIndex === 0 ? previewImages.length - 1 : prevIndex - 1,
+        prevIndex === 0 ? previewImages.length - 1 : prevIndex - 1,
     );
   };
 
   const handleNextImage = () => {
     setCurrentImageIndex((prevIndex) =>
-      prevIndex === previewImages.length - 1 ? 0 : prevIndex + 1,
+        prevIndex === previewImages.length - 1 ? 0 : prevIndex + 1,
     );
   };
 
+  const handleAddressSearch = () => {
+    if (!kakaoLoaded) {
+      console.error('Kakao Maps JavaScript API is not loaded.');
+      return;
+    }
+
+    const geocoder = new window.kakao.maps.services.Geocoder();
+    geocoder.addressSearch(
+        placeInfo.address,
+        (result: any, status: any) => {
+          if (status === window.kakao.maps.services.Status.OK) {
+            const { y, x } = result[0];
+            handleMapClick(parseFloat(y), parseFloat(x));
+          } else {
+            toast.error('주소 검색에 실패했습니다.', {
+              position: 'top-center',
+            });
+          }
+        }
+    );
+  };
+
+  const initialCenter =
+      placeInfo
+          ? { latitude: placeInfo.latitude, longitude: placeInfo.longitude }
+          : { latitude: 37.2795, longitude: 127.0438 };
+
+  const initialMarkers = placeInfo
+      ? [{ placeId: placeInfo.placeId, latitude: placeInfo.latitude, longitude: placeInfo.longitude }]
+      : [];
+
   return (
-    <div className="w-full h-screen flex">
-      <ToastContainer />
-      <div className="flex flex-col w-1/2 p-4">
-        <div className="flex items-center">
-          <button
-            className="backArrow"
-            onClick={handleBackButtonClick}
-          ></button>
-          <div className="text-2xl px-2 font-[BMJUA]">나만의 장소 추가하기</div>
-        </div>
-        <div className="p-10 flex flex-col items-center">
-          <div className="relative py-2 flex flex-col w-full border">
+      <div className="w-full h-[90%] flex">
+        <ToastContainer />
+        <div className="flex flex-col w-1/2 p-4 h-full">
+          <div className="flex items-center h-[5%]">
             <button
-              onClick={handlePrevImage}
-              className="backArrow absolute top-20  rounded-full flex justify-center"
+                className="backArrow"
+                onClick={handleBackButtonClick}
             ></button>
-            <div className="mx-auto">
-              {previewImages.length === 0 && (
-                <div className="flex justify-center items-center w-56 h-56 border border-gray-300 rounded-md">
-                  <div className="text-gray-500">사진을 업로드 해주세요</div>
-                </div>
-              )}
-              {previewImages.map((image, index) => (
-                <img
-                  key={index}
-                  src={image}
-                  alt={`Preview ${index}`}
-                  className={`w-56 h-56 object-cover mr-2 mb-2 ${
-                    index === currentImageIndex ? '' : 'hidden'
-                  }`}
+            <div className="text-2xl px-2 font-[BMJUA]">나만의 장소 추가하기</div>
+          </div>
+          <div className="py-5 flex flex-col items-center h-[90%]">
+            <div className="relative py-2 flex flex-col w-full border h-[20%]">
+              <div className="mx-auto h-full">
+                {previewImages.length === 0 && (
+                    <div className="flex justify-center items-center border border-gray-300 rounded-md h-full px-5">
+                      <div className="text-gray-500">사진을 업로드 해주세요</div>
+                    </div>
+                )}
+                {previewImages.map((image, index) => (
+                    <img
+                        key={index}
+                        src={image}
+                        alt={`Preview ${index}`}
+                        className={`object-cover mr-2 mb-2 h-full ${
+                            index === currentImageIndex ? '' : 'hidden'
+                        }`}
+                    />
+                ))}
+              </div>
+            </div>
+            <div className="flex flex-col my-2 w-full p-5 shadow-xl border font-BMJUA h-[80%]">
+              <div className="flex p-1 items-center">
+                <div className="flex w-20">장소명 :</div>
+                <input
+                    type="text"
+                    placeholder="장소명"
+                    name="name"
+                    value={placeInfo.name}
+                    onChange={handleChange}
+                    className="w-full p-2 border-2 input-field"
                 />
-              ))}
+              </div>
+              <div className="flex p-1 items-center">
+                <div className="flex w-20">주소 :</div>
+                <input
+                    type="text"
+                    placeholder="주소"
+                    name="address"
+                    value={placeInfo.address}
+                    onChange={handleChange}
+                    className="w-full p-2 border-2 input-field"
+                />
+                <button
+                    onClick={handleAddressSearch}
+                    className="ml-2 p-2 bg-main-red-color text-white rounded-md"
+                >
+                  주소 검색
+                </button>
+              </div>
+              <div className="flex p-1 items-center">
+                <div className="flex w-20">상세 설명 :</div>
+                <textarea
+                    placeholder="상세 설명"
+                    name="detail"
+                    value={placeInfo.detail}
+                    onChange={handleChange}
+                    className="w-full p-2 border-2 input-field"
+                    rows={1}
+                />
+              </div>
+              <div className="flex p-1 items-center">
+                <div className="flex w-20">구분 :</div>
+                <select
+                    name="division"
+                    value={placeInfo.division}
+                    onChange={handleChange}
+                    className="w-full p-2 border-2 input-field"
+                >
+                  <option value="">구분 선택</option>
+                  <option value="숙박">숙박</option>
+                  <option value="문화시설">문화시설</option>
+                  <option value="음식점">음식점</option>
+                  <option value="축제 공연 행사">축제 공연 행사</option>
+                  <option value="관광지">관광지</option>
+                  <option value="레포츠">레포츠</option>
+                  <option value="쇼핑">쇼핑</option>
+                </select>
+              </div>
+              <div className="flex p-1 items-center">
+                <div className="flex w-20">전화번호 :</div>
+                <input
+                    type="text"
+                    placeholder="전화번호"
+                    name="phone"
+                    value={placeInfo.phone}
+                    onChange={handleChange}
+                    className="w-full p-2 border-2 input-field"
+                />
+              </div>
+              <div className="flex p-1 items-center">
+                <div className="flex w-20">내용 :</div>
+                <textarea
+                    placeholder="내용"
+                    name="content"
+                    value={placeInfo.content}
+                    onChange={handleChange}
+                    className="w-full p-2 border-2 input-field"
+                    rows={1}
+                />
+              </div>
+              <div className="flex p-1 items-center">
+                <div className="flex w-20">위도 :</div>
+                <div className="mx-2">{placeInfo.latitude}</div>
+              </div>
+              <div className="flex p-1 items-center">
+                <div className="flex w-20">경도 :</div>
+                <div className="mx-2">{placeInfo.longitude}</div>
+              </div>
+              <input
+                  type="file"
+                  multiple
+                  onChange={handleFileChange}
+                  className="mb-2 p-2 border-2 border-main-red-color"
+              />
             </div>
-            <button
-              onClick={handleNextImage}
-              className="backArrow rotate-180 absolute right-0 top-20  rounded-full flex justify-center"
-            ></button>
           </div>
-          <div className="flex flex-col my-2 w-full p-10 shadow-xl border font-BMJUA">
-            <div className="flex p-1 items-center">
-              <div className="flex w-20">장소명 :</div>
-              <input
-                type="text"
-                placeholder="장소명"
-                name="name"
-                value={placeInfo.name}
-                onChange={handleChange}
-                className="w-full p-2 border-2 input-field"
-              />
-            </div>
-            <div className="flex p-1 items-center">
-              <div className="flex w-20">주소 :</div>
-              <input
-                type="text"
-                placeholder="주소"
-                name="address"
-                value={placeInfo.address}
-                onChange={handleChange}
-                className="w-full p-2 border-2 input-field"
-              />
-            </div>
-            <div className="flex p-1 items-center">
-              <div className="flex w-20">상세 설명 :</div>
-              <textarea
-                placeholder="상세 설명"
-                name="detail"
-                value={placeInfo.detail}
-                onChange={handleChange}
-                className="w-full p-2 border-2 input-field "
-                rows={3}
-              />
-            </div>
-            <div className="flex p-1 items-center">
-              <div className="flex w-20">구분 :</div>
-              <select
-                name="division"
-                value={placeInfo.division}
-                onChange={handleChange}
-                className="w-full p-2 border-2 input-field"
-              >
-                <option value="">구분 선택</option>
-                <option value="숙박">숙박</option>
-                <option value="문화시설">문화시설</option>
-                <option value="음식점">음식점</option>
-                <option value="축제 공연 행사">축제 공연 행사</option>
-                <option value="관광지">관광지</option>
-                <option value="레포츠">레포츠</option>
-                <option value="쇼핑">쇼핑</option>
-              </select>
-            </div>
-            <div className="flex p-1 items-center">
-              <div className="flex w-20">전화번호 :</div>
-              <input
-                type="text"
-                placeholder="전화번호"
-                name="phone"
-                value={placeInfo.phone}
-                onChange={handleChange}
-                className="w-full p-2 border-2 input-field "
-              />
-            </div>
-            <div className="flex p-1 items-center">
-              <div className="flex w-20">내용 :</div>
-              <textarea
-                placeholder="내용"
-                name="content"
-                value={placeInfo.content}
-                onChange={handleChange}
-                className="w-full p-2 border-2 input-field "
-                rows={3}
-              />
-            </div>
-            <div className="flex p-1 items-center">
-              <div className="flex w-20"> 위도 :</div>
-              <div className="mx-2">{placeInfo.latitude}</div>
-            </div>
-            <div className="flex p-1 items-center">
-              <div className="flex w-20">경도 :</div>
-              <div className="mx-2">{placeInfo.longitude}</div>
-            </div>
-            <div className="mb-4">{selectedLocationMessage}</div>
-            <input
-              type="file"
-              multiple
-              onChange={handleFileChange}
-              className="mb-2 p-2 border-2 border-main-red-color"
-            />
+          <div className="w-full h-[5%] flex justify-center">
+            <button
+                onClick={handleSubmit}
+                className="p-2 bg-main-red-color text-white rounded-md font-bold"
+            >
+              장소 추가
+            </button>
           </div>
         </div>
-        <button
-          onClick={handleSubmit}
-          className="py-2 bg-main-red-color text-white rounded-md"
-        >
-          장소 추가
-        </button>
+        <MapProvider key={JSON.stringify(initialMarkers)} initialCenter={initialCenter} initialMarkers={initialMarkers}>
+          <Map onMapClick={handleMapClick}/>
+        </MapProvider>
       </div>
-      {/*<MapProvider
-        initialCenter={{
-          latitude: placeInfo.latitude,
-          longitude: placeInfo.longitude,
-        }}
-      >
-        <Map onMapClick={handleMapClick} />
-      </MapProvider>*/}
-    </div>
   );
 };
 
