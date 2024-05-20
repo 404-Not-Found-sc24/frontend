@@ -143,8 +143,8 @@ const Event: React.FC = () => {
     });
 
     return (
-        <div>
-            <div className="flex max-w-2xl mx-auto pt-4 m-10">
+        <div className="flex flex-col w-full h-[90%]">
+            <div className="flex max-w-2xl mx-auto pt-4 h-[8%] w-full">
                 <div
                     id="1"
                     className={`mx-auto justify-center py-2 text-center w-1/2 border-main-red-color font-BMJUA text-2xl cursor-pointer ${
@@ -179,7 +179,7 @@ const Event: React.FC = () => {
                     홍보
                 </div>
             </div>
-            <div className="h-full w-full flex justify-center">
+            <div className="w-full flex justify-center h-[92%] pt-5">
                 {activeTab === '공지사항' && (
                     <div className="ag-theme-alpine" style={{height: "650px", width: '60%'}}>
                         <AgGridReact
