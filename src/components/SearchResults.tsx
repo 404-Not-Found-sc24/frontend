@@ -101,7 +101,7 @@ const SearchResults: React.FC<Props> = ({ tab, onResultsUpdate }) => {
   }, [location.search]);
 
   return (
-    <div className="">
+    <div className="bg-white">
       {tab === '장소 보기' &&
         placeSearchResults.map((place: PlaceData, index) => (
           <Link
