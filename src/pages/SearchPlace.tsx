@@ -94,10 +94,10 @@ const SearchPlace: React.FC = () => {
             장소 직접 추가하기
           </Link>
         </div>
-        <div className="tab-content h-[80%] overflow-y-scroll">
+        <div className="tab-content h-[80%] overflow-y-scroll justify-center">
           <div className={activeTab === '장소 보기' ? 'active' : ''}>
             {activeTab === '장소 보기' && (
-              <div className="h-[90%] bg-white p-10">
+              <div className="h-[90%]">
                 <SearchResults
                   tab={activeTab}
                   onResultsUpdate={handleResultsUpdate}
@@ -107,10 +107,12 @@ const SearchPlace: React.FC = () => {
           </div>
           <div className={activeTab === '일정 보기' ? 'active' : ''}>
             {activeTab === '일정 보기' && (
+                <div className="h-[90%]">
               <SearchResults
                 tab={activeTab}
                 onResultsUpdate={handleResultsUpdate}
               />
+                </div>
             )}
           </div>
         </div>

@@ -11,23 +11,25 @@ interface Diary {
   weather: string;
   content: string;
   imageUrl: string;
+  latitude: number;
+  longitude: number;
 }
 
 const DiaryDetail: React.FC = () => {
   const location = useLocation();
   const Diary = location.state.PlanData;
-  const [Diarydata, setDiaryData] = useState<Diary[]>([]);
+  const [diaryData, setDiaryData] = useState<Diary>();
 
   useEffect(() => {
     getData();
   }, []);
 
-  const initialMarkers = Diary
-      ? [{ placeId: Diary.placeId, latitude: Diary.latitude, longitude: Diary.longitude }]
+  const initialMarkers = Diary && diaryData
+      ? [{ placeId: Diary.placeId, latitude: diaryData.latitude, longitude: diaryData.longitude }]
       : [];
 
-  const initialCenter = Diary
-      ? { latitude: Diary.latitude, longitude: Diary.longitude }
+  const initialCenter = diaryData
+      ? { latitude: diaryData.latitude, longitude: diaryData.longitude }
       : { latitude: 37.2795, longitude: 127.0438 };
 
   const naviBack = () => {
@@ -53,20 +55,24 @@ const DiaryDetail: React.FC = () => {
   };
 
   return (
-    <div className="flex w-full h-[864px]">
+    <div className="flex w-full h-[90%]">
       <div className="w-1/2 h-full">
-        <div className="flex justify-between items-center">
-          <div className="flex items-center">
-            <i className="backArrow ml-2 cursor-pointer" onClick={naviBack}></i>
-            <div className="font-['BMJUA'] text-3xl text-black ml-2 flex items-center">
-              {Diary.title}
-            </div>
-            <div className="font-['BMJUA'] text-xl text-[#ED661A] ml-5 flex items-center">
-              {Diary.date}
+          <div className="flex w-full h-[10%]">
+            <i
+                className="backArrow ml-2 cursor-pointer w-[10%]"
+                onClick={naviBack}
+            ></i>
+            <div className="flex items-center w-[90%]">
+              <div className="font-['BMJUA'] text-3xl text-black ml-2 flex items-center">
+                {Diary.title}
+              </div>
+              <div className="font-['BMJUA'] text-xl text-[#ED661A] ml-5 flex items-center">
+                {Diary.date}
+              </div>
             </div>
           </div>
-        </div>
-        <div className="w-full h-[800px] flex justify-center">
+
+        <div className="w-full h-[90%] flex justify-center">
           <div className="w-5/6 h-full mb-5">
             <div className="w-full h-full flex flex-col pt-3">
               <div className="w-full h-[95%] flex flex-col py-5 rounded-md shadow-xl">
@@ -105,7 +111,11 @@ const DiaryDetail: React.FC = () => {
           </div>
         </div>
       </div>
-      <MapProvider initialMarkers={initialMarkers} initialCenter={initialCenter}>
+      <MapProvider
+          key={JSON.stringify(initialMarkers)}
+          initialCenter={initialCenter}
+          initialMarkers={initialMarkers}
+      >
         <Map />
       </MapProvider>
     </div>
