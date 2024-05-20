@@ -3,6 +3,7 @@ import Map from '../components/Map';
 import { MapProvider } from '../context/MapContext';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import planData from "../../types/PlanData";
 
 interface PlanData {
   placeId: number;
@@ -88,18 +89,23 @@ const MyDiaryDetail: React.FC = () => {
     <div className="flex w-full h-[90%]">
       <div className="w-1/2 h-full">
         <div className="flex justify-between items-center">
-          <div className="flex items-center">
-            <i className="backArrow ml-2 cursor-pointer" onClick={naviBack}></i>
-            <div className="font-['BMJUA'] text-3xl text-black ml-2 flex items-center">
-              {planName}
-            </div>
-            <div className="font-['BMJUA'] text-xl text-[#ED661A] ml-5 flex items-center">
-              {PlanData.time}
+          <div className="flex w-full">
+            <i
+                className="backArrow ml-2 cursor-pointer w-[10%]"
+                onClick={naviBack}
+            ></i>
+            <div className="flex items-center w-[90%]">
+              <div className="font-['BMJUA'] text-3xl text-black ml-2 flex items-center">
+                {planName}
+              </div>
+              <div className="font-['BMJUA'] text-xl text-[#ED661A] ml-5 flex items-center">
+                {PlanData.date}
+              </div>
             </div>
           </div>
           <button
-            onClick={navimakediary}
-            className="flex items-center justify-center w-20 h-7 mx-10 bg-black rounded-2xl text-white font-['Nanum Gothic'] text-sm font-semibold"
+              onClick={navimakediary}
+              className="flex items-center justify-center w-20 h-7 mx-10 bg-black rounded-2xl text-white font-['Nanum Gothic'] text-sm font-semibold"
           >
             일기 작성
           </button>
