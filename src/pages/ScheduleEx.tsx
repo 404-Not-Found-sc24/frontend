@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import Map from '../components/Map';
 import PlanDetailBox from '../components/PlanDetailBox';
 import { MapProvider } from '../context/MapContext';
@@ -35,21 +35,36 @@ const ScheduleEx: React.FC = () => {
   const { refreshAccessToken } = useAuth();
   const accessToken = localStorage.getItem('accessToken');
 
-  const initialMarkers = scheduleData.map(
-    ({ placeId, latitude, longitude }) => ({
-      placeId,
-      latitude,
-      longitude,
-    }),
+  const getPlacesByDay = (day: number) => {
+    return scheduleData.filter(
+        (data) =>
+            Math.ceil(
+                Math.abs(new Date(data.date).getTime() - startDate.getTime()) /
+                (1000 * 3600 * 24) +
+                1,
+            ) === day,
+    );
+  };
+
+  const activePlaces = useMemo(
+      () => getPlacesByDay(activeTab),
+      [activeTab, scheduleData],
   );
 
+  console.log(activePlaces);
+  const initialMarkers = activePlaces.map((place) => ({
+    placeId: place.locationId,
+    latitude: place.latitude,
+    longitude: place.longitude,
+  }));
+
   const initialCenter =
-    scheduleData.length > 0
-      ? {
-          latitude: scheduleData[0].latitude,
-          longitude: scheduleData[0].longitude,
-        }
-      : { latitude: 37.2795, longitude: 127.0438 };
+      activePlaces.length > 0
+          ? {
+            latitude: activePlaces[0].latitude,
+            longitude: activePlaces[0].longitude,
+          }
+          : { latitude: 37.2795, longitude: 127.0438 };
 
   const notifySuccess = () =>
     toast.success('일정이 성공적으로 저장되었습니다.', {
@@ -155,12 +170,15 @@ const ScheduleEx: React.FC = () => {
   };
 
   return (
-    <div className="flex w-full h-[864px]">
+    <div className="flex w-full h-[90%]">
       <ToastContainer />
       <div className="w-1/2 h-full">
-        <div className="flex">
-          <i className="backArrow ml-2 cursor-pointer" onClick={naviBack}></i>
-          <div className="flex items-center">
+        <div className="flex w-full h-[10%]">
+          <i
+              className="backArrow ml-2 cursor-pointer w-[10%]"
+              onClick={naviBack}
+          ></i>
+          <div className="flex items-center w-[90%]">
             <div className="font-['BMJUA'] text-3xl text-black ml-2 flex items-center">
               {plan.name}
             </div>
@@ -169,50 +187,51 @@ const ScheduleEx: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className="w-full h-[810px] flex justify-center">
+        <div className="w-full h-[90%] flex justify-center">
           <div className="w-11/12 h-full pt-3 pb-5 flex flex-col">
-            <div className="flex justify-between h-7">
+            <div className="flex justify-between h-7 mb-5">
               <div className="flex items-center">{generateTabs()}</div>
               <button
-                onClick={copySchedule}
-                className="w-20 h-7 bg-black rounded-2xl text-white font-['Nanum Gothic'] text-sm font-semibold"
+                  onClick={copySchedule}
+                  className="w-20 h-7 bg-black rounded-2xl text-white font-['Nanum Gothic'] text-sm font-semibold"
               >
                 일정 복사
               </button>
             </div>
-            {Array.from({ length: diffDays }, (_, index) => (
-              <div key={index}>
-                {activeTab === index + 1 && (
-                  <div>
-                    {scheduleData
-                      .filter(
-                        (data) =>
-                          Math.ceil(
-                            Math.abs(
-                              new Date(data.date).getTime() -
-                                startDate.getTime(),
-                            ) /
-                              (1000 * 3600 * 24) +
-                              1,
-                          ) ===
-                          index + 1,
-                      )
-                      .map((filteredData, dataIndex) => (
-                        <PlanDetailBox
-                          key={dataIndex}
-                          scheduleData={filteredData}
-                        />
-                      ))}
-                  </div>
-                )}
-              </div>
+            {Array.from({length: diffDays}, (_, index) => (
+                <div key={index}>
+                  {activeTab === index + 1 && (
+                      <div>
+                        {scheduleData
+                            .filter(
+                                (data) =>
+                                    Math.ceil(
+                                        Math.abs(
+                                            new Date(data.date).getTime() -
+                                            startDate.getTime(),
+                                        ) /
+                                        (1000 * 3600 * 24) +
+                                        1,
+                                    ) ===
+                                    index + 1,
+                            )
+                            .map((filteredData, dataIndex) => (
+                                <PlanDetailBox
+                                    key={dataIndex}
+                                    scheduleData={filteredData}
+                                />
+                            ))}
+                      </div>
+                  )}
+                </div>
             ))}
           </div>
         </div>
       </div>
       <MapProvider
-        initialMarkers={initialMarkers}
-        initialCenter={initialCenter}
+          key={JSON.stringify(initialMarkers)}
+          initialCenter={initialCenter}
+          initialMarkers={initialMarkers}
       >
         <Map />
       </MapProvider>
