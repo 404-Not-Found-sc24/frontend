@@ -30,12 +30,22 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({ data, onDeleteSchedule }) =
     }, []);
 
     const checkDate = async () => {
-        const nextDate = new Date(startDate);
+        const sDate = new Date(startDate);
+        const eDate = new Date(endDate);
         const currentDate = new Date();
-        const differenceInMilliseconds = nextDate.getTime() - currentDate.getTime();
 
-        // 밀리초를 일로 변환하여 차이 계산
-        setDifferenceInDays(Math.ceil(differenceInMilliseconds / (1000 * 60 * 60 * 24)));
+        if (currentDate > eDate) {
+            const differenceInMilliseconds = currentDate.getTime() - eDate.getTime();
+            setDifferenceInDays(Math.ceil(differenceInMilliseconds / (1000 * 60 * 60 * 24)));
+        }
+        else if (currentDate <= eDate && currentDate >= sDate) {
+            setDifferenceInDays(0);
+        }
+        else if (currentDate < sDate) {
+            const differenceInMilliseconds = currentDate.getTime() - sDate.getTime();
+            setDifferenceInDays(Math.ceil(differenceInMilliseconds / (1000 * 60 * 60 * 24)));
+        }
+
 
     };
 
@@ -107,7 +117,7 @@ const notifyError = () =>
                 <div className='flex flex-col w-full'>
                     <div className='flex flex-row'>
                         <div className='text-main-red-color text-xl font-bold w-20 mr-5'>
-                            {differenceInDays !== undefined && (differenceInDays === 0 ? "D-Day" : `D${differenceInDays < 0 ? '+' : '-'}${Math.abs(differenceInDays)}`)}
+                            {differenceInDays !== undefined && (differenceInDays === 0 ? "D-Day" : `D${differenceInDays > 0 ? '+' : '-'}${Math.abs(differenceInDays)}`)}
                         </div>
 
                         <div className='text-xl flex-grow'>{location}</div>
