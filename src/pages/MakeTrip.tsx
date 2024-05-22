@@ -145,6 +145,7 @@ const MakeTrip = ({ isOpen, city, cityDetail, imageUrl, handleCloseModal }: prop
         city: city,
         name: title,
         scheduleId: scheduleId,
+        check: 0
       },
     });
   }, [city, title, startDate, endDate, scheduleId]);
