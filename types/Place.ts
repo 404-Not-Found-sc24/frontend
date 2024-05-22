@@ -1,4 +1,5 @@
 type Place = {
+    placeId: number | null,
     locationId: number,
     name: string,
     address: string,
@@ -7,4 +8,4 @@ type Place = {
     imageUrl: string,
 };
 
-export default Place;
+export default Place; 

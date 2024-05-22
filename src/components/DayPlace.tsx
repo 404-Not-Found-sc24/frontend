@@ -13,9 +13,7 @@ const DayPlace: React.FC<DayPlaceProps> = ({index, selectedPlace, removePlace}) 
     const handleRemovePlace = () => {
         removePlace(index);
     };
-    useEffect(() => {
-        console.log(selectedPlace);
-    }, []);
+    
     return (
         <div className="w-11/12 h-20 flex items-center mb-3">
             <button className="delete mr-3" onClick={() => handleRemovePlace()}></button>

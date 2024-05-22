@@ -23,7 +23,7 @@ const MakePlan = () => {
   const [lastIdx, setLastIdx] = useState<number>(0);
   const [activeTab, setActiveTab] = useState<number>(1);
   const [res, setRes] = useState<Place[]>([]);
-  const [selectedPlaces, setSelectedPlaces] = useState<Place[][]>([]);
+  const [selectedPlaces, setSelectedPlaces] = useState<Place[][]>([[], [], []]);
   const { accessToken, refreshAccessToken } = useAuth();
   const placeLoadMoreRef = useRef<HTMLDivElement>(null);
   const placeObserver = useRef<IntersectionObserver>();
@@ -38,7 +38,7 @@ const MakePlan = () => {
       isLoading.current = true;
       try {
         const placeResponse = await axios.get(
-            `/tour/locations?city=${city}&keyword=${searchTerm}&lastIdx=${lastIdx}`,
+          `/tour/locations?city=${city}&keyword=${searchTerm}&lastIdx=${lastIdx}`,
         );
 
         setRes((prevData) => [...prevData, ...placeResponse.data]);
@@ -56,12 +56,12 @@ const MakePlan = () => {
     console.log(keyword);
     try {
       const response = await axios.get(
-          `tour/locations?city=${tripdataRef.current.city}&keyword=${keyword}&lastIdx=${lastIdx}`,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-            },
+        `tour/locations?city=${tripdataRef.current.city}&keyword=${keyword}&lastIdx=${lastIdx}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
           },
+        },
       );
       setRes((prevData) => [...prevData, ...response.data]);
       setLastIdx((prevLastIdx) => prevLastIdx + response.data.length);
@@ -73,7 +73,8 @@ const MakePlan = () => {
   const addSelectedPlace = (selectedPlace: Place, dayIndex: number) => {
     setSelectedPlaces((prevSelectedPlaces) => {
       const newSelectedPlaces = [...prevSelectedPlaces];
-      newSelectedPlaces[dayIndex - 1].push(selectedPlace);
+      const modifiedPlace = { ...selectedPlace, placeId: null };
+      newSelectedPlaces[dayIndex - 1].push(modifiedPlace);
       return newSelectedPlaces;
     });
   };
@@ -90,13 +91,13 @@ const MakePlan = () => {
     const tabs = [];
     for (let i = 1; i <= days; i++) {
       tabs.push(
-          <div
-              key={i}
-              className={`tab ${activeTab === i ? 'active' : ''}`}
-              onClick={() => handleTabClick(i)}
-          >
-            <div className="tabContent">{`${i}일차`}</div>
-          </div>,
+        <div
+          key={i}
+          className={`tab ${activeTab === i ? 'active' : ''}`}
+          onClick={() => handleTabClick(i)}
+        >
+          <div className="tabContent">{`${i}일차`}</div>
+        </div>,
       );
     }
     return tabs;
@@ -112,45 +113,65 @@ const MakePlan = () => {
   };
 
   const notifySuccess = () =>
-      toast.success('장소가 성공적으로 추가되었습니다!', {
-        position: 'top-center',
-      });
+    toast.success('장소가 성공적으로 추가되었습니다!', {
+      position: 'top-center',
+    });
 
   const addPlace = async () => {
     try {
       const postData = selectedPlaces.flatMap((innerArray, index) => {
         const startDate = new Date(tripdataRef.current.startDate);
-        console.log(startDate);
+        console.log("start", startDate.getDate());
         const currentDate = new Date(startDate);
-        currentDate.setDate(startDate.getDate() + index + 1); // 시작 날짜에 인덱스를 더한 값
+        console.log("index", index);
+        if (tripInfo.check === 0)
+          currentDate.setDate(startDate.getDate() + index + 1); // 시작 날짜에 인덱스를 더한 값
+        else
+        currentDate.setDate(startDate.getDate() + index); // 시작 날짜에 인덱스를 더한 값
 
-        return innerArray.map((place, innerIndex) => ({
-          placeId: innerIndex, // 내부 배열의 인덱스를 placeId로 사용
-          locationId: place.locationId,
-          date: currentDate.toISOString().slice(0, 10), // ISO 형식으로 변환하여 날짜만 추출
-          time: '00:00', // 예시: 방문 예정 시간
-        }));
+        console.log("curr", currentDate);
+
+        return innerArray.map((place, innerIndex) => {
+          if ('placeId' in place) {
+            return {
+              placeId: place.placeId != null ? place.placeId : null,
+              locationId: place.locationId,
+              date: currentDate.toISOString().slice(0, 10),
+              time: '00:00',
+            };
+          } else {
+            return {
+              placeId: null,
+              locationId: place.locationId,
+              date: currentDate.toISOString().slice(0, 10),
+              time: '00:00',
+            };
+          }
+        }).filter(placeData => placeData !== null);
       });
 
-      await axios
+      console.log("selectedPlaces", selectedPlaces);
+      console.log("postdata", postData);
 
-        .post('/schedule/place/' + tripdataRef.current.scheduleId, postData, {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${accessToken}`,
-          },
-        })
-        .then((response) => {
-          console.log(response);
-          notifySuccess();
-          setTimeout(() => {
-            navigate('/');
-          }, 3000);
-        });
+        await axios
+
+          .post('/schedule/place/' + tripdataRef.current.scheduleId, postData, {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${accessToken}`,
+            },
+          })
+          .then((response) => {
+            console.log(response);
+            notifySuccess();
+            setTimeout(() => {
+              navigate('/');
+            }, 3000);
+          });
     } catch (error) {
       if (
-          (error as AxiosError).response &&
-          (error as AxiosError).response?.status === 401
+        (error as AxiosError).response &&
+        (error as AxiosError).response?.status === 401
       ) {
         try {
           await refreshAccessToken();
@@ -163,24 +184,64 @@ const MakePlan = () => {
     }
   };
 
+  const checkPlaces = async () => {
+    try {
+      await axios
+        .get('/schedule/places/' + tripInfo.scheduleId, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+        })
+        .then((response) => {
+          setSelectedPlaces(response.data);
+        });
+    } catch (error) {
+      if (
+        (error as AxiosError).response &&
+        (error as AxiosError).response?.status === 401
+      ) {
+        try {
+          await refreshAccessToken();
+        } catch (refreshError) {
+          console.error('Failed to refresh access token:', refreshError);
+        }
+      } else {
+        console.error('Failed to add place:', error);
+      }
+    }
+  };
+
+
   useEffect(() => {
-    if (tripdataRef.current.startDate && tripdataRef.current.endDate) {
-      const differenceInTime =
+    const fetchData = async () => {
+      if (tripdataRef.current.startDate && tripdataRef.current.endDate) {
+        const differenceInTime =
           tripdataRef.current.endDate.getTime() -
           tripdataRef.current.startDate.getTime();
-      const differenceInDays = Math.floor(
-          differenceInTime / (1000 * 3600 * 24),
-      );
-      const tripDays = differenceInDays + 1;
-      setTripDays(tripDays);
+        const differenceInDays = Math.floor(
+          differenceInTime / (1000 * 3600 * 24)
+        );
+        const tripDays = differenceInDays + 1;
+        setTripDays(tripDays);
 
+        await checkPlaces();
+
+      }
+    }
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    if (selectedPlaces.length === 0) {
       const newTripPlaces = Array.from(
-          { length: tripDays },
-          () => [] as Place[],
+        { length: tripDays },
+        () => [] as Place[],
       );
       setSelectedPlaces(newTripPlaces);
     }
-  }, []);
+  }, [selectedPlaces]);
 
   useEffect(() => {
     const placeOptions = {
@@ -202,8 +263,8 @@ const MakePlan = () => {
     };
 
     placeObserver.current = new IntersectionObserver(
-        placeCallback,
-        placeOptions,
+      placeCallback,
+      placeOptions,
     );
 
     if (placeLoadMoreRef.current) {
@@ -224,9 +285,9 @@ const MakePlan = () => {
 
   const activePlaces = selectedPlaces[activeTab - 1] || [];
   const initialCenter =
-      activePlaces.length > 0
-          ? { latitude: activePlaces[activePlaces.length - 1].latitude, longitude: activePlaces[activePlaces.length - 1].longitude }
-          : { latitude: 37.2795, longitude: 127.0438 };
+    activePlaces.length > 0
+      ? { latitude: activePlaces[activePlaces.length - 1].latitude, longitude: activePlaces[activePlaces.length - 1].longitude }
+      : { latitude: 37.2795, longitude: 127.0438 };
   const initialMarkers = activePlaces.map((place) => ({
     placeId: place.locationId,
     latitude: place.latitude,
@@ -234,83 +295,86 @@ const MakePlan = () => {
   }));
 
   return (
-      <div className="w-full h-[90%] flex">
-        <ToastContainer />
-        <div className="w-1/2 h-full flex">
-          <div className="w-1/2 h-full flex flex-col">
-            <div className="flex w-full h-[10%]">
-              <i
-                  className="backArrow ml-2 cursor-pointer w-[10%]"
-                  onClick={naviBack}
-              ></i>
-              <div className="flex items-center w-[90%]">
-                <div className="font-['BMJUA'] text-3xl text-black ml-2 flex items-center">
-                  {tripInfo.city}
-                </div>
-              </div>
-            </div>
-            <div className="h-[10%]">
-              <SearchBar curr={curr}/>
-            </div>
-            <div className="flex justify-center h-[80%] overscroll-y-auto">
-              <div className="w-11/12 grid grid-cols-2 justify-items-center items-center gap-3 mt-4 overflow-y-auto">
-                {res.map((place: Place, index: number) => (
-                    <PlaceBox
-                        key={index}
-                        place={place}
-                        addSelectedPlace={() => addSelectedPlace(place, activeTab)}
-                    />
-                ))}
-                <div ref={placeLoadMoreRef}></div>
+    console.log('startDate: ', tripInfo.startDate),
+    console.log('endDate: ', tripInfo.endDate),
+    console.log('Schedule ID:', tripInfo.scheduleId),
+    <div className="w-full h-[90%] flex">
+      <ToastContainer />
+      <div className="w-1/2 h-full flex">
+        <div className="w-1/2 h-full flex flex-col">
+          <div className="flex w-full h-[10%]">
+            <i
+              className="backArrow ml-2 cursor-pointer w-[10%]"
+              onClick={naviBack}
+            ></i>
+            <div className="flex items-center w-[90%]">
+              <div className="font-['BMJUA'] text-3xl text-black ml-2 flex items-center">
+                {tripInfo.city}
               </div>
             </div>
           </div>
-          <div className="w-1/2 h-full flex">
-            <div className="tabs w-[40px]">{generateTabs(tripDays)}</div>
-            <div className="flex flex-col w-full h-full border-4 border-[#FF9A9A] justify-between">
-              <div className="tab-content">
-                {Array.from({ length: tripDays }, (_, tabIndex) => (
-                    <div
-                        key={tabIndex + 1}
-                        id={`content${tabIndex + 1}`}
-                        className={`content ${
-                            activeTab === tabIndex + 1 ? 'active' : ''
-                        }`}
-                    >
-                      <div className="contentBox">
-                        {selectedPlaces && (
-                            <div className="w-full h-full flex flex-col items-center pt-3">
-                              {selectedPlaces[activeTab - 1].map(
-                                  (selectedPlace, index) => (
-                                      <DayPlace
-                                          key={index}
-                                          index={index}
-                                          selectedPlace={selectedPlace}
-                                          removePlace={() => removePlace(activeTab, index)}
-                                      />
-                                  ),
-                              )}
-                            </div>
-                        )}
-                      </div>
-                    </div>
-                ))}
-              </div>
-              <div className="h-[100px] w-full flex justify-center items-center">
-                <button
-                    className="h-1/2 bg-black text-white px-10 rounded-md text-xl font-['BMJUA']"
-                    onClick={addPlace}
-                >
-                  추가
-                </button>
-              </div>
+          <div className="h-[10%]">
+            <SearchBar curr={curr} />
+          </div>
+          <div className="flex justify-center h-[80%] overscroll-y-auto">
+            <div className="w-11/12 grid grid-cols-2 justify-items-center items-center gap-3 mt-4 overflow-y-auto">
+              {res.map((place: Place, index: number) => (
+                <PlaceBox
+                  key={index}
+                  place={place}
+                  addSelectedPlace={() => addSelectedPlace(place, activeTab)}
+                />
+              ))}
+              <div ref={placeLoadMoreRef}></div>
             </div>
           </div>
         </div>
-          <MapProvider key={JSON.stringify(initialMarkers)} initialCenter={initialCenter} initialMarkers={initialMarkers}>
-            <Map />
-          </MapProvider>
+        <div className="w-1/2 h-full flex">
+          <div className="tabs w-[40px]">{generateTabs(tripDays)}</div>
+          <div className="flex flex-col w-full h-full border-4 border-[#FF9A9A] justify-between">
+            <div className="tab-content">
+              {Array.from({ length: tripDays }, (_, tabIndex) => (
+                <div
+                  key={tabIndex + 1}
+                  id={`content${tabIndex + 1}`}
+                  className={`content ${activeTab === tabIndex + 1 ? 'active' : ''
+                    }`}
+                >
+                  <div className="contentBox">
+                    {selectedPlaces[activeTab - 1] && (
+                      console.log("selectedPlaces", selectedPlaces),
+                      <div className="w-full h-full flex flex-col items-center pt-3">
+                        {selectedPlaces[activeTab - 1].map(
+                          (selectedPlace, index) => (
+                            <DayPlace
+                              key={index}
+                              index={index}
+                              selectedPlace={selectedPlace}
+                              removePlace={() => removePlace(activeTab, index)}
+                            />
+                          ),
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="h-[100px] w-full flex justify-center items-center">
+              <button
+                className="h-1/2 bg-black text-white px-10 rounded-md text-xl font-['BMJUA']"
+                onClick={addPlace}
+              >
+                추가
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
+      <MapProvider key={JSON.stringify(initialMarkers)} initialCenter={initialCenter} initialMarkers={initialMarkers}>
+        <Map />
+      </MapProvider>
+    </div>
 
   );
 };

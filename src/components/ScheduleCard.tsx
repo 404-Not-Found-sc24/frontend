@@ -33,6 +33,9 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({ data, onDeleteSchedule }) =
         const sDate = new Date(startDate);
         const eDate = new Date(endDate);
         const currentDate = new Date();
+        sDate.setHours(0, 0, 0, 0);
+        eDate.setHours(0, 0, 0, 0);
+        currentDate.setHours(0, 0, 0, 0);
 
         if (currentDate > eDate) {
             const differenceInMilliseconds = currentDate.getTime() - eDate.getTime();
@@ -62,14 +65,14 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({ data, onDeleteSchedule }) =
     };
 
 
-  const notifySuccess = () =>
-    toast.success('일정이 성공적으로 삭제되었습니다.', {
-        position: 'top-center',
-    });
-const notifyError = () =>
-    toast.error('일정 삭제 중 오류가 발생했습니다.', {
-        position: 'top-center',
-    });
+    const notifySuccess = () =>
+        toast.success('일정이 성공적으로 삭제되었습니다.', {
+            position: 'top-center',
+        });
+    const notifyError = () =>
+        toast.error('일정 삭제 중 오류가 발생했습니다.', {
+            position: 'top-center',
+        });
 
 
     const deleteSchedule = async (scheduleId: number) => {
