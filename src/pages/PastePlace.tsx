@@ -92,12 +92,13 @@ const PastePlace = ({ isOpen, locationId, handleCloseModal }: props) => {
   const getSchedules = async () => {
     try {
       const response = await axios
-          .get('/schedule', {
+          .get('/schedule/list', {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       })
           .then((response) => {
+            console.log(response);
             setSchedules(response.data);
           });
     } catch (error) {
