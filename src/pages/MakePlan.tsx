@@ -132,21 +132,12 @@ const MakePlan = () => {
         console.log("curr", currentDate);
 
         return innerArray.map((place, innerIndex) => {
-          if ('placeId' in place) {
             return {
               placeId: place.placeId != null ? place.placeId : null,
               locationId: place.locationId,
               date: currentDate.toISOString().slice(0, 10),
               time: '00:00',
             };
-          } else {
-            return {
-              placeId: null,
-              locationId: place.locationId,
-              date: currentDate.toISOString().slice(0, 10),
-              time: '00:00',
-            };
-          }
         }).filter(placeData => placeData !== null);
       });
 
