@@ -23,7 +23,7 @@ const PlaceInfo: React.FC = () => {
   const [diariesRes, setDiariesRes] = useState<DiariesData[]>([]);
   const place = location.state.place;
   const curr = 'main';
-
+  console.log(place);
 
   useEffect(() => {
     getData();
@@ -184,7 +184,7 @@ const PlaceInfo: React.FC = () => {
                               </div>
                           )}
                         </div>
-                        <div className="m-5 w-4/5">
+                        <div className="m-5 w-4/5 overflow-y-scroll">
                           <table>
                             <thead>
                             <tr>

@@ -24,6 +24,7 @@ import ScheduleEx from './pages/ScheduleEx';
 import MyPlanPage from './pages/MyPlanPage';
 import ViewNotice from "./pages/ViewNotice";
 import MyDiaryDetail from './pages/MyDiaryDetail';
+import MyPageSetting from './pages/MyPageSetting';
 
 function App() {
     return (
@@ -50,6 +51,7 @@ function App() {
                     <Route path="/mypage" element={<MyPage/>}/>
                     <Route path="/myplanpage" element={<MyPlanPage/>}/>
                     <Route path="/scheduleex" element={<ScheduleEx/>}/>
+                    <Route path="/mypage-setting" element={<MyPageSetting/>}/>
                 </Routes>
             </BrowserRouter>
         </AuthProvider>

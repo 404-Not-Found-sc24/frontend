@@ -31,7 +31,7 @@ const Event: React.FC = () => {
     const getNoticeData = async () => {
         try {
             await axios
-                .get(`https://api.nadueli.com/event/announce`, {
+                .get(`/event/announce`, {
                     headers: {
                         'Content-Type': 'application/json',
                     },
@@ -48,7 +48,7 @@ const Event: React.FC = () => {
     const getEventData = async () => {
         try {
             await axios
-                .get(`https://api.nadueli.com/event/event`, {
+                .get(`/event/event`, {
                     headers: {
                         'Content-Type': 'application/json',
                     },
@@ -65,7 +65,7 @@ const Event: React.FC = () => {
     const getPromoteData = async () => {
         try {
             await axios
-                .get(`https://api.nadueli.com/event/promotion`, {
+                .get(`/event/promotion`, {
                     headers: {
                         'Content-Type': 'application/json',
                     },
