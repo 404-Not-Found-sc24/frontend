@@ -38,6 +38,10 @@ const SignIn: React.FC = () => {
     }
   };
 
+  const handleFindPassword = () => {
+    navigate('/findpassword');
+  };
+
   return (
     <div className="max-w-md mx-auto mt-10 px-4">
       <h1 className="text-3xl font-semibold text-center">로그인</h1>
@@ -67,6 +71,15 @@ const SignIn: React.FC = () => {
             className="w-full px-4 py-3 uppercase bg-main-green-color rounded-lg text-white font-semibold tracking-wide focus:outline-none hover:bg-opacity-80"
           >
             로그인
+          </button>
+        </div>
+        <div className="flex items-center justify-center">
+          <button type="button" className="p-4">
+            아이디 찾기
+          </button>
+          <div className="p-4"> | </div>
+          <button type="button" onClick={handleFindPassword} className="p-4">
+            비밀번호 찾기
           </button>
         </div>
       </form>
