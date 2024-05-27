@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import Map from '../components/Map';
 import { MapProvider } from '../context/MapContext';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import PastePlace from "./PastePlace";
 
 interface Diary {
   userName: string;
@@ -16,6 +17,7 @@ interface Diary {
 }
 
 const DiaryDetail: React.FC = () => {
+  const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const Diary = location.state.PlanData;
   const [diaryData, setDiaryData] = useState<Diary>();
@@ -54,6 +56,14 @@ const DiaryDetail: React.FC = () => {
     }
   };
 
+  const handleOpenModal = useCallback(() => {
+    setIsOpen(true);
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    setIsOpen(false);
+  }, []);
+
   return (
     <div className="flex w-full h-[90%]">
       <div className="w-1/2 h-full">
@@ -83,7 +93,8 @@ const DiaryDetail: React.FC = () => {
                     </div>
                     <div className="font-['BMJUA'] text-2xl">{Diary.locationName}</div>
                   </div>
-                  <button className="w-20 h-7 bg-black rounded-2xl text-white font-['Nanum Gothic'] text-sm font-semibold">
+                  <button className="w-20 h-7 bg-black rounded-2xl text-white font-['Nanum Gothic'] text-sm font-semibold"
+                  onClick={() => handleOpenModal()}>
                     가져오기
                   </button>
                 </div>
@@ -110,6 +121,11 @@ const DiaryDetail: React.FC = () => {
             </div>
           </div>
         </div>
+        <PastePlace
+            isOpen={isOpen}
+            locationId={Diary.locationId}
+            handleCloseModal={handleCloseModal}
+        />
       </div>
       <MapProvider
           key={JSON.stringify(initialMarkers)}

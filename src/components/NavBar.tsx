@@ -43,7 +43,8 @@ const NavBar: React.FC = () => {
                 </li>
                 <li>
                   <Link
-                      to="/tour"
+                      to="/traveldes"
+                      state= {{ curr: 'tour'}}
                       className="py-4 px-3 item-center text-main-green-color font-BMJUA"
                   >
                     여행지
