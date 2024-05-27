@@ -10,7 +10,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 const MakeDiary: React.FC = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [weather, setWeather] = useState('');
+  const [weather, setWeather] = useState('맑음');
   const [images, setImages] = useState<File[]>([]);
   const [previewImages, setPreviewImages] = useState<string[]>([]);
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
