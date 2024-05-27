@@ -211,7 +211,7 @@ const PastePlace = ({ isOpen, locationId, handleCloseModal }: props) => {
                         type="number"
                         value={hour}
                         onChange={handleHourChange}
-                        className="w-[70px] h-[40px] rounded-md shadow-xl px-3 font-['Nanum Gothic'] text-md font-bold mr-3"
+                        className="w-[90px] h-[40px] rounded-md shadow-xl px-3 font-['Nanum Gothic'] text-md font-bold mr-3"
                         min="0"
                         max="23"
                         placeholder="HH"/> :
@@ -219,7 +219,7 @@ const PastePlace = ({ isOpen, locationId, handleCloseModal }: props) => {
                         type="number"
                         value={minute}
                         onChange={handleMinuteChange}
-                        className="w-[70px] h-[40px] rounded-md shadow-xl px-3 font-['Nanum Gothic'] text-md font-bold ml-3"
+                        className="w-[90px] h-[40px] rounded-md shadow-xl px-3 font-['Nanum Gothic'] text-md font-bold ml-3"
                         min="0"
                         max="59"
                         placeholder="MM"/>

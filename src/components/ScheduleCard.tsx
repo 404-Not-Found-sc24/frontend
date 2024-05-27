@@ -66,19 +66,6 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({ data, onDeleteSchedule }) =
     };
 
 
-<<<<<<< HEAD
-    const notifySuccess = () =>
-        toast.success('일정이 성공적으로 삭제되었습니다.', {
-            position: 'top-center',
-        });
-    const notifyError = () =>
-        toast.error('일정 삭제 중 오류가 발생했습니다.', {
-            position: 'top-center',
-        });
-
-=======
->>>>>>> dev
-
     const deleteSchedule = async (scheduleId: number) => {
         try {
             // 복사된 일정 데이터를 서버에 전송하여 저장합니다.
