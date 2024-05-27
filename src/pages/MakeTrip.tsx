@@ -209,11 +209,11 @@ const MakeTrip = ({ isOpen, city, cityDetail, imageUrl, handleCloseModal }: prop
           <>
             {step === 1 && (
               <>
-                <div className="font-['Nanum Gothic'] text-3xl font-semibold text-black mb-5">
+                <div className="font-['Nanum Gothic'] w-full h-full text-lg sm:text-3xl md:text-3xl lg:text-3xl xl:text-3xl font-semibold text-black mb-5">
                   {city}
                 </div>
-                <div className="flex justify-between items-center w-full h-full">
-                  <div className="mr-5 w-full h-full">{cityDetail}</div>
+                <div className="flex flex-col sm:flex-row md:flex-row lg:flex-row xl:flex-row justify-between items-center w-full h-full">
+                  <div className="mr-5 w-full h-full text-xs sm:text-md md:text-md lg:text-lg xl:text-lg">{cityDetail}</div>
                   <div className="w-full h-full flex justify-center">
                     <img src={imageUrl} className="max-h-80 object-cover" alt="지역소개사진"></img>
                   </div>
