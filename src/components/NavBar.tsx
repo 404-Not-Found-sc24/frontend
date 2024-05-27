@@ -25,14 +25,14 @@ const NavBar: React.FC = () => {
           to="/"
           className="flex items-center space-x-3 rtl:space-x-reverse"
         >
-          <span className="self-center text-3xl font-Dongle-Regular whitespace-nowrap text-main-green-color">
+          <span className="self-center text-5xl font-Dongle-Regular whitespace-nowrap text-main-green-color">
             나들이
           </span>
         </Link>
         <div className="hidden w-full md:block md:w-auto" id="navbar-default">
           <div>
             {isAuthenticated ? (
-              <ul className="font-medium flex p-4 md:p-0 mt-4 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white">
+              <ul className="font-5xl flex p-4 md:p-0 mt-4 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white items-center">
                 <li>
                   <Link
                     to="/event"
@@ -42,12 +42,12 @@ const NavBar: React.FC = () => {
                   </Link>
                 </li>
                 <li>
-                  <button
-                    className="pb-4 px-3 item-center text-main-green-color font-BMJUA"
-                    onClick={() => navigateToTravel('tour')}
+                  <Link
+                      to="/tour"
+                      className="py-4 px-3 item-center text-main-green-color font-BMJUA"
                   >
                     여행지
-                  </button>
+                  </Link>
                 </li>
                 <li>
                   <Link
@@ -68,7 +68,7 @@ const NavBar: React.FC = () => {
                 </li>
               </ul>
             ) : (
-              <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white">
+              <ul className="font-2xl flex flex-col p-4 md:p-0 mt-4 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white items-center">
                 <li>
                   <Link
                     to="/signup"
