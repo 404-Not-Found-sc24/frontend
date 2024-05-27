@@ -24,6 +24,7 @@ import ScheduleEx from './pages/ScheduleEx';
 import MyPlanPage from './pages/MyPlanPage';
 import ViewNotice from './pages/ViewNotice';
 import MyDiaryDetail from './pages/MyDiaryDetail';
+import MyPageSetting from './pages/MyPageSetting';
 import FindEmail from './pages/FindEmail';
 import FindPassword from './pages/FindPassword';
 
@@ -54,6 +55,7 @@ function App() {
           <Route path="/scheduleex" element={<ScheduleEx />} />
           <Route path="/findpassword" element={<FindPassword />} />
           <Route path="/findemail" element={<FindEmail />} />
+          <Route path="/mypage-setting" element={<MyPageSetting/>}/>
         </Routes>
       </BrowserRouter>
     </AuthProvider>

@@ -24,6 +24,7 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({ data, onDeleteSchedule }) =
     const [differenceInDays, setDifferenceInDays] = useState<number>();
     const { accessToken, refreshAccessToken } = useAuth();
     const navigate = useNavigate();
+    const [showDeletePopup, setShowDeletePopup] = useState<boolean>(false);
 
     useEffect(() => {
         checkDate();
@@ -57,22 +58,12 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({ data, onDeleteSchedule }) =
         navigate("/myplanpage", { state: { data } });
     };
 
-    const handleDeleteSchedule = async (e: React.MouseEvent<HTMLImageElement, MouseEvent>, scheduleId: number) => {
+    const handleDeleteSchedule = async (e: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
         e.stopPropagation(); // 클릭 이벤트 전파 방지
         // 일정 삭제 처리
-        await deleteSchedule(scheduleId);
+        setShowDeletePopup(true);
         // 알림 또는 다른 작업 수행
     };
-
-
-    const notifySuccess = () =>
-        toast.success('일정이 성공적으로 삭제되었습니다.', {
-            position: 'top-center',
-        });
-    const notifyError = () =>
-        toast.error('일정 삭제 중 오류가 발생했습니다.', {
-            position: 'top-center',
-        });
 
 
     const deleteSchedule = async (scheduleId: number) => {
@@ -83,8 +74,8 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({ data, onDeleteSchedule }) =
             });
             // 저장이 완료되면 사용자에게 알립니다. (예: 모달, 알림 등)
             console.log('일정이 성공적으로 삭제되었습니다:', response.data);
-            notifySuccess();
             onDeleteSchedule(scheduleId);
+            setShowDeletePopup(false);
         } catch (error) {
             if (
                 (error as AxiosError).response &&
@@ -96,15 +87,24 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({ data, onDeleteSchedule }) =
                     // 여기에서는 재시도 로직을 추가할 수 있습니다.
                 } catch (refreshError) {
                     console.error('Failed to refresh access token:', refreshError);
-                    notifyError();
                     // 액세스 토큰 갱신에 실패한 경우 사용자에게 알립니다.
                 }
             } else {
                 console.error('일정 삭제 중 오류 발생:', error);
-                notifyError();
             }
         }
     }
+
+
+    const handlePopupClose = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        e.stopPropagation();
+        setShowDeletePopup(false);
+    };
+
+    const handleConfirmClick = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        e.stopPropagation();
+        await deleteSchedule(scheduleId); // 일정 삭제
+    };
 
     return (
         <div className='w-full flex p-5 h-44 shadow-md' onClick={() => handleScheduleClick(data)}>
@@ -131,10 +131,21 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({ data, onDeleteSchedule }) =
                     </div>
                     <div className='flex justify-between'>
                         <div className='texl-lg font-medium'>{startDate} ~ {endDate}</div>
-                        <img src={`${process.env.PUBLIC_URL}/image/recycle-bin.png`} alt="휴지통" className='w-5 h-5 text-main-red-color' onClick={(e) => handleDeleteSchedule(e, data.scheduleId)}></img>
+                        <img src={`${process.env.PUBLIC_URL}/image/recycle-bin.png`} alt="휴지통" className='w-5 h-5 text-main-red-color' onClick={(e) => handleDeleteSchedule(e)}></img>
                     </div>
                 </div>
             </div>
+            {showDeletePopup && (
+                <div className="popup absolute top-0 left-0 w-full h-full bg-black/50 flex justify-center">
+                    <div className='bg-white p-3 rounded mt-10 w-1/3 h-36 flex items-center flex-col'>
+                        <div className='h-24 flex items-center'>일정을 삭제하시겠습니까?</div>
+                        <div>
+                            <button onClick={handlePopupClose} className='w-16 text-white bg-main-red-color py-0.5 px-3 mr-3'>취소</button>
+                            <button onClick={handleConfirmClick} className='w-16 text-white bg-main-red-color py-0.5 px-3'>확인</button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

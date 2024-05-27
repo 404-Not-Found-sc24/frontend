@@ -35,8 +35,9 @@ const MyPage: React.FC = () => {
   const [beforeTravel, setBeforeTravel] = useState<ScheduleData[]>([]);
   const [traveling, setTraveling] = useState<ScheduleData[]>([]);
   const [afterTravel, setAfterTravel] = useState<ScheduleData[]>([]);
-  const [userInfo, setUserInfo] = useState<UserInfo>();
+  const [userInfo, setUserInfo] = useState<UserInfo | undefined>(undefined);
   const [activeTab, setActiveTab] = useState('여행 전');
+  const [showSuccessPopup, setShowSuccessPopup] = useState<boolean>(false);
 
   const { refreshAccessToken } = useAuth();
   const accessToken = localStorage.getItem('accessToken');
@@ -106,7 +107,13 @@ const MyPage: React.FC = () => {
     });
   };
 
+  const navigateToSetting = (data: UserInfo) => {
+    navigate("/mypage-setting", { state: { data } });
+  };
+
   const onDeleteSchedule = (scheduleId: number) => {
+
+    setShowSuccessPopup(true);
     // 일정 삭제 후 상태 업데이트
     if (activeTab === '여행 전') {
       const updatedSchedules = beforeTravel.filter(schedule => schedule.scheduleId !== scheduleId);
@@ -133,7 +140,7 @@ const MyPage: React.FC = () => {
     setActiveTab(tab);
   };
 
-  const renderScheduleCards = (scheduleData:ScheduleData[], onDeleteSchedule:(scheduleId: number) => void) => {
+  const renderScheduleCards = (scheduleData: ScheduleData[], onDeleteSchedule: (scheduleId: number) => void) => {
     return (
       <div>
         {scheduleData.map((data: ScheduleData, index: number) => {
@@ -150,9 +157,12 @@ const MyPage: React.FC = () => {
     );
   };
 
+  const handlePopupClose = () => {
+    setShowSuccessPopup(false);
+  };
+
   return (
     <div >
-      <ToastContainer />
       <div className="h-[22rem]">
         <div className="w-full h-44 bg-main-red-color"></div>
         <div className="relative flex justify-center">
@@ -170,12 +180,18 @@ const MyPage: React.FC = () => {
             />
           }
           <h1 className="absolute top-16 text-3xl font-medium">{userInfo?.nickname}</h1>
-          <Link
-            to="/"
+          <button
+            onClick={() => {
+              if (userInfo) {
+                navigateToSetting(userInfo);
+              } else {
+                console.log("User info is not available");
+              }
+            }}
             className="text-ms text-main-green-color font-Nanum Gothic underline underline-offset-4 absolute top-28"
           >
             사용자 설정
-          </Link>
+          </button>
         </div>
       </div>
       <div className="flex justify-center ">
@@ -230,7 +246,7 @@ const MyPage: React.FC = () => {
           </div>
           <div>
             {activeTab === '여행 전' && (beforeTravel.length > 0 ? (
-             renderScheduleCards(beforeTravel, onDeleteSchedule)
+              renderScheduleCards(beforeTravel, onDeleteSchedule)
             ) : (
               <div className="flex justify-center items-center h-44 shadow-md">
                 <div className="text-slate-300 font-bold text-3xl">
@@ -239,7 +255,7 @@ const MyPage: React.FC = () => {
               </div>
             ))}
             {activeTab === '여행 중' && (traveling.length > 0 ? (
-             renderScheduleCards(traveling, onDeleteSchedule)
+              renderScheduleCards(traveling, onDeleteSchedule)
             ) : (
               <div className="flex justify-center items-center h-44 shadow-md">
                 <div className="text-slate-300 font-bold text-3xl">
@@ -248,7 +264,7 @@ const MyPage: React.FC = () => {
               </div>
             ))}
             {activeTab === '여행 후' && (afterTravel.length > 0 ? (
-             renderScheduleCards(afterTravel, onDeleteSchedule)
+              renderScheduleCards(afterTravel, onDeleteSchedule)
             ) : (
               <div className="flex justify-center items-center h-44 shadow-md">
                 <div className="text-slate-300 font-bold text-3xl">
@@ -259,6 +275,14 @@ const MyPage: React.FC = () => {
           </div>
         </div>
       </div>
+      {showSuccessPopup && (
+        <div className="popup absolute top-0 l-0 w-full h-full bg-black/50 flex justify-center">
+          <div className='bg-white p-3 rounded mt-10 w-1/3 h-36 flex items-center flex-col'>
+            <div className='h-24 flex items-center'>일정이 삭제되었습니다.</div>
+            <button onClick={handlePopupClose} className='w-16 text-white bg-main-red-color py-0.5 px-3'>확인</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
