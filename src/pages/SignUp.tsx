@@ -31,7 +31,10 @@ const SignUp: React.FC = () => {
         '닉네임에 특수문자가 포함되면 안되고 숫자로 시작하면 안됩니다!',
       )
       .required('닉네임을 입력하세요!'),
-    phone: Yup.string().required('전화번호를 입력하세요!'),
+    phone: Yup.string()
+      .matches(/^[0-9-]+$/, '전화번호는 숫자만 포함해야 합니다!')
+      .matches(/^\d{3}-\d{4}-\d{4}$/, '전화번호 형식이 올바르지 않습니다!')
+      .required('전화번호를 입력하세요!'),
     password: Yup.string()
       .min(8, '비밀번호는 최소 8자리 이상입니다')
       .max(16, '비밀번호는 최대 16자리입니다!')
@@ -41,6 +44,15 @@ const SignUp: React.FC = () => {
         '알파벳, 숫자, 공백을 제외한 특수문자를 모두 포함해야 합니다!',
       ),
   });
+
+  const formatPhoneNumber = (phone: string) => {
+    const cleaned = ('' + phone).replace(/\D/g, '');
+    const match = cleaned.match(/^(\d{3})(\d{3,4})(\d{4})$/);
+    if (match) {
+      return `${match[1]}-${match[2]}-${match[3]}`;
+    }
+    return phone;
+  };
 
   const submit = async (values: {
     name: string;
@@ -97,7 +109,7 @@ const SignUp: React.FC = () => {
       onSubmit={submit}
       validateOnMount={true}
     >
-      {({ values, handleSubmit, handleChange, errors }) => (
+      {({ values, handleSubmit, handleChange, setFieldValue, errors }) => (
         <div className="max-w-sm mx-auto mt-8">
           <ToastContainer />
           <form onSubmit={handleSubmit} autoComplete="off">
@@ -152,7 +164,9 @@ const SignUp: React.FC = () => {
                 name="phone"
                 type="phone"
                 value={values.phone}
-                onChange={handleChange}
+                onChange={(e) => {
+                  setFieldValue('phone', formatPhoneNumber(e.target.value));
+                }}
                 className="w-full p-2 border rounded"
               />
               <div className="text-red-500">{errors.phone}</div>
