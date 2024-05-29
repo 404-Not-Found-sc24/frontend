@@ -27,6 +27,7 @@ import MyDiaryDetail from './pages/MyDiaryDetail';
 import MyPageSetting from './pages/MyPageSetting';
 import FindEmail from './pages/FindEmail';
 import FindPassword from './pages/FindPassword';
+import PrivateRoute from './components/PrivateRoute';
 
 function App() {
   return (
@@ -35,27 +36,29 @@ function App() {
         <NavBar />
         <Routes>
           <Route path="/" element={<Main />} />
-          <Route path="/makediary" element={<MakeDiary />} />
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
-          <Route path="/makeplan" element={<MakePlan />} />
           <Route path="/placeinfo" element={<PlaceInfo />} />
           <Route path="/searchplace" element={<SearchPlace />} />
-          <Route path="/searchtraveldes" element={<SearchTravelDes />} />
-          <Route path="/traveldes" element={<Travledes />} />
-          <Route path="/plandetail" element={<PlanDetail />} />
-          <Route path="/diarydetail" element={<DiaryDetail />} />
-          <Route path="/mydiarydetail" element={<MyDiaryDetail />} />
-          <Route path="/addplaceform" element={<AddPlaceForm />} />
           <Route path="/event" element={<EventPage />} />
           <Route path="/notice/view" element={<ViewNotice />} />
-          <Route path="myplan" element={<MyPlan />} />
-          <Route path="/mypage" element={<MyPage />} />
-          <Route path="/myplanpage" element={<MyPlanPage />} />
-          <Route path="/scheduleex" element={<ScheduleEx />} />
           <Route path="/findpassword" element={<FindPassword />} />
           <Route path="/findemail" element={<FindEmail />} />
-          <Route path="/mypage-setting" element={<MyPageSetting/>}/>
+          <Route element={<PrivateRoute />}>
+            <Route path="/makediary" element={<MakeDiary />} />
+            <Route path="/makeplan" element={<MakePlan />} />
+            <Route path="/plandetail" element={<PlanDetail />} />
+            <Route path="/diarydetail" element={<DiaryDetail />} />
+            <Route path="/mydiarydetail" element={<MyDiaryDetail />} />
+            <Route path="/addplaceform" element={<AddPlaceForm />} />
+            <Route path="/searchtraveldes" element={<SearchTravelDes />} />
+            <Route path="/traveldes" element={<Travledes />} />
+            <Route path="myplan" element={<MyPlan />} />
+            <Route path="/mypage" element={<MyPage />} />
+            <Route path="/myplanpage" element={<MyPlanPage />} />
+            <Route path="/scheduleex" element={<ScheduleEx />} />
+            <Route path="/mypage-setting" element={<MyPageSetting />} />
+          </Route>
         </Routes>
       </BrowserRouter>
     </AuthProvider>
