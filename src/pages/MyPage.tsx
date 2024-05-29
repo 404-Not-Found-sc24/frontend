@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import ScheduleCard from '../components/ScheduleCard';
 import { useAuth } from '../context/AuthContext';
 import axios, { AxiosError } from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
 
 interface ScheduleData {
   scheduleId: number;
@@ -24,28 +25,23 @@ interface UserInfo {
   imageUrl: string;
 }
 
+interface ScheduleList {
+  beforeTravel: ScheduleData[];
+  traveling: ScheduleData[];
+  afterTravel: ScheduleData[];
+}
+
 const MyPage: React.FC = () => {
   const [beforeTravel, setBeforeTravel] = useState<ScheduleData[]>([]);
   const [traveling, setTraveling] = useState<ScheduleData[]>([]);
   const [afterTravel, setAfterTravel] = useState<ScheduleData[]>([]);
   const [userInfo, setUserInfo] = useState<UserInfo | undefined>(undefined);
-  const [activeTab, setActiveTab] = useState<'여행 전' | '여행 중' | '여행 후'>(
-    '여행 전',
-  );
+  const [activeTab, setActiveTab] = useState('여행 전');
   const [showSuccessPopup, setShowSuccessPopup] = useState<boolean>(false);
 
   const { refreshAccessToken } = useAuth();
   const accessToken = localStorage.getItem('accessToken');
   const navigate = useNavigate();
-
-  const tabs = useMemo(
-    () => [
-      { label: '여행 전', key: 'beforeTravel' },
-      { label: '여행 중', key: 'traveling' },
-      { label: '여행 후', key: 'afterTravel' },
-    ],
-    [],
-  );
 
   const getSchedules = async () => {
     try {
@@ -64,8 +60,11 @@ const MyPage: React.FC = () => {
       ) {
         try {
           await refreshAccessToken();
+          // 새로운 액세스 토큰으로 다시 요청을 보냅니다.
+          // 여기에서는 재시도 로직을 추가할 수 있습니다.
         } catch (refreshError) {
           console.error('Failed to refresh access token:', refreshError);
+          // 액세스 토큰 갱신에 실패한 경우 사용자에게 알립니다.
         }
       } else {
         console.error('일정 조회 중 오류 발생:', error);
@@ -88,8 +87,11 @@ const MyPage: React.FC = () => {
       ) {
         try {
           await refreshAccessToken();
+          // 새로운 액세스 토큰으로 다시 요청을 보냅니다.
+          // 여기에서는 재시도 로직을 추가할 수 있습니다.
         } catch (refreshError) {
           console.error('Failed to refresh access token:', refreshError);
+          // 액세스 토큰 갱신에 실패한 경우 사용자에게 알립니다.
         }
       } else {
         console.error('일정 조회 중 오류 발생:', error);
@@ -111,6 +113,7 @@ const MyPage: React.FC = () => {
 
   const onDeleteSchedule = (scheduleId: number) => {
     setShowSuccessPopup(true);
+    // 일정 삭제 후 상태 업데이트
     if (activeTab === '여행 전') {
       const updatedSchedules = beforeTravel.filter(
         (schedule) => schedule.scheduleId !== scheduleId,
@@ -133,6 +136,10 @@ const MyPage: React.FC = () => {
     getSchedules();
     getUserInfo();
   }, [refreshAccessToken]);
+
+  const handleTabClick = (tab: string) => {
+    setActiveTab(tab);
+  };
 
   const renderScheduleCards = (
     scheduleData: ScheduleData[],
@@ -157,17 +164,6 @@ const MyPage: React.FC = () => {
   const handlePopupClose = () => {
     setShowSuccessPopup(false);
   };
-
-  const scheduleData = useMemo(() => {
-    const scheduleMap: {
-      [key in '여행 전' | '여행 중' | '여행 후']: ScheduleData[];
-    } = {
-      '여행 전': beforeTravel,
-      '여행 중': traveling,
-      '여행 후': afterTravel,
-    };
-    return scheduleMap[activeTab] || [];
-  }, [activeTab, beforeTravel, traveling, afterTravel]);
 
   return (
     <div>
@@ -223,35 +219,72 @@ const MyPage: React.FC = () => {
           </div>
           <div className="w-full flex justify-center">
             <div className="flex pt-4 w-full">
-              {tabs.map((tab) => (
-                <div
-                  key={tab.key}
-                  className={`mx-auto justify-center py-2 text-center w-1/2 border-main-red-color font-BMJUA text-2xl cursor-pointer ${
-                    activeTab === tab.label
-                      ? 'border-x-2 border-t-2 rounded-t-lg text-main-red-color'
-                      : 'border-b-2'
-                  }`}
-                  onClick={() =>
-                    setActiveTab(tab.label as '여행 전' | '여행 중' | '여행 후')
-                  }
-                >
-                  {tab.label}
-                </div>
-              ))}
+              <div
+                id="1"
+                className={`mx-auto justify-center py-2 text-center w-1/2 border-main-red-color font-BMJUA text-2xl cursor-pointer ${
+                  activeTab === '여행 전'
+                    ? 'border-x-2 border-t-2 rounded-t-lg text-main-red-color'
+                    : 'border-b-2'
+                }`}
+                onClick={() => handleTabClick('여행 전')}
+              >
+                여행 전
+              </div>
+              <div
+                id="2"
+                className={`mx-auto justify-center py-2 text-center w-1/2 border-main-red-color font-BMJUA text-2xl cursor-pointer ${
+                  activeTab === '여행 중'
+                    ? 'border-x-2 border-t-2 rounded-t-lg text-main-red-color'
+                    : 'border-b-2'
+                }`}
+                onClick={() => handleTabClick('여행 중')}
+              >
+                여행 중
+              </div>
+              <div
+                id="3"
+                className={`mx-auto justify-center py-2 text-center w-1/2 border-main-red-color font-BMJUA text-2xl cursor-pointer ${
+                  activeTab === '여행 후'
+                    ? 'border-x-2 border-t-2 rounded-t-lg text-main-red-color'
+                    : 'border-b-2'
+                }`}
+                onClick={() => handleTabClick('여행 후')}
+              >
+                여행 후
+              </div>
             </div>
           </div>
           <div>
-            {scheduleData.length > 0 ? (
-              renderScheduleCards(scheduleData, onDeleteSchedule)
-            ) : (
-              <div className="flex justify-center items-center h-44 shadow-md">
-                <div className="text-slate-300 font-bold text-3xl">
-                  {activeTab === '여행 전' && '계획 중인 여행이 없습니다.'}
-                  {activeTab === '여행 중' && '여행 중인 일정이 없습니다.'}
-                  {activeTab === '여행 후' && '종료된 여행이 없습니다.'}
+            {activeTab === '여행 전' &&
+              (beforeTravel.length > 0 ? (
+                renderScheduleCards(beforeTravel, onDeleteSchedule)
+              ) : (
+                <div className="flex justify-center items-center h-44 shadow-md">
+                  <div className="text-slate-300 font-bold text-3xl">
+                    계획 중인 여행이 없습니다.
+                  </div>
                 </div>
-              </div>
-            )}
+              ))}
+            {activeTab === '여행 중' &&
+              (traveling.length > 0 ? (
+                renderScheduleCards(traveling, onDeleteSchedule)
+              ) : (
+                <div className="flex justify-center items-center h-44 shadow-md">
+                  <div className="text-slate-300 font-bold text-3xl">
+                    여행 중인 일정이 없습니다.
+                  </div>
+                </div>
+              ))}
+            {activeTab === '여행 후' &&
+              (afterTravel.length > 0 ? (
+                renderScheduleCards(afterTravel, onDeleteSchedule)
+              ) : (
+                <div className="flex justify-center items-center h-44 shadow-md">
+                  <div className="text-slate-300 font-bold text-3xl">
+                    종료된 여행이 없습니다.
+                  </div>
+                </div>
+              ))}
           </div>
         </div>
       </div>
