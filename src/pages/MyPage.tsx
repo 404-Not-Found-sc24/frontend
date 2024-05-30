@@ -26,9 +26,9 @@ interface UserInfo {
 }
 
 interface ScheduleList {
-  beforeTravel: ScheduleData[],
-  traveling: ScheduleData[],
-  afterTravel: ScheduleData[]
+  beforeTravel: ScheduleData[];
+  traveling: ScheduleData[];
+  afterTravel: ScheduleData[];
 }
 
 const MyPage: React.FC = () => {
@@ -97,7 +97,7 @@ const MyPage: React.FC = () => {
         console.error('일정 조회 중 오류 발생:', error);
       }
     }
-  }
+  };
 
   const navigateToTravel = (curr: string) => {
     navigate('/traveldes', {
@@ -108,28 +108,29 @@ const MyPage: React.FC = () => {
   };
 
   const navigateToSetting = (data: UserInfo) => {
-    navigate("/mypage-setting", { state: { data } });
+    navigate('/mypage-setting', { state: { data } });
   };
 
   const onDeleteSchedule = (scheduleId: number) => {
-
     setShowSuccessPopup(true);
     // 일정 삭제 후 상태 업데이트
     if (activeTab === '여행 전') {
-      const updatedSchedules = beforeTravel.filter(schedule => schedule.scheduleId !== scheduleId);
+      const updatedSchedules = beforeTravel.filter(
+        (schedule) => schedule.scheduleId !== scheduleId,
+      );
       setBeforeTravel(updatedSchedules);
-    }
-    else if (activeTab === '여행 중') {
-      const updatedSchedules = traveling.filter(schedule => schedule.scheduleId !== scheduleId);
+    } else if (activeTab === '여행 중') {
+      const updatedSchedules = traveling.filter(
+        (schedule) => schedule.scheduleId !== scheduleId,
+      );
       setTraveling(updatedSchedules);
-    }
-    else if (activeTab === '여행 후') {
-      const updatedSchedules = afterTravel.filter(schedule => schedule.scheduleId !== scheduleId);
+    } else if (activeTab === '여행 후') {
+      const updatedSchedules = afterTravel.filter(
+        (schedule) => schedule.scheduleId !== scheduleId,
+      );
       setAfterTravel(updatedSchedules);
     }
-
   };
-
 
   useEffect(() => {
     getSchedules();
@@ -140,7 +141,10 @@ const MyPage: React.FC = () => {
     setActiveTab(tab);
   };
 
-  const renderScheduleCards = (scheduleData: ScheduleData[], onDeleteSchedule: (scheduleId: number) => void) => {
+  const renderScheduleCards = (
+    scheduleData: ScheduleData[],
+    onDeleteSchedule: (scheduleId: number) => void,
+  ) => {
     return (
       <div>
         {scheduleData.map((data: ScheduleData, index: number) => {
@@ -162,30 +166,32 @@ const MyPage: React.FC = () => {
   };
 
   return (
-    <div >
+    <div>
       <div className="h-[22rem]">
         <div className="w-full h-44 bg-main-red-color"></div>
         <div className="relative flex justify-center">
-          {userInfo?.imageUrl == null ?
+          {userInfo?.imageUrl == null ? (
             <img
               src={`${process.env.PUBLIC_URL}/image/user.png`}
               alt="유저 기본 이미지"
               className="absolute w-24 h-24 -top-10 bg-white rounded-full"
             />
-            :
+          ) : (
             <img
               src={userInfo.imageUrl}
               alt="유저 프로필 이미지"
               className="absolute w-24 h-24 -top-10 bg-white rounded-full"
             />
-          }
-          <h1 className="absolute top-16 text-3xl font-medium">{userInfo?.nickname}</h1>
+          )}
+          <h1 className="absolute top-16 text-3xl font-medium">
+            {userInfo?.nickname}
+          </h1>
           <button
             onClick={() => {
               if (userInfo) {
                 navigateToSetting(userInfo);
               } else {
-                console.log("User info is not available");
+                console.log('User info is not available');
               }
             }}
             className="text-ms text-main-green-color font-Nanum Gothic underline underline-offset-4 absolute top-28"
@@ -204,7 +210,8 @@ const MyPage: React.FC = () => {
                 {beforeTravel.length + traveling.length + afterTravel.length}
               </h1>
             </div>
-            <button className="bg-main-red-color text-white rounded-full px-3 py-1"
+            <button
+              className="bg-main-red-color text-white rounded-full px-3 py-1"
               onClick={() => navigateToTravel('schedule')}
             >
               + 일정 추가
@@ -214,30 +221,33 @@ const MyPage: React.FC = () => {
             <div className="flex pt-4 w-full">
               <div
                 id="1"
-                className={`mx-auto justify-center py-2 text-center w-1/2 border-main-red-color font-BMJUA text-2xl cursor-pointer ${activeTab === '여행 전'
-                  ? 'border-x-2 border-t-2 rounded-t-lg text-main-red-color'
-                  : 'border-b-2'
-                  }`}
+                className={`mx-auto justify-center py-2 text-center w-1/2 border-main-red-color font-BMJUA text-2xl cursor-pointer ${
+                  activeTab === '여행 전'
+                    ? 'border-x-2 border-t-2 rounded-t-lg text-main-red-color'
+                    : 'border-b-2'
+                }`}
                 onClick={() => handleTabClick('여행 전')}
               >
                 여행 전
               </div>
               <div
                 id="2"
-                className={`mx-auto justify-center py-2 text-center w-1/2 border-main-red-color font-BMJUA text-2xl cursor-pointer ${activeTab === '여행 중'
-                  ? 'border-x-2 border-t-2 rounded-t-lg text-main-red-color'
-                  : 'border-b-2'
-                  }`}
+                className={`mx-auto justify-center py-2 text-center w-1/2 border-main-red-color font-BMJUA text-2xl cursor-pointer ${
+                  activeTab === '여행 중'
+                    ? 'border-x-2 border-t-2 rounded-t-lg text-main-red-color'
+                    : 'border-b-2'
+                }`}
                 onClick={() => handleTabClick('여행 중')}
               >
                 여행 중
               </div>
               <div
                 id="3"
-                className={`mx-auto justify-center py-2 text-center w-1/2 border-main-red-color font-BMJUA text-2xl cursor-pointer ${activeTab === '여행 후'
-                  ? 'border-x-2 border-t-2 rounded-t-lg text-main-red-color'
-                  : 'border-b-2'
-                  }`}
+                className={`mx-auto justify-center py-2 text-center w-1/2 border-main-red-color font-BMJUA text-2xl cursor-pointer ${
+                  activeTab === '여행 후'
+                    ? 'border-x-2 border-t-2 rounded-t-lg text-main-red-color'
+                    : 'border-b-2'
+                }`}
                 onClick={() => handleTabClick('여행 후')}
               >
                 여행 후
@@ -245,41 +255,49 @@ const MyPage: React.FC = () => {
             </div>
           </div>
           <div>
-            {activeTab === '여행 전' && (beforeTravel.length > 0 ? (
-              renderScheduleCards(beforeTravel, onDeleteSchedule)
-            ) : (
-              <div className="flex justify-center items-center h-44 shadow-md">
-                <div className="text-slate-300 font-bold text-3xl">
-                  계획 중인 여행이 없습니다.
+            {activeTab === '여행 전' &&
+              (beforeTravel.length > 0 ? (
+                renderScheduleCards(beforeTravel, onDeleteSchedule)
+              ) : (
+                <div className="flex justify-center items-center h-44 shadow-md">
+                  <div className="text-slate-300 font-bold text-3xl">
+                    계획 중인 여행이 없습니다.
+                  </div>
                 </div>
-              </div>
-            ))}
-            {activeTab === '여행 중' && (traveling.length > 0 ? (
-              renderScheduleCards(traveling, onDeleteSchedule)
-            ) : (
-              <div className="flex justify-center items-center h-44 shadow-md">
-                <div className="text-slate-300 font-bold text-3xl">
-                  여행 중인 일정이 없습니다.
+              ))}
+            {activeTab === '여행 중' &&
+              (traveling.length > 0 ? (
+                renderScheduleCards(traveling, onDeleteSchedule)
+              ) : (
+                <div className="flex justify-center items-center h-44 shadow-md">
+                  <div className="text-slate-300 font-bold text-3xl">
+                    여행 중인 일정이 없습니다.
+                  </div>
                 </div>
-              </div>
-            ))}
-            {activeTab === '여행 후' && (afterTravel.length > 0 ? (
-              renderScheduleCards(afterTravel, onDeleteSchedule)
-            ) : (
-              <div className="flex justify-center items-center h-44 shadow-md">
-                <div className="text-slate-300 font-bold text-3xl">
-                  종료된 여행이 없습니다.
+              ))}
+            {activeTab === '여행 후' &&
+              (afterTravel.length > 0 ? (
+                renderScheduleCards(afterTravel, onDeleteSchedule)
+              ) : (
+                <div className="flex justify-center items-center h-44 shadow-md">
+                  <div className="text-slate-300 font-bold text-3xl">
+                    종료된 여행이 없습니다.
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
         </div>
       </div>
       {showSuccessPopup && (
         <div className="popup absolute top-0 l-0 w-full h-full bg-black/50 flex justify-center">
-          <div className='bg-white p-3 rounded mt-10 w-1/3 h-36 flex items-center flex-col'>
-            <div className='h-24 flex items-center'>일정이 삭제되었습니다.</div>
-            <button onClick={handlePopupClose} className='w-16 text-white bg-main-red-color py-0.5 px-3'>확인</button>
+          <div className="bg-white p-3 rounded mt-10 w-1/3 h-36 flex items-center flex-col">
+            <div className="h-24 flex items-center">일정이 삭제되었습니다.</div>
+            <button
+              onClick={handlePopupClose}
+              className="w-16 text-white bg-main-red-color py-0.5 px-3"
+            >
+              확인
+            </button>
           </div>
         </div>
       )}
