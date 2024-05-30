@@ -162,6 +162,7 @@ const MyPlanPage: React.FC = () => {
         name: plan.title,
         scheduleId: plan.scheduleId,
         planData: planData,
+        check: 1,
       },
     });
   };
