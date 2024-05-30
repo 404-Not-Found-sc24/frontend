@@ -28,6 +28,8 @@ import MyPageSetting from './pages/MyPageSetting';
 import FindEmail from './pages/FindEmail';
 import FindPassword from './pages/FindPassword';
 import PrivateRoute from './components/PrivateRoute';
+import AddEvent from './pages/AddEvent';
+import AddPromotion from './pages/AddPromotion';
 
 function App() {
   return (
@@ -58,6 +60,8 @@ function App() {
             <Route path="/myplanpage" element={<MyPlanPage />} />
             <Route path="/scheduleex" element={<ScheduleEx />} />
             <Route path="/mypage-setting" element={<MyPageSetting />} />
+            <Route path="/addevent" element={<AddEvent />} />
+            <Route path="/addpromotion" element={<AddPromotion />} />
           </Route>
         </Routes>
       </BrowserRouter>
