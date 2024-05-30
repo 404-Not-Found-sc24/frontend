@@ -158,10 +158,13 @@ const PlanDetail: React.FC = () => {
   };
 
   return (
-    <div className="flex w-full h-[864px]">
+    <div className="flex w-full h-[90%]">
       <div className="w-1/2 h-full">
-        <div className="flex">
-          <i className="backArrow ml-2 cursor-pointer" onClick={naviBack}></i>
+        <div className="flex w-full h-[10%]">
+          <i
+            className="backArrow w-[10%] ml-2 cursor-pointer"
+            onClick={naviBack}
+          ></i>
           <div className="flex items-center">
             <div className="font-['BMJUA'] text-3xl text-black ml-2 flex items-center">
               {plan.name}
