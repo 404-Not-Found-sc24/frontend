@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useCallback, useState } from 'react';
+import React, { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import axios, { AxiosError } from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import { useAuth } from '../context/AuthContext';
@@ -12,6 +12,15 @@ const AddPromotion: React.FC = () => {
   const [showUploadMessage, setShowUploadMessage] = useState<boolean>(true);
   const { accessToken } = useAuth();
   const navigate = useNavigate();
+  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [timeoutId]);
 
   const handleTitleChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
@@ -60,13 +69,14 @@ const AddPromotion: React.FC = () => {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-      console.log('이벤트 정보가 성공적으로 추가되었습니다:', response.data);
+      console.log('홍보 자료가 성공적으로 추가되었습니다:', response.data);
       notifySuccess();
-      setTimeout(() => {
-        navigate('/');
+      const id = setTimeout(() => {
+        navigate('/event');
       }, 3000);
+      setTimeoutId(id);
     } catch (error) {
-      console.error('이벤트 추가 중 오류 발생:', error);
+      console.error('홍보 자료 추가 중 오류 발생:', error);
       notifyError();
     }
   };

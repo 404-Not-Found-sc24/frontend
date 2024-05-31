@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useCallback, useState } from 'react';
+import React, { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import axios, { AxiosError } from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import { useAuth } from '../context/AuthContext';
@@ -12,6 +12,15 @@ const AddEvent: React.FC = () => {
   const [showUploadMessage, setShowUploadMessage] = useState<boolean>(true);
   const { accessToken } = useAuth();
   const navigate = useNavigate();
+  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null); // 타이머 ID 상태 추가
+
+  useEffect(() => {
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId); // 언마운트 시 타이머 제거
+      }
+    };
+  }, [timeoutId]);
 
   const handleTitleChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
@@ -62,9 +71,10 @@ const AddEvent: React.FC = () => {
       });
       console.log('이벤트 정보가 성공적으로 추가되었습니다:', response.data);
       notifySuccess();
-      setTimeout(() => {
+      const id = setTimeout(() => {
         navigate('/event');
       }, 3000);
+      setTimeoutId(id);
     } catch (error) {
       console.error('이벤트 추가 중 오류 발생:', error);
       notifyError();
