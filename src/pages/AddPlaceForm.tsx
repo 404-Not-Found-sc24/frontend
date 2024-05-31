@@ -19,12 +19,12 @@ const AddPlaceForm: React.FC = () => {
     images: [] as File[],
     placeId: 0,
   });
-  const [selectedLocationMessage, setSelectedLocationMessage] = useState('');
   const [previewImages, setPreviewImages] = useState<string[]>([]);
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
   const { accessToken, refreshAccessToken } = useAuth();
   const [kakaoLoaded, setKakaoLoaded] = useState(false);
   const navigate = useNavigate();
+  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null); // 타이머 ID 상태 추가
 
   useEffect(() => {
     const checkKakaoLoaded = () => {
@@ -36,6 +36,14 @@ const AddPlaceForm: React.FC = () => {
     };
     checkKakaoLoaded();
   }, []);
+
+  useEffect(() => {
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId); // 언마운트 시 타이머 제거
+      }
+    };
+  }, [timeoutId]);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -97,9 +105,10 @@ const AddPlaceForm: React.FC = () => {
       toast.success('장소 정보 제출에 성공했습니다.', {
         position: 'top-center',
       });
-      setTimeout(() => {
+      const id = setTimeout(() => {
         navigate('/');
       }, 3000);
+      setTimeoutId(id);
       // 성공적으로 제출되었을 경우 처리
     } catch (error) {
       if (
@@ -128,18 +137,6 @@ const AddPlaceForm: React.FC = () => {
 
   const handleBackButtonClick = () => {
     window.history.back();
-  };
-
-  const handlePrevImage = () => {
-    setCurrentImageIndex((prevIndex) =>
-      prevIndex === 0 ? previewImages.length - 1 : prevIndex - 1,
-    );
-  };
-
-  const handleNextImage = () => {
-    setCurrentImageIndex((prevIndex) =>
-      prevIndex === previewImages.length - 1 ? 0 : prevIndex + 1,
-    );
   };
 
   const handleAddressSearch = () => {
