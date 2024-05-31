@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
@@ -7,6 +7,15 @@ const FindPassword: React.FC = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null); // 타이머 ID 상태 추가
+
+  useEffect(() => {
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId); // 언마운트 시 타이머 제거
+      }
+    };
+  }, [timeoutId]);
 
   const navimain = () => {
     navigate('/');
@@ -49,9 +58,10 @@ const FindPassword: React.FC = () => {
           autoClose: 2000,
         },
       );
-      setTimeout(() => {
+      const id = setTimeout(() => {
         navigate('/');
       }, 2000);
+      setTimeoutId(id);
     } catch (e: any) {
       toast.error('입력하신 이메일 아이디를 찾을 수 없습니다.' + '😭', {
         position: 'top-center',
