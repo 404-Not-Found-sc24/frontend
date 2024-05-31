@@ -133,15 +133,16 @@ const MyDiaryDetail: React.FC = () => {
                         src={PlanData.imageUrl}
                         width="250px"
                         alt="지역소개사진"
-                        className="w-full h-full"
                       />
                     </div>
                     <div className="mx-10 my-5 h-full">
                       <div className="flex justify-between">
-                        <div className="font-['Nanum Gothic'] font-bold text-lg">
+                        <div className="w-[90%] font-['Nanum Gothic'] font-bold text-lg">
                           {PlanData.title}
                         </div>
-                        {Diarydata && <div>{Diarydata.weather}</div>}
+                        {Diarydata && (
+                          <div className="w-[10%]">{Diarydata.weather}</div>
+                        )}
                       </div>
                       <div className="font-['Nanum Gothic'] mt-3">
                         {PlanData.content}

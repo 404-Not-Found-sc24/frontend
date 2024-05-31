@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import Map from '../components/Map';
-import PlanDetailBox from '../components/PlanDetailBox';
 import { MapProvider } from '../context/MapContext';
 import axios, { AxiosError } from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
+import MyPlanDetailBox from '../components/MyPlanDetailBox';
 
 interface ScheduleData {
   placeId: number;
@@ -236,9 +236,10 @@ const PlanDetail: React.FC = () => {
                           index + 1,
                       )
                       .map((filteredData, dataIndex) => (
-                        <PlanDetailBox
+                        <MyPlanDetailBox
                           key={dataIndex}
                           scheduleData={filteredData}
+                          planName={plan.name}
                         />
                       ))}
                   </div>
