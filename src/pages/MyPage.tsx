@@ -54,10 +54,7 @@ const MyPage: React.FC = () => {
       setTraveling(response.data.traveling);
       setAfterTravel(response.data.afterTravel);
     } catch (error) {
-      if (
-        (error as AxiosError).response &&
-        (error as AxiosError).response?.status === 401
-      ) {
+      if ((error as AxiosError).response) {
         try {
           await refreshAccessToken();
           // 새로운 액세스 토큰으로 다시 요청을 보냅니다.
