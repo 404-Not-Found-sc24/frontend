@@ -209,6 +209,9 @@ code {
 .tab-content > div.active {
   display: block;
 }
+#active-white-bg {
+  background-color: white;
+}
 
 .active {
   background-color: #ff9a9a;
@@ -219,6 +222,7 @@ code {
   background-color: white;
   height: 100%;
 }
+
 
 /* 표 */
 table{
@@ -248,4 +252,14 @@ td{
 
 .header-center {
   text-align: center;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
