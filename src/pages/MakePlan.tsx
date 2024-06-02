@@ -41,6 +41,7 @@ const MakePlan = () => {
   const searchTerm = queryParams.get('q') || '';
   const city = queryParams.get('city') || '';
   const isLoading = useRef<boolean>(false);
+  const [times, setTimes] = useState<string[][]>([[], [], []]);
   const [state, setState] = useState<State>({
     center: {
       lat: 37.2795,
@@ -103,6 +104,22 @@ const MakePlan = () => {
     setKey(JSON.stringify(initialCenter));
   }, [initialCenter]);
 
+  const handleTimeChange = (dayIndex: number, placeIndex: number, time: string) => {
+    setTimes(prevTimes => {
+      const updatedTimes = [...prevTimes];
+      if (!updatedTimes[dayIndex-1]) {
+        updatedTimes[dayIndex-1] = [];
+      }
+      updatedTimes[dayIndex-1][placeIndex] = time;
+      return updatedTimes;
+    });
+  };
+
+
+  useEffect(() => {
+    console.log(times);
+  }, [times]);
+
   const fetchPlaceDataOnScroll = async () => {
     if (!isLoading.current) {
       isLoading.current = true;
@@ -155,20 +172,16 @@ const MakePlan = () => {
     });
   };
 
-  const generateTabs = (days: number) => {
-    const tabs = [];
+  const generateSelectOptions = (days: number) => {
+    const options = [];
     for (let i = 1; i <= days; i++) {
-      tabs.push(
-          <div
-              key={i}
-              className={`tab ${activeTab === i ? 'active' : ''}`}
-              onClick={() => handleTabClick(i)}
-          >
-            <div className="tabContent">{`${i}일차`}</div>
-          </div>,
+      options.push(
+          <option key={i} value={i}>
+            {`${i}일차`}
+          </option>
       );
     }
-    return tabs;
+    return options;
   };
 
   const handleTabClick = (index: number) => {
@@ -183,10 +196,10 @@ const MakePlan = () => {
       toast.success('장소가 성공적으로 추가되었습니다!', {
         position: 'top-center',
       });
-
   const addPlace = async () => {
     try {
       const postData = selectedPlaces.flatMap((innerArray, index) => {
+        console.log(index, innerArray);
         const startDate = new Date(tripdataRef.current.startDate);
         const currentDate = new Date(startDate);
         if (tripInfo.check === 0) {
@@ -194,13 +207,13 @@ const MakePlan = () => {
         } else {
           currentDate.setDate(startDate.getDate() + index);
         }
-
-        return innerArray.map((place) => {
+        return innerArray.map((place, innerIndex) => {
+          console.log(times[index]);
           return {
             placeId: place.placeId != null ? place.placeId : null,
             locationId: place.locationId,
             date: currentDate.toISOString().slice(0, 10),
-            time: '00:00',
+            time: times[index][innerIndex],
           };
         }).filter(placeData => placeData !== null);
       });
@@ -371,10 +384,18 @@ const MakePlan = () => {
             </div>
           </div>
           <div className="w-1/2 h-full flex">
-            <div className="tabs w-[40px]">{generateTabs(tripDays)}</div>
             <div className="flex flex-col w-full h-full border-4 border-[#FF9A9A] justify-between">
-              <div className="tab-content">
-                {Array.from({ length: tripDays }, (_, tabIndex) => (
+              <div className="select-container">
+                <select
+                    className="day-select"
+                    value={activeTab}
+                    onChange={(e) => handleTabClick(Number(e.target.value))}
+                >
+                  {generateSelectOptions(tripDays)}
+                </select>
+              </div>
+              <div className="tab-content h-[80%] overflow-y-scroll">
+                {Array.from({length: tripDays}, (_, tabIndex) => (
                     <div
                         key={tabIndex + 1}
                         id={`content${tabIndex + 1}`}
@@ -384,16 +405,16 @@ const MakePlan = () => {
                       <div className="contentBox">
                         {selectedPlaces[activeTab - 1] && (
                             <div className="w-full h-full flex flex-col items-center pt-3">
-                              {selectedPlaces[activeTab - 1].map(
-                                  (selectedPlace, index) => (
-                                      <DayPlace
-                                          key={index}
-                                          index={index}
-                                          selectedPlace={selectedPlace}
-                                          removePlace={() => removePlace(activeTab, index)}
-                                      />
-                                  ),
-                              )}
+                              {selectedPlaces[activeTab-1].map((selectedPlace, index) => (
+                                  <DayPlace
+                                      key={index}
+                                      dayIndex={activeTab}
+                                      placeIndex={index}
+                                      selectedPlace={selectedPlace}
+                                      removePlace={(dayIndex, placeIndex) => removePlace(dayIndex, placeIndex)}
+                                      onTimeChange={handleTimeChange}
+                                  />
+                              ))}
                             </div>
                         )}
                       </div>
@@ -412,7 +433,7 @@ const MakePlan = () => {
           </div>
         </div>
         <MapProvider key={key} initialCenter={initialCenter} initialMarkers={initialMarkers}>
-          <Map />
+          <Map/>
         </MapProvider>
       </div>
   );
