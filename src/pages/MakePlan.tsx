@@ -119,6 +119,15 @@ const MakePlan = () => {
   useEffect(() => {
     console.log(times);
   }, [times]);
+  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [timeoutId]);]
 
   const fetchPlaceDataOnScroll = async () => {
     if (!isLoading.current) {
@@ -225,9 +234,10 @@ const MakePlan = () => {
         },
       }).then((response) => {
         notifySuccess();
-        setTimeout(() => {
-          navigate('/');
-        }, 3000);
+        const id = setTimeout(() => {
+            navigate('/');
+          }, 3000);
+        setTimeoutId(id);
       });
     } catch (error) {
       if (
@@ -278,14 +288,14 @@ const MakePlan = () => {
             tripdataRef.current.endDate.getTime() -
             tripdataRef.current.startDate.getTime();
         const differenceInDays = Math.floor(
-            differenceInTime / (1000 * 3600 * 24)
+          differenceInTime / (1000 * 3600 * 24),
         );
         const tripDays = differenceInDays + 1;
         setTripDays(tripDays);
 
         await checkPlaces();
       }
-    }
+    };
 
     fetchData();
   }, []);

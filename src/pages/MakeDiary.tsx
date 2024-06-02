@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useCallback, useState } from 'react';
+import React, { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import axios, { AxiosError } from 'axios';
 import Map from '../components/Map';
 import '../index.css';
@@ -19,6 +19,15 @@ const MakeDiary: React.FC = () => {
   const location = useLocation();
   const PlanData = location.state.PlanData;
   const navigate = useNavigate();
+  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [timeoutId]);
 
   const initialMarkers = PlanData
     ? [
@@ -65,9 +74,10 @@ const MakeDiary: React.FC = () => {
       );
       console.log('일기가 성공적으로 작성되었습니다:', response.data);
       notifySuccess();
-      setTimeout(() => {
+      const id = setTimeout(() => {
         navigate('/mypage');
       }, 3000);
+      setTimeoutId(id);
     } catch (error) {
       if (
         (error as AxiosError).response &&

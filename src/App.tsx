@@ -15,11 +15,9 @@ import MakeDiary from './pages/MakeDiary';
 import DiaryDetail from './pages/DiaryDetail';
 import PlanDetail from './pages/PlanDetail';
 import AddPlaceForm from './pages/AddPlaceForm';
-import { MapProvider } from './context/MapContext';
 import SearchTravelDes from './pages/SearchTravelDes';
 import EventPage from './pages/Event';
 import MyPage from './pages/MyPage';
-import MyPlan from './pages/MyPlan';
 import ScheduleEx from './pages/ScheduleEx';
 import MyPlanPage from './pages/MyPlanPage';
 import ViewNotice from './pages/ViewNotice';
@@ -28,6 +26,8 @@ import MyPageSetting from './pages/MyPageSetting';
 import FindEmail from './pages/FindEmail';
 import FindPassword from './pages/FindPassword';
 import PrivateRoute from './components/PrivateRoute';
+import AddEvent from './pages/AddEvent';
+import AddPromotion from './pages/AddPromotion';
 
 function App() {
   return (
@@ -53,11 +53,12 @@ function App() {
             <Route path="/addplaceform" element={<AddPlaceForm />} />
             <Route path="/searchtraveldes" element={<SearchTravelDes />} />
             <Route path="/traveldes" element={<Travledes />} />
-            <Route path="myplan" element={<MyPlan />} />
             <Route path="/mypage" element={<MyPage />} />
             <Route path="/myplanpage" element={<MyPlanPage />} />
             <Route path="/scheduleex" element={<ScheduleEx />} />
             <Route path="/mypage-setting" element={<MyPageSetting />} />
+            <Route path="/addevent" element={<AddEvent />} />
+            <Route path="/addpromotion" element={<AddPromotion />} />
           </Route>
         </Routes>
       </BrowserRouter>

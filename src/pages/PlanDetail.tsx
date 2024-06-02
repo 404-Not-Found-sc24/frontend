@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import Map from '../components/Map';
-import PlanDetailBox from '../components/PlanDetailBox';
 import { MapProvider } from '../context/MapContext';
 import axios, { AxiosError } from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
+import MyPlanDetailBox from '../components/MyPlanDetailBox';
 
 interface ScheduleData {
   placeId: number;
@@ -34,6 +34,7 @@ const PlanDetail: React.FC = () => {
   const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1;
   const { refreshAccessToken } = useAuth();
   const accessToken = localStorage.getItem('accessToken');
+  const [dropdownVisible, setDropdownVisible] = useState<boolean>(false);
 
   const initialMarkers = scheduleData.map(
     ({ placeId, latitude, longitude }) => ({
@@ -61,11 +62,12 @@ const PlanDetail: React.FC = () => {
     });
   const handleTabClick = (tab: number) => {
     setActiveTab(tab);
+    setDropdownVisible(false); // 드롭다운 닫기
   };
-  // Tab 생성
+
   const generateTabs = () => {
     const tabs = [];
-    for (let i = 1; i <= diffDays; i++) {
+    for (let i = 1; i <= 5 && i <= diffDays; i++) {
       tabs.push(
         <button
           key={i}
@@ -76,6 +78,37 @@ const PlanDetail: React.FC = () => {
         >
           {`${i}일차`}
         </button>,
+      );
+    }
+    if (diffDays > 5) {
+      tabs.push(
+        <div key="more" className="relative w-16 h-full">
+          <button
+            className={`w-16 h-full bg-[#FF9A9A] rounded-2xl text-white font-['BMJUA'] text-sm mr-2 ${
+              activeTab > 5 ? '' : 'opacity-50'
+            }`}
+            onClick={() => setDropdownVisible(!dropdownVisible)}
+          >
+            ...
+          </button>
+          {dropdownVisible && (
+            <div className="absolute w-24 z-10 mt-2">
+              {Array.from({ length: diffDays - 5 }, (_, i) => i + 6).map(
+                (day) => (
+                  <button
+                    key={day}
+                    className={`block w-full my-1 px-4 py-2 bg-[#FF9A9A] rounded-2xl text-white font-['BMJUA'] text-sm mr-2 opacity-50 hover:opacity-100 ${
+                      activeTab === day ? 'opacity-100' : 'opacity-50'
+                    }`}
+                    onClick={() => handleTabClick(day)}
+                  >
+                    {`${day}일차`}
+                  </button>
+                ),
+              )}
+            </div>
+          )}
+        </div>,
       );
     }
     return tabs;
@@ -185,32 +218,33 @@ const PlanDetail: React.FC = () => {
                 가져오기
               </button>
             </div>
-            {Array.from({length: diffDays}, (_, index) => (
-                <div key={index}>
-                  {activeTab === index + 1 && (
-                      <div>
-                        {scheduleData
-                            .filter(
-                                (data) =>
-                                    Math.ceil(
-                                        Math.abs(
-                                            new Date(data.date).getTime() -
-                                            startDate.getTime(),
-                                        ) /
-                                        (1000 * 3600 * 24) +
-                                        1,
-                                    ) ===
-                                    index + 1,
-                            )
-                            .map((filteredData, dataIndex) => (
-                                <PlanDetailBox
-                                    key={dataIndex}
-                                    scheduleData={filteredData}
-                                />
-                            ))}
-                      </div>
-                  )}
-                </div>
+            {Array.from({ length: diffDays }, (_, index) => (
+              <div key={index}>
+                {activeTab === index + 1 && (
+                  <div>
+                    {scheduleData
+                      .filter(
+                        (data) =>
+                          Math.ceil(
+                            Math.abs(
+                              new Date(data.date).getTime() -
+                                startDate.getTime(),
+                            ) /
+                              (1000 * 3600 * 24) +
+                              1,
+                          ) ===
+                          index + 1,
+                      )
+                      .map((filteredData, dataIndex) => (
+                        <MyPlanDetailBox
+                          key={dataIndex}
+                          scheduleData={filteredData}
+                          planName={plan.name}
+                        />
+                      ))}
+                  </div>
+                )}
+              </div>
             ))}
           </div>
         </div>
