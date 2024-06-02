@@ -6,5 +6,5 @@
 **국내 여행 계획 및 일기 기록 서비스**
 <br/><br/>
 ## 서비스 URL
-https://nadeuli.com
+https://nadueli.com
 <br/><br/>

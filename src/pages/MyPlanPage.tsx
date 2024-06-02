@@ -26,6 +26,7 @@ const MyPlanPage: React.FC = () => {
   const scheduleId = location.state.data.scheduleId;
   const accessToken = localStorage.getItem('accessToken');
   const [activeTab, setActiveTab] = useState<number>(1);
+  const [dropdownVisible, setDropdownVisible] = useState<boolean>(false);
   const { refreshAccessToken } = useAuth();
   const [planData, setPlanData] = useState<PlanData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -37,11 +38,12 @@ const MyPlanPage: React.FC = () => {
 
   const handleTabClick = (tab: number) => {
     setActiveTab(tab);
+    setDropdownVisible(false); // 드롭다운 닫기
   };
 
   const generateTabs = () => {
     const tabs = [];
-    for (let i = 1; i <= diffDays; i++) {
+    for (let i = 1; i <= 5 && i <= diffDays; i++) {
       tabs.push(
         <button
           key={i}
@@ -52,6 +54,37 @@ const MyPlanPage: React.FC = () => {
         >
           {`${i}일차`}
         </button>,
+      );
+    }
+    if (diffDays > 5) {
+      tabs.push(
+        <div key="more" className="relative w-16 h-full">
+          <button
+            className={`w-16 h-full bg-[#FF9A9A] rounded-2xl text-white font-['BMJUA'] text-sm mr-2 ${
+              activeTab > 5 ? '' : 'opacity-50'
+            }`}
+            onClick={() => setDropdownVisible(!dropdownVisible)}
+          >
+            ...
+          </button>
+          {dropdownVisible && (
+            <div className="absolute w-24 z-10 mt-2">
+              {Array.from({ length: diffDays - 5 }, (_, i) => i + 6).map(
+                (day) => (
+                  <button
+                    key={day}
+                    className={`block w-full my-1 px-4 py-2 bg-[#FF9A9A] rounded-2xl text-white font-['BMJUA'] text-sm mr-2 opacity-50 hover:opacity-100 ${
+                      activeTab === day ? 'opacity-100' : 'opacity-50'
+                    }`}
+                    onClick={() => handleTabClick(day)}
+                  >
+                    {`${day}일차`}
+                  </button>
+                ),
+              )}
+            </div>
+          )}
+        </div>,
       );
     }
     return tabs;
@@ -129,7 +162,7 @@ const MyPlanPage: React.FC = () => {
         name: plan.title,
         scheduleId: plan.scheduleId,
         planData: planData,
-        check: 1
+        check: 1,
       },
     });
   };

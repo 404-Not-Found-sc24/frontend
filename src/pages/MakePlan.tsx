@@ -32,6 +32,15 @@ const MakePlan = () => {
   const searchTerm = queryParams.get('q') || '';
   const city = queryParams.get('city') || '';
   const isLoading = useRef<boolean>(false);
+  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [timeoutId]);
 
   const fetchPlaceDataOnScroll = async () => {
     if (!isLoading.current) {
@@ -121,44 +130,47 @@ const MakePlan = () => {
     try {
       const postData = selectedPlaces.flatMap((innerArray, index) => {
         const startDate = new Date(tripdataRef.current.startDate);
-        console.log("start", startDate.getDate());
+        console.log('start', startDate.getDate());
         const currentDate = new Date(startDate);
-        console.log("index", index);
+        console.log('index', index);
         if (tripInfo.check === 0)
-          currentDate.setDate(startDate.getDate() + index + 1); // 시작 날짜에 인덱스를 더한 값
-        else
-        currentDate.setDate(startDate.getDate() + index); // 시작 날짜에 인덱스를 더한 값
+          currentDate.setDate(startDate.getDate() + index + 1);
+        // 시작 날짜에 인덱스를 더한 값
+        else currentDate.setDate(startDate.getDate() + index); // 시작 날짜에 인덱스를 더한 값
 
-        console.log("curr", currentDate);
+        console.log('curr', currentDate);
 
-        return innerArray.map((place, innerIndex) => {
+        return innerArray
+          .map((place, innerIndex) => {
             return {
               placeId: place.placeId != null ? place.placeId : null,
               locationId: place.locationId,
               date: currentDate.toISOString().slice(0, 10),
               time: '00:00',
             };
-        }).filter(placeData => placeData !== null);
+          })
+          .filter((placeData) => placeData !== null);
       });
 
-      console.log("selectedPlaces", selectedPlaces);
-      console.log("postdata", postData);
+      console.log('selectedPlaces', selectedPlaces);
+      console.log('postdata', postData);
 
-        await axios
+      await axios
 
-          .post('/schedule/place/' + tripdataRef.current.scheduleId, postData, {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${accessToken}`,
-            },
-          })
-          .then((response) => {
-            console.log(response);
-            notifySuccess();
-            setTimeout(() => {
-              navigate('/');
-            }, 3000);
-          });
+        .post('/schedule/place/' + tripdataRef.current.scheduleId, postData, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+        })
+        .then((response) => {
+          console.log(response);
+          notifySuccess();
+          const id = setTimeout(() => {
+            navigate('/');
+          }, 3000);
+          setTimeoutId(id);
+        });
     } catch (error) {
       if (
         (error as AxiosError).response &&
@@ -203,7 +215,6 @@ const MakePlan = () => {
     }
   };
 
-
   useEffect(() => {
     const fetchData = async () => {
       if (tripdataRef.current.startDate && tripdataRef.current.endDate) {
@@ -211,15 +222,14 @@ const MakePlan = () => {
           tripdataRef.current.endDate.getTime() -
           tripdataRef.current.startDate.getTime();
         const differenceInDays = Math.floor(
-          differenceInTime / (1000 * 3600 * 24)
+          differenceInTime / (1000 * 3600 * 24),
         );
         const tripDays = differenceInDays + 1;
         setTripDays(tripDays);
 
         await checkPlaces();
-
       }
-    }
+    };
 
     fetchData();
   }, []);
@@ -277,7 +287,10 @@ const MakePlan = () => {
   const activePlaces = selectedPlaces[activeTab - 1] || [];
   const initialCenter =
     activePlaces.length > 0
-      ? { latitude: activePlaces[activePlaces.length - 1].latitude, longitude: activePlaces[activePlaces.length - 1].longitude }
+      ? {
+          latitude: activePlaces[activePlaces.length - 1].latitude,
+          longitude: activePlaces[activePlaces.length - 1].longitude,
+        }
       : { latitude: 37.2795, longitude: 127.0438 };
   const initialMarkers = activePlaces.map((place) => ({
     placeId: place.locationId,
@@ -289,84 +302,93 @@ const MakePlan = () => {
     console.log('startDate: ', tripInfo.startDate),
     console.log('endDate: ', tripInfo.endDate),
     console.log('Schedule ID:', tripInfo.scheduleId),
-    <div className="w-full h-[90%] flex">
-      <ToastContainer />
-      <div className="w-1/2 h-full flex">
-        <div className="w-1/2 h-full flex flex-col">
-          <div className="flex w-full h-[10%]">
-            <i
-              className="backArrow ml-2 cursor-pointer w-[10%]"
-              onClick={naviBack}
-            ></i>
-            <div className="flex items-center w-[90%]">
-              <div className="font-['BMJUA'] text-3xl text-black ml-2 flex items-center">
-                {tripInfo.city}
+    (
+      <div className="w-full h-[90%] flex">
+        <ToastContainer />
+        <div className="w-1/2 h-full flex">
+          <div className="w-1/2 h-full flex flex-col">
+            <div className="flex w-full h-[10%]">
+              <i
+                className="backArrow ml-2 cursor-pointer w-[10%]"
+                onClick={naviBack}
+              ></i>
+              <div className="flex items-center w-[90%]">
+                <div className="font-['BMJUA'] text-3xl text-black ml-2 flex items-center">
+                  {tripInfo.city}
+                </div>
+              </div>
+            </div>
+            <div className="h-[10%]">
+              <SearchBar curr={curr} />
+            </div>
+            <div className="flex justify-center h-[80%] overscroll-y-auto">
+              <div className="w-11/12 grid grid-cols-2 justify-items-center items-center gap-3 mt-4 overflow-y-auto">
+                {res.map((place: Place, index: number) => (
+                  <PlaceBox
+                    key={index}
+                    place={place}
+                    addSelectedPlace={() => addSelectedPlace(place, activeTab)}
+                  />
+                ))}
+                <div ref={placeLoadMoreRef}></div>
               </div>
             </div>
           </div>
-          <div className="h-[10%]">
-            <SearchBar curr={curr} />
-          </div>
-          <div className="flex justify-center h-[80%] overscroll-y-auto">
-            <div className="w-11/12 grid grid-cols-2 justify-items-center items-center gap-3 mt-4 overflow-y-auto">
-              {res.map((place: Place, index: number) => (
-                <PlaceBox
-                  key={index}
-                  place={place}
-                  addSelectedPlace={() => addSelectedPlace(place, activeTab)}
-                />
-              ))}
-              <div ref={placeLoadMoreRef}></div>
-            </div>
-          </div>
-        </div>
-        <div className="w-1/2 h-full flex">
-          <div className="tabs w-[40px]">{generateTabs(tripDays)}</div>
-          <div className="flex flex-col w-full h-full border-4 border-[#FF9A9A] justify-between">
-            <div className="tab-content">
-              {Array.from({ length: tripDays }, (_, tabIndex) => (
-                <div
-                  key={tabIndex + 1}
-                  id={`content${tabIndex + 1}`}
-                  className={`content ${activeTab === tabIndex + 1 ? 'active' : ''
+          <div className="w-1/2 h-full flex">
+            <div className="tabs w-[40px]">{generateTabs(tripDays)}</div>
+            <div className="flex flex-col w-full h-full border-4 border-[#FF9A9A] justify-between">
+              <div className="tab-content">
+                {Array.from({ length: tripDays }, (_, tabIndex) => (
+                  <div
+                    key={tabIndex + 1}
+                    id={`content${tabIndex + 1}`}
+                    className={`content ${
+                      activeTab === tabIndex + 1 ? 'active' : ''
                     }`}
-                >
-                  <div className="contentBox">
-                    {selectedPlaces[activeTab - 1] && (
-                      console.log("selectedPlaces", selectedPlaces),
-                      <div className="w-full h-full flex flex-col items-center pt-3">
-                        {selectedPlaces[activeTab - 1].map(
-                          (selectedPlace, index) => (
-                            <DayPlace
-                              key={index}
-                              index={index}
-                              selectedPlace={selectedPlace}
-                              removePlace={() => removePlace(activeTab, index)}
-                            />
-                          ),
-                        )}
-                      </div>
-                    )}
+                  >
+                    <div className="contentBox">
+                      {selectedPlaces[activeTab - 1] &&
+                        (console.log('selectedPlaces', selectedPlaces),
+                        (
+                          <div className="w-full h-full flex flex-col items-center pt-3">
+                            {selectedPlaces[activeTab - 1].map(
+                              (selectedPlace, index) => (
+                                <DayPlace
+                                  key={index}
+                                  index={index}
+                                  selectedPlace={selectedPlace}
+                                  removePlace={() =>
+                                    removePlace(activeTab, index)
+                                  }
+                                />
+                              ),
+                            )}
+                          </div>
+                        ))}
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-            <div className="h-[100px] w-full flex justify-center items-center">
-              <button
-                className="h-1/2 bg-black text-white px-10 rounded-md text-xl font-['BMJUA']"
-                onClick={addPlace}
-              >
-                추가
-              </button>
+                ))}
+              </div>
+              <div className="h-[100px] w-full flex justify-center items-center">
+                <button
+                  className="h-1/2 bg-black text-white px-10 rounded-md text-xl font-['BMJUA']"
+                  onClick={addPlace}
+                >
+                  추가
+                </button>
+              </div>
             </div>
           </div>
         </div>
+        <MapProvider
+          key={JSON.stringify(initialMarkers)}
+          initialCenter={initialCenter}
+          initialMarkers={initialMarkers}
+        >
+          <Map />
+        </MapProvider>
       </div>
-      <MapProvider key={JSON.stringify(initialMarkers)} initialCenter={initialCenter} initialMarkers={initialMarkers}>
-        <Map />
-      </MapProvider>
-    </div>
-
+    )
   );
 };
 
