@@ -28,6 +28,7 @@ import FindPassword from './pages/FindPassword';
 import PrivateRoute from './components/PrivateRoute';
 import AddEvent from './pages/AddEvent';
 import AddPromotion from './pages/AddPromotion';
+import EditDiary from './pages/EditDiary';
 
 function App() {
   return (
@@ -46,6 +47,7 @@ function App() {
           <Route path="/findemail" element={<FindEmail />} />
           <Route element={<PrivateRoute />}>
             <Route path="/makediary" element={<MakeDiary />} />
+            <Route path="/editdiary" element={<EditDiary />} />
             <Route path="/makeplan" element={<MakePlan />} />
             <Route path="/plandetail" element={<PlanDetail />} />
             <Route path="/diarydetail" element={<DiaryDetail />} />

@@ -11,6 +11,15 @@ import { toast, ToastContainer } from 'react-toastify';
 import { MapProvider } from '../context/MapContext';
 import Map from '../components/Map';
 
+interface State {
+  center: {
+    lat: number;
+    lng: number;
+  };
+  errMsg: string | null;
+  isLoading: boolean;
+}
+
 const MakePlan = () => {
   const location = useLocation();
   const tripInfo = { ...location.state };
@@ -32,6 +41,90 @@ const MakePlan = () => {
   const searchTerm = queryParams.get('q') || '';
   const city = queryParams.get('city') || '';
   const isLoading = useRef<boolean>(false);
+  const [times, setTimes] = useState<string[][]>([[], [], []]);
+  const [state, setState] = useState<State>({
+    center: {
+      lat: 37.2795,
+      lng: 127.0438,
+    },
+    errMsg: null,
+    isLoading: true,
+  });
+
+  const [initialCenter, setInitialCenter] = useState({
+    latitude: state.center.lat,
+    longitude: state.center.lng,
+  });
+  const [key, setKey] = useState(JSON.stringify(initialCenter));
+
+  const activePlaces = selectedPlaces[activeTab - 1] || [];
+
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setState((prev) => ({
+            ...prev,
+            center: {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
+            },
+            isLoading: false,
+          }));
+          setInitialCenter({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          });
+        },
+        (err) => {
+          setState((prev) => ({
+            ...prev,
+            errMsg: err.message,
+            isLoading: false,
+          }));
+        },
+      );
+    } else {
+      setState((prev) => ({
+        ...prev,
+        errMsg: 'geolocation을 사용할 수 없어요..',
+        isLoading: false,
+      }));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (activePlaces.length > 0) {
+      console.log(activePlaces[activePlaces.length - 1].latitude);
+      setInitialCenter({
+        latitude: activePlaces[activePlaces.length - 1].latitude,
+        longitude: activePlaces[activePlaces.length - 1].longitude,
+      });
+    }
+  }, [selectedPlaces, activePlaces, res, state.center.lat, state.center.lng]);
+
+  useEffect(() => {
+    setKey(JSON.stringify(initialCenter));
+  }, [initialCenter]);
+
+  const handleTimeChange = (
+    dayIndex: number,
+    placeIndex: number,
+    time: string,
+  ) => {
+    setTimes((prevTimes) => {
+      const updatedTimes = [...prevTimes];
+      if (!updatedTimes[dayIndex - 1]) {
+        updatedTimes[dayIndex - 1] = [];
+      }
+      updatedTimes[dayIndex - 1][placeIndex] = time;
+      return updatedTimes;
+    });
+  };
+
+  useEffect(() => {
+    console.log(times);
+  }, [times]);
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -61,8 +154,6 @@ const MakePlan = () => {
   };
 
   const getData = async () => {
-    console.log(tripdataRef.current.city);
-    console.log(keyword);
     try {
       const response = await axios.get(
         `tour/locations?city=${tripdataRef.current.city}&keyword=${keyword}&lastIdx=${lastIdx}`,
@@ -82,6 +173,9 @@ const MakePlan = () => {
   const addSelectedPlace = (selectedPlace: Place, dayIndex: number) => {
     setSelectedPlaces((prevSelectedPlaces) => {
       const newSelectedPlaces = [...prevSelectedPlaces];
+      if (!newSelectedPlaces[dayIndex - 1]) {
+        newSelectedPlaces[dayIndex - 1] = [];
+      }
       const modifiedPlace = { ...selectedPlace, placeId: null };
       newSelectedPlaces[dayIndex - 1].push(modifiedPlace);
       return newSelectedPlaces;
@@ -91,30 +185,27 @@ const MakePlan = () => {
   const removePlace = (dayIndex: number, placeIndex: number) => {
     setSelectedPlaces((prevSelectedPlaces) => {
       const newSelectedPlaces = [...prevSelectedPlaces];
-      newSelectedPlaces[dayIndex - 1].splice(placeIndex, 1);
+      if (newSelectedPlaces[dayIndex - 1]) {
+        newSelectedPlaces[dayIndex - 1].splice(placeIndex, 1);
+      }
       return newSelectedPlaces;
     });
   };
 
-  const generateTabs = (days: number) => {
-    const tabs = [];
+  const generateSelectOptions = (days: number) => {
+    const options = [];
     for (let i = 1; i <= days; i++) {
-      tabs.push(
-        <div
-          key={i}
-          className={`tab ${activeTab === i ? 'active' : ''}`}
-          onClick={() => handleTabClick(i)}
-        >
-          <div className="tabContent">{`${i}일차`}</div>
-        </div>,
+      options.push(
+        <option key={i} value={i}>
+          {`${i}일차`}
+        </option>,
       );
     }
-    return tabs;
+    return options;
   };
 
   const handleTabClick = (index: number) => {
-    console.log(index);
-    setActiveTab(index); // 클릭한 탭의 인덱스를 상태로 설정
+    setActiveTab(index);
   };
 
   const naviBack = () => {
@@ -125,38 +216,31 @@ const MakePlan = () => {
     toast.success('장소가 성공적으로 추가되었습니다!', {
       position: 'top-center',
     });
-
   const addPlace = async () => {
     try {
       const postData = selectedPlaces.flatMap((innerArray, index) => {
+        console.log(index, innerArray);
         const startDate = new Date(tripdataRef.current.startDate);
-        console.log('start', startDate.getDate());
         const currentDate = new Date(startDate);
-        console.log('index', index);
-        if (tripInfo.check === 0)
+        if (tripInfo.check === 0) {
           currentDate.setDate(startDate.getDate() + index + 1);
-        // 시작 날짜에 인덱스를 더한 값
-        else currentDate.setDate(startDate.getDate() + index); // 시작 날짜에 인덱스를 더한 값
-
-        console.log('curr', currentDate);
-
+        } else {
+          currentDate.setDate(startDate.getDate() + index);
+        }
         return innerArray
           .map((place, innerIndex) => {
+            console.log(times[index]);
             return {
               placeId: place.placeId != null ? place.placeId : null,
               locationId: place.locationId,
               date: currentDate.toISOString().slice(0, 10),
-              time: '00:00',
+              time: times[index][innerIndex],
             };
           })
           .filter((placeData) => placeData !== null);
       });
 
-      console.log('selectedPlaces', selectedPlaces);
-      console.log('postdata', postData);
-
       await axios
-
         .post('/schedule/place/' + tripdataRef.current.scheduleId, postData, {
           headers: {
             'Content-Type': 'application/json',
@@ -164,7 +248,6 @@ const MakePlan = () => {
           },
         })
         .then((response) => {
-          console.log(response);
           notifySuccess();
           const id = setTimeout(() => {
             navigate('/');
@@ -242,7 +325,7 @@ const MakePlan = () => {
       );
       setSelectedPlaces(newTripPlaces);
     }
-  }, [selectedPlaces]);
+  }, [tripDays]);
 
   useEffect(() => {
     const placeOptions = {
@@ -284,14 +367,11 @@ const MakePlan = () => {
     setRes([]);
   }, [location.search]);
 
-  const activePlaces = selectedPlaces[activeTab - 1] || [];
-  const initialCenter =
-    activePlaces.length > 0
-      ? {
-          latitude: activePlaces[activePlaces.length - 1].latitude,
-          longitude: activePlaces[activePlaces.length - 1].longitude,
-        }
-      : { latitude: 37.2795, longitude: 127.0438 };
+  useEffect(() => {
+    console.log(initialMarkers);
+    setKey(JSON.stringify(initialMarkers));
+  }, [selectedPlaces]);
+
   const initialMarkers = activePlaces.map((place) => ({
     placeId: place.locationId,
     latitude: place.latitude,
@@ -299,96 +379,99 @@ const MakePlan = () => {
   }));
 
   return (
-    console.log('startDate: ', tripInfo.startDate),
-    console.log('endDate: ', tripInfo.endDate),
-    console.log('Schedule ID:', tripInfo.scheduleId),
-    (
-      <div className="w-full h-[90%] flex">
-        <ToastContainer />
-        <div className="w-1/2 h-full flex">
-          <div className="w-1/2 h-full flex flex-col">
-            <div className="flex w-full h-[10%]">
-              <i
-                className="backArrow ml-2 cursor-pointer w-[10%]"
-                onClick={naviBack}
-              ></i>
-              <div className="flex items-center w-[90%]">
-                <div className="font-['BMJUA'] text-3xl text-black ml-2 flex items-center">
-                  {tripInfo.city}
-                </div>
-              </div>
-            </div>
-            <div className="h-[10%]">
-              <SearchBar curr={curr} />
-            </div>
-            <div className="flex justify-center h-[80%] overscroll-y-auto">
-              <div className="w-11/12 grid grid-cols-2 justify-items-center items-center gap-3 mt-4 overflow-y-auto">
-                {res.map((place: Place, index: number) => (
-                  <PlaceBox
-                    key={index}
-                    place={place}
-                    addSelectedPlace={() => addSelectedPlace(place, activeTab)}
-                  />
-                ))}
-                <div ref={placeLoadMoreRef}></div>
+    <div className="w-full h-[90%] flex">
+      <ToastContainer />
+      <div className="w-1/2 h-full flex">
+        <div className="w-1/2 h-full flex flex-col">
+          <div className="flex w-full h-[10%]">
+            <i
+              className="backArrow ml-2 cursor-pointer w-[10%]"
+              onClick={naviBack}
+            ></i>
+            <div className="flex items-center w-[90%]">
+              <div className="font-['BMJUA'] text-3xl text-black ml-2 flex items-center">
+                {tripInfo.city}
               </div>
             </div>
           </div>
-          <div className="w-1/2 h-full flex">
-            <div className="tabs w-[40px]">{generateTabs(tripDays)}</div>
-            <div className="flex flex-col w-full h-full border-4 border-[#FF9A9A] justify-between">
-              <div className="tab-content">
-                {Array.from({ length: tripDays }, (_, tabIndex) => (
-                  <div
-                    key={tabIndex + 1}
-                    id={`content${tabIndex + 1}`}
-                    className={`content ${
-                      activeTab === tabIndex + 1 ? 'active' : ''
-                    }`}
-                  >
-                    <div className="contentBox">
-                      {selectedPlaces[activeTab - 1] &&
-                        (console.log('selectedPlaces', selectedPlaces),
-                        (
-                          <div className="w-full h-full flex flex-col items-center pt-3">
-                            {selectedPlaces[activeTab - 1].map(
-                              (selectedPlace, index) => (
-                                <DayPlace
-                                  key={index}
-                                  index={index}
-                                  selectedPlace={selectedPlace}
-                                  removePlace={() =>
-                                    removePlace(activeTab, index)
-                                  }
-                                />
-                              ),
-                            )}
-                          </div>
-                        ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="h-[100px] w-full flex justify-center items-center">
-                <button
-                  className="h-1/2 bg-black text-white px-10 rounded-md text-xl font-['BMJUA']"
-                  onClick={addPlace}
-                >
-                  추가
-                </button>
-              </div>
+          <div className="h-[10%]">
+            <SearchBar curr={curr} />
+          </div>
+          <div className="flex justify-center h-[80%] overscroll-y-auto">
+            <div className="w-11/12 grid grid-cols-2 justify-items-center items-center gap-3 mt-4 overflow-y-auto">
+              {res.map((place: Place, index: number) => (
+                <PlaceBox
+                  key={index}
+                  place={place}
+                  addSelectedPlace={() => addSelectedPlace(place, activeTab)}
+                />
+              ))}
+              <div ref={placeLoadMoreRef}></div>
             </div>
           </div>
         </div>
-        <MapProvider
-          key={JSON.stringify(initialMarkers)}
-          initialCenter={initialCenter}
-          initialMarkers={initialMarkers}
-        >
-          <Map />
-        </MapProvider>
+        <div className="w-1/2 h-full flex">
+          <div className="flex flex-col w-full h-full border-4 border-[#FF9A9A] justify-between">
+            <div className="select-container">
+              <select
+                className="day-select"
+                value={activeTab}
+                onChange={(e) => handleTabClick(Number(e.target.value))}
+              >
+                {generateSelectOptions(tripDays)}
+              </select>
+            </div>
+            <div className="tab-content h-[80%] overflow-y-scroll">
+              {Array.from({ length: tripDays }, (_, tabIndex) => (
+                <div
+                  key={tabIndex + 1}
+                  id={`content${tabIndex + 1}`}
+                  className={`content ${
+                    activeTab === tabIndex + 1 ? 'active' : ''
+                  }`}
+                >
+                  <div className="contentBox">
+                    {selectedPlaces[activeTab - 1] && (
+                      <div className="w-full h-full flex flex-col items-center pt-3">
+                        {selectedPlaces[activeTab - 1].map(
+                          (selectedPlace, index) => (
+                            <DayPlace
+                              key={index}
+                              dayIndex={activeTab}
+                              placeIndex={index}
+                              selectedPlace={selectedPlace}
+                              removePlace={(dayIndex, placeIndex) =>
+                                removePlace(dayIndex, placeIndex)
+                              }
+                              onTimeChange={handleTimeChange}
+                            />
+                          ),
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="h-[100px] w-full flex justify-center items-center">
+              <button
+                className="h-1/2 bg-black text-white px-10 rounded-md text-xl font-['BMJUA']"
+                onClick={addPlace}
+              >
+                추가
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
-    )
+      <MapProvider
+        key={key}
+        initialCenter={initialCenter}
+        initialMarkers={initialMarkers}
+      >
+        <Map />
+      </MapProvider>
+    </div>
   );
 };
 

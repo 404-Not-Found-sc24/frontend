@@ -1,47 +1,74 @@
-import '../index.css';
-import * as React from "react";
-import Place from '../../types/Place';
-import {useEffect} from "react";
+import {ChangeEvent, useEffect, useState} from "react";
+import Place from "../../types/Place";
 
 interface DayPlaceProps {
-    index: number;
+    dayIndex: number;
+    placeIndex: number;
     selectedPlace: Place;
-    removePlace: (placeIndex: number) => void;
+    removePlace: (dayIndex: number, placeIndex: number) => void;
+    onTimeChange: (dayIndex: number, placeIndex: number, time: string) => void;
 }
 
-const DayPlace: React.FC<DayPlaceProps> = ({index, selectedPlace, removePlace}) => {
-    const handleRemovePlace = () => {
-        removePlace(index);
+const DayPlace: React.FC<DayPlaceProps> = ({ dayIndex, placeIndex, selectedPlace, removePlace, onTimeChange }) => {
+    const [hours, setHours] = useState<string>('');
+    const [minutes, setMinutes] = useState<string>('');
+
+    useEffect(() => {
+        const formattedHours = hours.padStart(2, '0');
+        const formattedMinutes = minutes.padStart(2, '0');
+        const newTime = `${formattedHours}:${formattedMinutes}`;
+        onTimeChange(dayIndex, placeIndex, newTime);
+    }, [hours, minutes]);
+
+    const handleHoursChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        if (value === '' || (/^\d{1,2}$/.test(value) && Number(value) >= 0 && Number(value) <= 23)) {
+            setHours(value);
+        }
     };
-    
+
+    const handleMinutesChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        if (value === '' || (/^\d{1,2}$/.test(value) && Number(value) >= 0 && Number(value) <= 59)) {
+            setMinutes(value);
+        }
+    };
+
+    const handleRemovePlace = () => {
+        removePlace(dayIndex, placeIndex);
+    };
+
     return (
-        <div className="w-11/12 h-20 flex items-center mb-3">
+        <div className="w-11/12 h-[80px] flex items-center mb-3">
             <button className="delete mr-3" onClick={() => handleRemovePlace()}></button>
             <div className="w-full h-full rounded-md shadow-xl flex items-center">
-                {selectedPlace.imageUrl ? (
-                    <img
-                        src={selectedPlace.imageUrl}
-                        alt={selectedPlace.name}
-                        className="rounded-md ml-3"
-                        style={{ objectFit: 'cover', width: '60px', height: '60px' }}
+                <div className="flex w-[40%] p-1 ml-1 font-['BMJUA'] text-[#ED661A] items-center">
+                    <input
+                        placeholder="00"
+                        className="w-[45%] p-1 text-center rounded text-xl font-['BMJUA'] text-[#ED661A]"
+                        value={hours}
+                        onChange={handleHoursChange}
                     />
-                ) : (
-                    <div
-                        className="rounded-md w-[60px] h-[60px] border-2 ml-3 px-1.5 text-center pt-1">
-                        No Image
-                    </div>
-                )}
-                <div className="w-full ml-3">
+                    <span className="mx-1">:</span>
+                    <input
+                        placeholder="00"
+                        className="w-[45%] p-1 text-center rounded text-xl font-['BMJUA'] text-[#ED661A]"
+                        value={minutes}
+                        onChange={handleMinutesChange}
+                    />
+                </div>
+                <div className="w-full ml-1">
                     <div className="font-extrabold text-lg font-['Nanum Gothic']"
                          style={{overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis"}}
                     >
-                        {selectedPlace.name.length > 9 ? `${selectedPlace.name.slice(0, 9)}...` : selectedPlace.name}</div>
+                        {selectedPlace.name.length > 9 ? `${selectedPlace.name.slice(0, 9)}...` : selectedPlace.name}
+                    </div>
                     <div className="text-sm font-['Nanum Gothic']"
                          style={{overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis"}}
                     >
-                        {selectedPlace.address.length > 14 ? `${selectedPlace.address.slice(0, 14)}...` : selectedPlace.address}</div>
+                        {selectedPlace.address.length > 14 ? `${selectedPlace.address.slice(0, 14)}...` : selectedPlace.address}
+                    </div>
                 </div>
-                <div className="menu relative right-5"></div>
             </div>
         </div>
     );
