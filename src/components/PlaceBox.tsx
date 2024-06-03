@@ -20,10 +20,7 @@ const PlaceBox: React.FC<CityBoxProps> = ({place, addSelectedPlace}) => {
                     className="rounded-4 w-full h-full overflow-hidden object-cover"
                 />
             ) : (
-                <div
-                    className="rounded-4 w-full h-full border-2 flex mt-2 text-gray-600 justify-center items-center text-center">
-                    {place.name}
-                </div>
+                <img src={process.env.PUBLIC_URL + '/image/logo.png'} className='h-full w-full'></img>
             )}
             <div
                 className="absolute bottom-0 right-0 text-2xl font-['BMHANNApro'] text-white bg-black bg-opacity-50 p-2 rounded-tl rounded-br z-10"

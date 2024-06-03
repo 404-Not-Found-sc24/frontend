@@ -191,13 +191,13 @@ const SearchResults: React.FC<Props> = ({ tab, onResultsUpdate, activeDivision, 
                 {place.imageUrl ? (
                   <img src={place.imageUrl} alt={place.name} className="w-32 h-32 mt-2" />
                 ) : (
-                  <div className="border-2 flex w-32 h-32 mt-2 text-gray-600 justify-center items-center">
-                    사진이 없습니다.
-                  </div>
+                    <img src={process.env.PUBLIC_URL + '/image/logo.png'} className='h-32 w-32'></img>
                 )}
                 <div className="flex flex-col p-2">
-                  <h3 className="font-[BMJUA] text-xl">{place.name}</h3>
-                  <p className="font-[Nanum Gothic] text-gray-600">{place.address}</p>
+                <h3 className="font-[BMJUA] text-xl">{place.name}</h3>
+                  <p className="font-[Nanum Gothic] text-gray-600">
+                    {place.address}
+                  </p>
                 </div>
               </div>
             </div>
