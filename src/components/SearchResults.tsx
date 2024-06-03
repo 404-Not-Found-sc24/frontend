@@ -158,7 +158,6 @@ const SearchResults: React.FC<Props> = ({ tab, onResultsUpdate, activeDivision, 
     });
     if (activeDivision === '전체') {
       setActiveDivision('음식점');
-      setActiveDivision('전체');
     } else {
       setActiveDivision('전체');
     }
