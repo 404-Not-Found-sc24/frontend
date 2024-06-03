@@ -169,9 +169,7 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({
           {imageUrl !== null ? (
             <img src={imageUrl} alt="" className="h-full w-full"></img>
           ) : (
-            <div className="flex h-full w-full border-2 text-center justify-center items-center">
-              사진이 없습니다.
-            </div>
+              <img src={process.env.PUBLIC_URL + '/image/logo.png'} className='h-full w-full'></img>
           )}
         </div>
         <div className="flex flex-col w-full">
@@ -187,7 +185,7 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({
 
             <div className="text-xl flex-grow">{location}</div>
             <div className="text-xl w-20">
-              <button onClick={handleShare}>
+              <button onClick={handleShare} className='hover:font-bold'>
                 {share == 1 ? 'PUBLIC' : 'PRIVATE'}
               </button>
             </div>
