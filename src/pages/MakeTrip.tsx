@@ -235,7 +235,7 @@ const MakeTrip = ({ isOpen, city, cityDetail, imageUrl, handleCloseModal }: prop
                 </div>
                 <div className="calendar-container flex w-full mb-4 justify-center">
                   <Calendar
-                    value={startDate}
+                    value={endDate ? [startDate, endDate] : startDate} // 종료일이 있다면 날짜 범위로 설정, 없으면 단일 날짜로 설정
                     onChange={handleDateChange}
                     selectRange={true}
                     view="month"

@@ -176,7 +176,7 @@ const SearchResults: React.FC<Props> = ({ tab, onResultsUpdate, activeDivision, 
   }, [location.search]);
 
   return (
-    <div className="bg-white px-5 w-full h-full  overflow-y-auto">
+    <div className="bg-white px-5 w-full h-full overflow-y-auto">
       {(tab === '장소 보기' && Object.keys(divisions).includes(activeDivision)) &&
         divisions[activeDivision].map((place: PlaceData, index) => (
           <Link
@@ -186,9 +186,9 @@ const SearchResults: React.FC<Props> = ({ tab, onResultsUpdate, activeDivision, 
             className="w-full h-[30%] p-5 flex rounded-md shadow-xl mb-2"
           >
             <div ref={index === divisions[activeDivision].length - 1 && lastPlaceIdx[activeDivision] !== -1 ? placeLoadMoreRef : null}>
-              <div className="flex">
+              <div className="flex h-[100%]">
                 {place.imageUrl ? (
-                  <img src={place.imageUrl} alt={place.name} className="w-32 h-32 mt-2" />
+                  <img src={place.imageUrl} alt={place.name} className="w-32 h-full mt-2" />
                 ) : (
                     <img src={process.env.PUBLIC_URL + '/image/logo.png'} className='h-32 w-32'></img>
                 )}
