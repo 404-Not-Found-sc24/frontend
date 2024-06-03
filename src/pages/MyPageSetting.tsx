@@ -1,7 +1,9 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import axios, { AxiosError } from 'axios';
+import { toast, ToastContainer } from 'react-toastify';
+import { useNavigate } from 'react-router';
 
 interface UserInfo {
     memberId: number;
@@ -21,6 +23,8 @@ const MyPageSetting: React.FC = () => {
     const [userInfo, setUserInfo] = useState<UserInfo>(data.data);
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [showSuccessPopup, setShowSuccessPopup] = useState<boolean>(false);
+    const navigate = useNavigate();
+    const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null); // 타이머 ID 상태 추가
 
     const { refreshAccessToken } = useAuth();
     const accessToken = localStorage.getItem('accessToken');
@@ -41,6 +45,15 @@ const MyPageSetting: React.FC = () => {
         }
     };
 
+    useEffect(() => {
+        return () => {
+            if (timeoutId) {
+                clearTimeout(timeoutId); // 언마운트 시 타이머 제거
+            }
+        };
+    }, [timeoutId]);
+
+
     const onClickImageUplaod = () => {
         if (imageInput.current) {
             imageInput.current.click();
@@ -59,6 +72,16 @@ const MyPageSetting: React.FC = () => {
         setShowSuccessPopup(false);
     };
 
+
+    const notifySuccess = () =>
+        toast.success('사용자 정보가 성공적으로 수정되었습니다.', {
+            position: 'top-center',
+        });
+    const notifyError = () =>
+        toast.error('사용자 정보 수정 중 오류가 발생했습니다.', {
+            position: 'top-center',
+        });
+
     const handleSubmit = async () => {
         console.log(userInfo);
         const formData = new FormData();
@@ -74,7 +97,11 @@ const MyPageSetting: React.FC = () => {
                     Authorization: `Bearer ${accessToken}`,
                 },
             });
-            setShowSuccessPopup(true);
+            notifySuccess();
+            const id = setTimeout(() => {
+                navigate('/mypage');
+            }, 3000);
+            setTimeoutId(id);
         } catch (error) {
             if (
                 (error as AxiosError).response &&
@@ -90,6 +117,7 @@ const MyPageSetting: React.FC = () => {
                 }
             } else {
                 console.error('일정 조회 중 오류 발생:', error);
+                notifyError();
             }
         }
     };
@@ -97,6 +125,7 @@ const MyPageSetting: React.FC = () => {
     return (
         console.log(userInfo),
         <div className="flex justify-center">
+            <ToastContainer />
             <div className="w-5/6 flex items-center flex-col">
                 {userInfo?.imageUrl == null ?
                     <img
@@ -164,14 +193,6 @@ const MyPageSetting: React.FC = () => {
                 <button className="my-2 bg-main-red-color opacity-75 rounded text-white py-1 px-3" onClick={handleSubmit}>
                     저장
                 </button>
-                {showSuccessPopup && (
-                    <div className="popup absolute top-0 l-0 w-full h-full bg-black/50 flex justify-center">
-                        <div className='bg-white p-3 rounded mt-10 w-1/3 h-36 flex items-center flex-col'>
-                            <div className='h-24 flex items-center'>정보가 수정되었습니다.</div>
-                            <button onClick={handlePopupClose} className='w-16 text-white bg-main-red-color py-0.5 px-3'>확인</button>
-                        </div>
-                    </div>
-                )}
             </div>
         </div>
     );
