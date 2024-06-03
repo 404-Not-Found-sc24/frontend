@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import Map from '../components/Map';
 import { MapProvider } from '../context/MapContext';
 import { useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import planData from '../../types/PlanData';
+import axios, { AxiosError } from 'axios';
+import { useAuth } from '../context/AuthContext';
 
 interface PlanData {
   placeId: number;
@@ -34,28 +34,64 @@ const MyDiaryDetail: React.FC = () => {
   const PlanData = location.state.PlanData;
   const planName = location.state.planName;
   const [Diarydata, setDiaryData] = useState<Diary | null>(null);
-
-  const getData = async () => {
-    console.log(PlanData);
-    try {
-      await axios
-        .get(`/tour/diary/${PlanData.diaryId}`, {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        })
-        .then((response) => {
-          console.log(response.data);
-          setDiaryData(response.data);
-        });
-    } catch (e) {
-      console.error('Error:', e);
-    }
-  };
+  const accessToken = localStorage.getItem('accessToken');
+  const { refreshAccessToken } = useAuth();
+  const [showDeletePopup, setShowDeletePopup] = useState<boolean>(false);
+  const [showSuccessPopup, setShowSuccessPopup] = useState<boolean>(false);
 
   useEffect(() => {
+    const getData = async () => {
+      console.log(PlanData);
+      try {
+        await axios
+          .get(`/tour/diary/${PlanData.diaryId}`, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          })
+          .then((response) => {
+            console.log(response.data);
+            setDiaryData(response.data);
+          });
+      } catch (e) {
+        console.error('Error:', e);
+      }
+    };
     getData();
   }, []);
+
+  const handleDeleteDiary = async (
+    e: React.MouseEvent<HTMLImageElement, MouseEvent>,
+  ) => {
+    e.stopPropagation();
+    setShowDeletePopup(true);
+  };
+
+  const deleteDiary = async () => {
+    try {
+      const response = await axios.delete(
+        `/schedule/diary/${PlanData.diaryId}`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        },
+      );
+      console.log('일정이 성공적으로 삭제되었습니다:', response.data);
+      setShowDeletePopup(false);
+    } catch (error) {
+      if ((error as AxiosError).response) {
+        try {
+          await refreshAccessToken();
+          // 새로운 액세스 토큰으로 다시 요청을 보냅니다.
+          // 여기에서는 재시도 로직을 추가할 수 있습니다.
+        } catch (refreshError) {
+          console.error('Failed to refresh access token:', refreshError);
+          // 액세스 토큰 갱신에 실패한 경우 사용자에게 알립니다.
+        }
+      } else {
+        console.error('일정 삭제 중 오류 발생:', error);
+      }
+    }
+  };
 
   const initialMarkers = PlanData
     ? [
@@ -85,6 +121,33 @@ const MyDiaryDetail: React.FC = () => {
     navigate('/makediary', { state: { PlanData: PlanData } });
   };
 
+  const navieditdiary = () => {
+    console.log(PlanData);
+    console.log(Diarydata);
+    navigate('/editdiary', {
+      state: { PlanData: PlanData, Diarydata: Diarydata },
+    });
+  };
+
+  const handlePopupClose = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => {
+    e.stopPropagation();
+    setShowDeletePopup(false);
+  };
+
+  const handleConfirmClick = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => {
+    e.stopPropagation();
+    await deleteDiary(); // 일정 삭제
+    setShowSuccessPopup(true);
+  };
+  const handleSuccessPopupClose = () => {
+    setShowSuccessPopup(false);
+    navigate('/mypage');
+  };
+
   return (
     <div className="flex w-full h-[90%]">
       <div className="w-1/2 h-full">
@@ -104,11 +167,16 @@ const MyDiaryDetail: React.FC = () => {
             </div>
           </div>
           {Diarydata ? (
-            <></>
+            <button
+              onClick={navieditdiary}
+              className="flex items-center justify-center w-[20%] h-7  mx-10 bg-black rounded-2xl text-white font-['Nanum Gothic'] text-sm font-semibold"
+            >
+              일기 수정
+            </button>
           ) : (
             <button
               onClick={navimakediary}
-              className="flex items-center justify-center w-20 h-7 mx-10 bg-black rounded-2xl text-white font-['Nanum Gothic'] text-sm font-semibold"
+              className="flex items-center justify-center w-[20%] h-7 mx-10 bg-black rounded-2xl text-white font-['Nanum Gothic'] text-sm font-semibold"
             >
               일기 작성
             </button>
@@ -118,12 +186,30 @@ const MyDiaryDetail: React.FC = () => {
           <div className="w-5/6 h-full mb-5">
             <div className="w-full h-full flex flex-col pt-3">
               <div className="w-full h-[95%] flex flex-col py-5 rounded-md shadow-xl">
-                <div className="flex justify-between h-[10%] mx-5 items-center">
-                  <div className="flex w-[50%] items-center">
-                    <div className="font-['BMJUA'] text-[#FF9A9A] text-xl mr-5"></div>
+                <div className="flex h-[10%] mx-5 items-center">
+                  <div className="flex justify-between w-[100%] items-center">
                     <div className="font-['BMJUA'] text-2xl">
                       {PlanData.locationName}
                     </div>
+                    {Diarydata ? (
+                      <button
+                        onClick={deleteDiary}
+                        className="flex items-center justify-end w-20 h-7 "
+                      >
+                        <img
+                          src={
+                            process.env.PUBLIC_URL +
+                            '/image/delete-bin-6-line.png'
+                          }
+                          alt="삭제"
+                          width="30"
+                          height="30"
+                          onClick={(e) => handleDeleteDiary(e)}
+                        />
+                      </button>
+                    ) : (
+                      <></>
+                    )}
                   </div>
                 </div>
                 {PlanData.title ? (
@@ -165,6 +251,42 @@ const MyDiaryDetail: React.FC = () => {
       >
         <Map />
       </MapProvider>
+      {showDeletePopup && (
+        <div className="popup absolute top-0 left-0 z-50 w-full h-full bg-black/50 flex justify-center">
+          <div className="bg-white p-3 rounded mt-10 w-1/3 h-36 flex items-center flex-col">
+            <div className="h-24 flex items-center">
+              일기를 삭제하시겠습니까?
+            </div>
+            <div>
+              <button
+                onClick={handlePopupClose}
+                className="w-16 text-white bg-main-red-color py-0.5 px-3 mr-3"
+              >
+                취소
+              </button>
+              <button
+                onClick={handleConfirmClick}
+                className="w-16 text-white bg-main-red-color py-0.5 px-3"
+              >
+                확인
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {showSuccessPopup && (
+        <div className="popup absolute top-0 left-0 z-50 w-full h-full bg-black/50 flex justify-center">
+          <div className="bg-white p-3 rounded mt-10 w-1/3 h-36 flex items-center flex-col">
+            <div className="h-24 flex items-center">일기가 삭제되었습니다.</div>
+            <button
+              onClick={handleSuccessPopupClose}
+              className="w-16 text-white bg-main-red-color py-0.5 px-3"
+            >
+              확인
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
