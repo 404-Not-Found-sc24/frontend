@@ -20,11 +20,12 @@ interface ScheduleCardProps {
 }
 
 const ScheduleCard: React.FC<ScheduleCardProps> = ({ data, onDeleteSchedule }) => {
-    const { scheduleId, name, location, startDate, endDate, share, imageUrl } = data;
+    const { scheduleId, name, location, startDate, endDate, share :initialShare, imageUrl } = data;
     const [differenceInDays, setDifferenceInDays] = useState<number>();
     const { accessToken, refreshAccessToken } = useAuth();
     const navigate = useNavigate();
     const [showDeletePopup, setShowDeletePopup] = useState<boolean>(false);
+    const [share, setShare] = useState<number>(initialShare);
 
     useEffect(() => {
         checkDate();
@@ -106,6 +107,37 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({ data, onDeleteSchedule }) =
         await deleteSchedule(scheduleId); // 일정 삭제
     };
 
+    const handleShare = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        e.stopPropagation();
+        try {
+            console.log(scheduleId);
+            const newShareValue = share === 1 ? 0 : 1;
+            await axios.patch(`/schedule/sharing/`+ scheduleId, {}, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+            console.log(newShareValue);
+            setShare(newShareValue);
+            toast.success('공유 설정이 변경되었습니다.');
+        } catch (error) {
+            if (
+                (error as AxiosError).response &&
+                (error as AxiosError).response?.status === 401
+            ) {
+                try {
+                    await refreshAccessToken();
+                    await handleShare(e); // 액세스 토큰을 갱신 후 다시 시도
+                } catch (refreshError) {
+                    console.error('Failed to refresh access token:', refreshError);
+                }
+            } else {
+                console.error('공유 설정 변경 중 오류 발생:', error);
+                toast.error('공유 설정 변경에 실패했습니다.');
+            }
+        }
+    };
+
     return (
         <div className='w-full flex p-5 h-44 shadow-md' onClick={() => handleScheduleClick(data)}>
             <div className='flex w-full'>
@@ -124,7 +156,7 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({ data, onDeleteSchedule }) =
                         </div>
 
                         <div className='text-xl flex-grow'>{location}</div>
-                        <div className='text-xl w-20'>{share == 1 ? 'PUBLIC' : 'PRIVATE'}</div>
+                        <div className='text-xl w-20'><button onClick={handleShare}>{share == 1 ? 'PUBLIC' : 'PRIVATE'}</button></div>
                     </div>
                     <div className='flex flex-grow items-center justify-start'>
                         <div className='text-3xl font-bold'>{name}</div>
