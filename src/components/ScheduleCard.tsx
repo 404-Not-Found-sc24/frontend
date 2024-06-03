@@ -202,7 +202,7 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({
             <img
               src={`${process.env.PUBLIC_URL}/image/recycle-bin.png`}
               alt="휴지통"
-              className="w-5 h-5 text-main-red-color"
+              className="w-5 h-5 text-main-red-color cursor-pointer"
               onClick={(e) => handleDeleteSchedule(e)}
             ></img>
           </div>

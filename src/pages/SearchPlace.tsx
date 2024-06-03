@@ -9,14 +9,14 @@ import '../index.css';
 import axios from 'axios';
 
 type DivisionsType = {
-  '전체': PlaceData[];
-  '음식점': PlaceData[];
-  '문화시설': PlaceData[];
+  전체: PlaceData[];
+  음식점: PlaceData[];
+  문화시설: PlaceData[];
   '축제 공연 행사': PlaceData[];
-  '관광지': PlaceData[];
-  '레포츠': PlaceData[];
-  '숙박': PlaceData[];
-  '쇼핑': PlaceData[];
+  관광지: PlaceData[];
+  레포츠: PlaceData[];
+  숙박: PlaceData[];
+  쇼핑: PlaceData[];
 };
 
 const SearchPlace: React.FC = () => {
@@ -32,17 +32,18 @@ const SearchPlace: React.FC = () => {
   });
   const location = useLocation();
   const [divisions, setDivisions] = useState<DivisionsType>({
-    '전체': [],
-    '음식점': [],
-    '문화시설': [],
+    전체: [],
+    음식점: [],
+    문화시설: [],
     '축제 공연 행사': [],
-    '관광지': [],
-    '레포츠': [],
-    '숙박': [],
-    '쇼핑': [],
+    관광지: [],
+    레포츠: [],
+    숙박: [],
+    쇼핑: [],
   });
 
-  const [activeDivision, setActiveDivision] = useState<keyof DivisionsType>('전체');
+  const [activeDivision, setActiveDivision] =
+    useState<keyof DivisionsType>('전체');
 
   const handleDivisionClick = (division: keyof DivisionsType) => {
     setActiveDivision(division);
@@ -53,6 +54,7 @@ const SearchPlace: React.FC = () => {
     const term = queryParams.get('q') || '';
     setSearchTerm(term);
   }, [location.search]);
+
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
   };
@@ -94,19 +96,21 @@ const SearchPlace: React.FC = () => {
         <div className="h-[8%] w-full flex justify-center">
           <div className="flex max-w-2xl mx-5 pt-4 w-[80%]">
             <div
-              className={`mx-auto justify-center py-2 text-center w-1/2 border-main-red-color font-BMJUA text-2xl cursor-pointer ${activeTab === '장소 보기'
-                ? 'border-x-2 border-t-2 rounded-t-lg text-main-red-color'
-                : 'border-b-2'
-                }`}
+              className={`mx-auto justify-center py-2 text-center w-1/2 border-main-red-color font-BMJUA text-2xl cursor-pointer ${
+                activeTab === '장소 보기'
+                  ? 'border-x-2 border-t-2 rounded-t-lg text-main-red-color'
+                  : 'border-b-2'
+              }`}
               onClick={() => handleTabClick('장소 보기')}
             >
               장소 보기
             </div>
             <div
-              className={`mx-auto justify-center py-2 text-center w-1/2 border-main-red-color font-BMJUA text-2xl cursor-pointer ${activeTab === '일정 보기'
-                ? 'border-x-2 border-t-2 rounded-t-lg text-main-red-color'
-                : 'border-b-2'
-                }`}
+              className={`mx-auto justify-center py-2 text-center w-1/2 border-main-red-color font-BMJUA text-2xl cursor-pointer ${
+                activeTab === '일정 보기'
+                  ? 'border-x-2 border-t-2 rounded-t-lg text-main-red-color'
+                  : 'border-b-2'
+              }`}
               onClick={() => handleTabClick('일정 보기')}
             >
               일정 보기
@@ -114,20 +118,28 @@ const SearchPlace: React.FC = () => {
           </div>
         </div>
         <div className="tab-content h-[82%] justify-between ">
-          <div id='active-white-bg' className={activeTab === '장소 보기' ? 'active h-full w-full' : ''}>
+          <div
+            id="active-white-bg"
+            className={activeTab === '장소 보기' ? 'active h-full w-full' : ''}
+          >
             {activeTab === '장소 보기' && (
               <div className="flex flex-col">
                 <div className="w-full whitespace-nowrap overflow-x-auto no-scrollbar flex justify-start xl:justify-center">
-                  {(Object.keys(divisions) as Array<keyof DivisionsType>).map((division) => (
-                    <button
-                      key={division}
-                      className={`py-1 px-2 m-1 border rounded-full ${activeDivision === division ? 'bg-main-red-color text-white' : 'bg-white text-main-red-color'
+                  {(Object.keys(divisions) as Array<keyof DivisionsType>).map(
+                    (division) => (
+                      <button
+                        key={division}
+                        className={`py-1 px-2 m-1 border rounded-full ${
+                          activeDivision === division
+                            ? 'bg-main-red-color text-white'
+                            : 'bg-white text-main-red-color'
                         }`}
-                      onClick={() => handleDivisionClick(division)}
-                    >
-                      {division}
-                    </button>
-                  ))}
+                        onClick={() => handleDivisionClick(division)}
+                      >
+                        {division}
+                      </button>
+                    ),
+                  )}
                 </div>
                 <div className="flex max-w-4xl justify-end w-full px-10">
                   <Link
@@ -138,14 +150,14 @@ const SearchPlace: React.FC = () => {
                   </Link>
                 </div>
                 <div className="flex-grow w-full h-[65vh]">
-                    <SearchResults
-                      tab={activeTab}
-                      onResultsUpdate={handleResultsUpdate}
-                      activeDivision={activeDivision}
-                      divisions={divisions}
-                      setDivisions={setDivisions}
-                      setActiveDivision={setActiveDivision}
-                    />
+                  <SearchResults
+                    tab={activeTab}
+                    onResultsUpdate={handleResultsUpdate}
+                    activeDivision={activeDivision}
+                    divisions={divisions}
+                    setDivisions={setDivisions}
+                    setActiveDivision={setActiveDivision}
+                  />
                 </div>
               </div>
             )}

@@ -25,6 +25,8 @@ const EditDiary: React.FC = () => {
   const { accessToken, refreshAccessToken } = useAuth();
   const navigate = useNavigate();
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
+  const ALLOW_FILE_EXTENSION = 'jpg,jpeg,png';
+  const FILE_SIZE_MAX_LIMIT = 1 * 1024 * 1024;
 
   useEffect(() => {
     return () => {
@@ -108,33 +110,43 @@ const EditDiary: React.FC = () => {
     }
   };
 
-  const handleImageRemove = (index: number) => {
-    const updatedImages = [...images];
-    updatedImages.splice(index, 1);
-    setImages(updatedImages);
-
-    const updatedPreviews = [...previewImages];
-    updatedPreviews.splice(index, 1);
-    setPreviewImages(updatedPreviews);
-
-    if (updatedPreviews.length === 0) {
-      setShowUploadMessage(true);
-    }
-  };
-
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const selectedImages = Array.from(e.target.files);
-      setImages(selectedImages);
+      const validImages: File[] = [];
+      const imagePreviews: string[] = [];
+      let hasInvalidFile = false;
 
-      const imagePreviews = selectedImages.map((image) =>
-        URL.createObjectURL(image),
-      );
+      selectedImages.forEach((image) => {
+        const fileExtension = image.name.split('.').pop()?.toLowerCase();
+        const fileSize = image.size;
+
+        if (
+          fileExtension &&
+          ALLOW_FILE_EXTENSION.includes(fileExtension) &&
+          fileSize <= FILE_SIZE_MAX_LIMIT
+        ) {
+          validImages.push(image);
+          imagePreviews.push(URL.createObjectURL(image));
+        } else {
+          hasInvalidFile = true;
+        }
+      });
+
+      setImages(validImages);
       setPreviewImages(imagePreviews);
-      setShowUploadMessage(false);
+      setShowUploadMessage(validImages.length === 0);
+
+      if (hasInvalidFile) {
+        toast.error(
+          'jpg, jpeg, png 파일만 업로드 가능하며, 파일 크기는 1MB 이하로 제한됩니다.',
+          {
+            position: 'top-center',
+          },
+        );
+      }
     }
   };
-
   const handleTitleChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
       console.log(event.target.value);

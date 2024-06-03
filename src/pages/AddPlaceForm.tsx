@@ -25,6 +25,8 @@ const AddPlaceForm: React.FC = () => {
   const [kakaoLoaded, setKakaoLoaded] = useState(false);
   const navigate = useNavigate();
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null); // 타이머 ID 상태 추가
+  const ALLOW_FILE_EXTENSION = 'jpg,jpeg,png';
+  const FILE_SIZE_MAX_LIMIT = 1 * 1024 * 1024;
 
   useEffect(() => {
     const checkKakaoLoaded = () => {
@@ -64,19 +66,38 @@ const AddPlaceForm: React.FC = () => {
       longitude: lng,
     }));
   };
-
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files) {
-      setPlaceInfo((prevState) => ({
-        ...prevState,
-        images: Array.from(files),
-      }));
+    if (e.target.files) {
+      const selectedImages = Array.from(e.target.files);
+      const validImages: File[] = [];
+      const imagePreviews: string[] = [];
+      let hasInvalidFile = false;
 
-      const imagePreviews = Array.from(files).map((file) =>
-        URL.createObjectURL(file),
-      );
+      selectedImages.forEach((image) => {
+        const fileExtension = image.name.split('.').pop()?.toLowerCase();
+        const fileSize = image.size;
+
+        if (
+          fileExtension &&
+          ALLOW_FILE_EXTENSION.includes(fileExtension) &&
+          fileSize <= FILE_SIZE_MAX_LIMIT
+        ) {
+          validImages.push(image);
+          imagePreviews.push(URL.createObjectURL(image));
+        } else {
+          hasInvalidFile = true;
+        }
+      });
       setPreviewImages(imagePreviews);
+
+      if (hasInvalidFile) {
+        toast.error(
+          'jpg, jpeg, png 파일만 업로드 가능하며, 파일 크기는 1MB 이하로 제한됩니다.',
+          {
+            position: 'top-center',
+          },
+        );
+      }
     }
   };
 
@@ -111,10 +132,7 @@ const AddPlaceForm: React.FC = () => {
       setTimeoutId(id);
       // 성공적으로 제출되었을 경우 처리
     } catch (error) {
-      if (
-        (error as AxiosError).response &&
-        (error as AxiosError).response?.status === 401
-      ) {
+      if ((error as AxiosError).response) {
         try {
           await refreshAccessToken();
           // 새로운 액세스 토큰으로 다시 요청을 보냅니다.
