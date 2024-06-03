@@ -178,7 +178,7 @@ const MyPageSetting: React.FC = () => {
                     }
                     <div>
                         <div className="flex flex-col">
-                            <button className="bg-main-red-color opacity-75 rounded text-white py-1 px-3"
+                            <button className="bg-main-red-color opacity-75 rounded text-white py-1 px-3 font-['BMJUA'] "
                                     onClick={onClickImageUplaod}>
                                 프로필 수정
                             </button>
@@ -195,7 +195,7 @@ const MyPageSetting: React.FC = () => {
                     </div>
                     <div className="mt-4 w-1/2 flex justify-center flex-col">
                         <div className='my-2'>
-                            <div className='my-1'>이름</div>
+                            <div className="my-1  font-['BMJUA']">이름</div>
                             <input
                                 name="name"
                                 value={userInfo.name}
@@ -203,7 +203,7 @@ const MyPageSetting: React.FC = () => {
                                 className="w-full border rounded p-2 mb-2"
                             /></div>
                         <div className='my-2'>
-                            <div className='my-1'>닉네임</div>
+                            <div className="my-1  font-['BMJUA']">닉네임</div>
                             <input
                                 name="nickname"
                                 value={userInfo.nickname}
@@ -212,7 +212,7 @@ const MyPageSetting: React.FC = () => {
                             />
                         </div>
                         <div className='my-2'>
-                            <div className='my-1'>이메일</div>
+                            <div className="my-1  font-['BMJUA']">이메일</div>
                             <input
                                 name="email"
                                 disabled
@@ -222,7 +222,7 @@ const MyPageSetting: React.FC = () => {
                             />
                         </div>
                         <div className='my-2'>
-                            <div className='my-1'>핸드폰</div>
+                            <div className="my-1  font-['BMJUA']">핸드폰</div>
                             <input
                                 name="phone"
                                 value={userInfo.phone}
@@ -231,7 +231,7 @@ const MyPageSetting: React.FC = () => {
                             />
                         </div>
                     </div>
-                    <button className="my-2 bg-main-red-color opacity-75 rounded text-white py-1 px-3"
+                    <button className="my-2 bg-main-red-color opacity-75 rounded text-white py-1 px-3  font-['BMJUA']"
                             onClick={handleSubmit}>
                         저장
                     </button>
