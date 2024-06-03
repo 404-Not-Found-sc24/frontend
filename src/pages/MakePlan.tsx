@@ -127,7 +127,7 @@ const MakePlan = () => {
         clearTimeout(timeoutId);
       }
     };
-  }, [timeoutId]);]
+  }, [timeoutId]);
 
   const fetchPlaceDataOnScroll = async () => {
     if (!isLoading.current) {
