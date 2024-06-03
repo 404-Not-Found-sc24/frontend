@@ -1,7 +1,9 @@
-import React, {useState, useRef, useEffect} from 'react';
-import {useLocation, useNavigate} from 'react-router-dom';
-import {useAuth} from '../context/AuthContext';
-import axios, {AxiosError} from 'axios';
+import React, { useState, useRef, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import axios, { AxiosError } from 'axios';
+import { toast, ToastContainer } from 'react-toastify';
+import { useNavigate } from 'react-router';
 
 interface UserInfo {
     memberId: number;
@@ -25,6 +27,7 @@ const MyPageSetting: React.FC = () => {
     const [userInfo, setUserInfo] = useState<UserInfo>(data.data);
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [showSuccessPopup, setShowSuccessPopup] = useState<boolean>(false);
+    const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null); // 타이머 ID 상태 추가
 
     const {refreshAccessToken} = useAuth();
     useEffect(() => {
@@ -55,6 +58,15 @@ const MyPageSetting: React.FC = () => {
         }
     };
 
+    useEffect(() => {
+        return () => {
+            if (timeoutId) {
+                clearTimeout(timeoutId); // 언마운트 시 타이머 제거
+            }
+        };
+    }, [timeoutId]);
+
+
     const onClickImageUplaod = () => {
         if (imageInput.current) {
             imageInput.current.click();
@@ -73,6 +85,16 @@ const MyPageSetting: React.FC = () => {
         setShowSuccessPopup(false);
     };
 
+
+    const notifySuccess = () =>
+        toast.success('사용자 정보가 성공적으로 수정되었습니다.', {
+            position: 'top-center',
+        });
+    const notifyError = () =>
+        toast.error('사용자 정보 수정 중 오류가 발생했습니다.', {
+            position: 'top-center',
+        });
+
     const handleSubmit = async () => {
         console.log(userInfo);
         const formData = new FormData();
@@ -88,7 +110,11 @@ const MyPageSetting: React.FC = () => {
                     Authorization: `Bearer ${accessToken}`,
                 },
             });
-            setShowSuccessPopup(true);
+            notifySuccess();
+            const id = setTimeout(() => {
+                navigate('/mypage');
+            }, 3000);
+            setTimeoutId(id);
         } catch (error) {
             if (
                 (error as AxiosError).response &&
@@ -104,6 +130,7 @@ const MyPageSetting: React.FC = () => {
                 }
             } else {
                 console.error('일정 조회 중 오류 발생:', error);
+                notifyError();
             }
         }
     };
@@ -158,7 +185,6 @@ const MyPageSetting: React.FC = () => {
                             <button className="text-main-green-color text-sm underline mt-1" onClick={getOut}>회원 탈퇴하기
                             </button>
                         </div>
-
                         <input
                             type="file"
                             accept="image/jpg, image/png, image/jpeg"

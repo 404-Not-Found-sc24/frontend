@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import ScheduleCard from '../components/ScheduleCard';
 import { useAuth } from '../context/AuthContext';
 import axios, { AxiosError } from 'axios';
-import { ToastContainer, toast } from 'react-toastify';
 
 interface ScheduleData {
   scheduleId: number;
@@ -163,7 +162,7 @@ const MyPage: React.FC = () => {
   };
 
   return (
-    <div>
+    <div className="h-full">
       <div className="h-[22rem]">
         <div className="w-full h-44 bg-main-red-color"></div>
         <div className="relative flex justify-center">
@@ -286,7 +285,7 @@ const MyPage: React.FC = () => {
         </div>
       </div>
       {showSuccessPopup && (
-        <div className="popup absolute top-0 l-0 w-full h-full bg-black/50 flex justify-center">
+        <div className="popup fixed top-0 l-0 w-full h-100% bg-black/50 flex justify-center">
           <div className="bg-white p-3 rounded mt-10 w-1/3 h-36 flex items-center flex-col">
             <div className="h-24 flex items-center">일정이 삭제되었습니다.</div>
             <button
