@@ -146,7 +146,7 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({ data, onDeleteSchedule }) =
                         imageUrl !== null ?
                             <img src={imageUrl} alt="" className='h-full w-full'></img>
                             :
-                            <div className='flex h-full w-full border-2 text-center justify-center items-center'>사진이 없습니다.</div>
+                            <img src={process.env.PUBLIC_URL + '/image/logo.png'} className='h-full w-full'></img>
                     }
                 </div>
                 <div className='flex flex-col w-full'>
