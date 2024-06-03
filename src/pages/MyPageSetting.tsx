@@ -16,18 +16,31 @@ interface UserInfo {
 }
 
 const MyPageSetting: React.FC = () => {
-
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [accessToken, setAccessToken] = useState<string | null>(null);
+    const [refreshToken, setRefreshToken] = useState<string | null>(null);
+    const navigate = useNavigate();
     const location = useLocation();
-    const imageInput = useRef<HTMLInputElement>(null);;
-    const data = { ...location.state };
+    const imageInput = useRef<HTMLInputElement>(null);
+    ;
+    const data = {...location.state};
     const [userInfo, setUserInfo] = useState<UserInfo>(data.data);
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [showSuccessPopup, setShowSuccessPopup] = useState<boolean>(false);
-    const navigate = useNavigate();
     const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null); // 타이머 ID 상태 추가
 
-    const { refreshAccessToken } = useAuth();
-    const accessToken = localStorage.getItem('accessToken');
+    const {refreshAccessToken} = useAuth();
+    useEffect(() => {
+        const checkAuth = async () => {
+            const storedAccessToken = localStorage.getItem('accessToken');
+            if (storedAccessToken) {
+                setIsAuthenticated(true);
+                setAccessToken(storedAccessToken);
+            }
+        };
+
+        checkAuth();
+    }, []);
 
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files[0]) {
@@ -61,7 +74,7 @@ const MyPageSetting: React.FC = () => {
     }
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = event.target;
+        const {name, value} = event.target;
         setUserInfo((prevUserInfo) => ({
             ...prevUserInfo,
             [name]: value,
@@ -122,79 +135,118 @@ const MyPageSetting: React.FC = () => {
         }
     };
 
+    const getOut = async () => {
+        try {
+            await axios.delete(`/auth`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+
+            // Clear local storage values
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+
+            // Clear context values
+            setAccessToken(null);
+            setRefreshToken(null);
+            setIsAuthenticated(false);
+
+            // Navigate to login or home page
+            navigate('/');
+        } catch (error) {
+            console.error('Error logging out:', error);
+        }
+    };
+
     return (
         console.log(userInfo),
-        <div className="flex justify-center">
-            <ToastContainer />
-            <div className="w-5/6 flex items-center flex-col">
-                {userInfo?.imageUrl == null ?
-                    <img
-                        src={`${process.env.PUBLIC_URL}/image/user.png`}
-                        alt="유저 기본 이미지"
-                        className="w-24 h-24 -top-10 bg-white rounded-full"
-                    />
-                    :
-                    <img
-                        src={userInfo.imageUrl}
-                        alt="유저 프로필 이미지"
-                        className="w-36 h-36 -top-10 bg-white rounded-full mb-5 border-main-red-color border-2"
-                    />
-                }
-                <div>
-                    <button className="bg-main-red-color opacity-75 rounded text-white py-1 px-3" onClick={onClickImageUplaod}>
-                        프로필 수정
+            <div className="flex justify-center">
+                <div className="w-5/6 flex items-center flex-col">
+                    {userInfo?.imageUrl == null ?
+                        <img
+                            src={`${process.env.PUBLIC_URL}/image/user.png`}
+                            alt="유저 기본 이미지"
+                            className="w-24 h-24 -top-10 bg-white rounded-full"
+                        />
+                        :
+                        <img
+                            src={userInfo.imageUrl}
+                            alt="유저 프로필 이미지"
+                            className="w-36 h-36 -top-10 bg-white rounded-full mb-5 border-main-red-color border-2"
+                        />
+                    }
+                    <div>
+                        <div className="flex flex-col">
+                            <button className="bg-main-red-color opacity-75 rounded text-white py-1 px-3"
+                                    onClick={onClickImageUplaod}>
+                                프로필 수정
+                            </button>
+                            <button className="text-main-green-color text-sm underline mt-1" onClick={getOut}>회원 탈퇴하기
+                            </button>
+                        </div>
+                        <input
+                            type="file"
+                            accept="image/jpg, image/png, image/jpeg"
+                            className="mt-2 hidden"
+                            onChange={handleImageChange}
+                            ref={imageInput}
+                        />
+                    </div>
+                    <div className="mt-4 w-1/2 flex justify-center flex-col">
+                        <div className='my-2'>
+                            <div className='my-1'>이름</div>
+                            <input
+                                name="name"
+                                value={userInfo.name}
+                                onChange={handleInputChange}
+                                className="w-full border rounded p-2 mb-2"
+                            /></div>
+                        <div className='my-2'>
+                            <div className='my-1'>닉네임</div>
+                            <input
+                                name="nickname"
+                                value={userInfo.nickname}
+                                onChange={handleInputChange}
+                                className="w-full border rounded p-2 mb-2"
+                            />
+                        </div>
+                        <div className='my-2'>
+                            <div className='my-1'>이메일</div>
+                            <input
+                                name="email"
+                                disabled
+                                value={userInfo.email}
+                                onChange={handleInputChange}
+                                className="w-full border rounded p-2 mb-2 disabled:bg-gray-200"
+                            />
+                        </div>
+                        <div className='my-2'>
+                            <div className='my-1'>핸드폰</div>
+                            <input
+                                name="phone"
+                                value={userInfo.phone}
+                                onChange={handleInputChange}
+                                className="w-full border rounded p-2 mb-2"
+                            />
+                        </div>
+                    </div>
+                    <button className="my-2 bg-main-red-color opacity-75 rounded text-white py-1 px-3"
+                            onClick={handleSubmit}>
+                        저장
                     </button>
-                    <input
-                        type="file"
-                        accept="image/jpg, image/png, image/jpeg"
-                        className="mt-2 hidden"
-                        onChange={handleImageChange}
-                        ref={imageInput}
-                    />
+                    {showSuccessPopup && (
+                        <div className="popup absolute top-0 l-0 w-full h-full bg-black/50 flex justify-center">
+                            <div className='bg-white p-3 rounded mt-10 w-1/3 h-36 flex items-center flex-col'>
+                                <div className='h-24 flex items-center'>정보가 수정되었습니다.</div>
+                                <button onClick={handlePopupClose}
+                                        className='w-16 text-white bg-main-red-color py-0.5 px-3'>확인
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </div>
-                <div className="mt-4 w-1/2 flex justify-center flex-col">
-                    <div className='my-2'>
-                        <div className='my-1'>이름</div>
-                        <input
-                            name="name"
-                            value={userInfo.name}
-                            onChange={handleInputChange}
-                            className="w-full border rounded p-2 mb-2"
-                        /></div>
-                    <div className='my-2'>
-                        <div className='my-1'>닉네임</div>
-                        <input
-                            name="nickname"
-                            value={userInfo.nickname}
-                            onChange={handleInputChange}
-                            className="w-full border rounded p-2 mb-2"
-                        />
-                    </div>
-                    <div className='my-2'>
-                        <div className='my-1'>이메일</div>
-                        <input
-                            name="email"
-                            disabled
-                            value={userInfo.email}
-                            onChange={handleInputChange}
-                            className="w-full border rounded p-2 mb-2 disabled:bg-gray-200"
-                        />
-                    </div>
-                    <div className='my-2'>
-                        <div className='my-1'>핸드폰</div>
-                        <input
-                            name="phone"
-                            value={userInfo.phone}
-                            onChange={handleInputChange}
-                            className="w-full border rounded p-2 mb-2"
-                        />
-                    </div>
-                </div>
-                <button className="my-2 bg-main-red-color opacity-75 rounded text-white py-1 px-3" onClick={handleSubmit}>
-                    저장
-                </button>
             </div>
-        </div>
     );
 };
 export default MyPageSetting;
