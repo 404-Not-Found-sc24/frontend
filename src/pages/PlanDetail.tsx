@@ -153,6 +153,7 @@ const PlanDetail: React.FC = () => {
 
   const copySchedule = async () => {
     try {
+      console.log(scheduleId);
       // 복사된 일정 데이터를 서버에 전송하여 저장합니다.
       const response = await axios.post(
         `/tour/schedules/${scheduleId}`,
@@ -164,7 +165,7 @@ const PlanDetail: React.FC = () => {
       // 저장이 완료되면 사용자에게 알립니다. (예: 모달, 알림 등)
       console.log('일정이 성공적으로 복사되었습니다:', response.data);
       notifySuccess();
-      navigate('/myplanpage', { state: { copiedSchedule: scheduleData } });
+      navigate('/mypage', { state: { copiedSchedule: scheduleData } });
     } catch (error) {
       if (
         (error as AxiosError).response &&
@@ -195,8 +196,8 @@ const PlanDetail: React.FC = () => {
       <div className="w-1/2 h-full">
         <div className="flex w-full h-[10%]">
           <i
-              className="backArrow ml-2 cursor-pointer w-[10%]"
-              onClick={naviBack}
+            className="backArrow ml-2 cursor-pointer w-[10%]"
+            onClick={naviBack}
           ></i>
           <div className="flex items-center w-[90%]">
             <div className="font-['BMJUA'] text-3xl text-black ml-2 flex items-center">
@@ -212,8 +213,8 @@ const PlanDetail: React.FC = () => {
             <div className="flex justify-between h-7">
               <div className="flex items-center">{generateTabs()}</div>
               <button
-                  onClick={copySchedule}
-                  className="w-20 h-7 bg-black rounded-2xl text-white font-['Nanum Gothic'] text-sm font-semibold"
+                onClick={copySchedule}
+                className="w-20 h-7 bg-black rounded-2xl text-white font-['Nanum Gothic'] text-sm font-semibold"
               >
                 가져오기
               </button>
@@ -250,10 +251,10 @@ const PlanDetail: React.FC = () => {
         </div>
       </div>
       <MapProvider
-          initialMarkers={initialMarkers}
-          initialCenter={initialCenter}
+        initialMarkers={initialMarkers}
+        initialCenter={initialCenter}
       >
-        <Map/>
+        <Map />
       </MapProvider>
     </div>
   );
