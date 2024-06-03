@@ -38,6 +38,7 @@ const MyDiaryDetail: React.FC = () => {
   const { refreshAccessToken } = useAuth();
   const [showDeletePopup, setShowDeletePopup] = useState<boolean>(false);
   const [showSuccessPopup, setShowSuccessPopup] = useState<boolean>(false);
+  const [isBeforeStartDate, setIsBeforeStartDate] = useState<boolean>(false);
 
   useEffect(() => {
     const getData = async () => {
@@ -58,6 +59,11 @@ const MyDiaryDetail: React.FC = () => {
       }
     };
     getData();
+
+
+    const today = new Date();
+    const startDate = new Date(PlanData.date);
+    setIsBeforeStartDate(today < startDate);
   }, []);
 
   const handleDeleteDiary = async (
@@ -95,12 +101,12 @@ const MyDiaryDetail: React.FC = () => {
 
   const initialMarkers = PlanData
     ? [
-        {
-          placeId: PlanData.placeId,
-          latitude: PlanData.latitude,
-          longitude: PlanData.longitude,
-        },
-      ]
+      {
+        placeId: PlanData.placeId,
+        latitude: PlanData.latitude,
+        longitude: PlanData.longitude,
+      },
+    ]
     : [];
 
   const initialCenter = PlanData
@@ -157,7 +163,7 @@ const MyDiaryDetail: React.FC = () => {
               className="backArrow ml-2 cursor-pointer w-[10%]"
               onClick={naviBack}
             ></i>
-            <div className="flex items-center w-[90%]">
+            <div className="flex items-center w-[80%]">
               <div className="font-['BMJUA'] text-3xl text-black ml-2 flex items-center">
                 {planName}
               </div>
@@ -166,20 +172,24 @@ const MyDiaryDetail: React.FC = () => {
               </div>
             </div>
           </div>
-          {Diarydata ? (
-            <button
-              onClick={navieditdiary}
-              className="flex items-center justify-center w-[20%] h-7  mx-10 bg-black rounded-2xl text-white font-['Nanum Gothic'] text-sm font-semibold"
-            >
-              일기 수정
-            </button>
-          ) : (
-            <button
-              onClick={navimakediary}
-              className="flex items-center justify-center w-[20%] h-7 mx-10 bg-black rounded-2xl text-white font-['Nanum Gothic'] text-sm font-semibold"
-            >
-              일기 작성
-            </button>
+          {!isBeforeStartDate && (
+            <div className='w-[20%] mr-5'>
+              {Diarydata ? (
+                <button
+                  onClick={navieditdiary}
+                  className="flex items-center justify-center w-full h-7 bg-black rounded-2xl text-white font-['Nanum Gothic'] text-sm font-semibold"
+                >
+                  일기 수정
+                </button>
+              ) : (
+                <button
+                  onClick={navimakediary}
+                  className="flex items-center justify-center w-full h-7 bg-black rounded-2xl text-white font-['Nanum Gothic'] text-sm font-semibold"
+                >
+                  일기 작성
+                </button>
+              )}
+            </div>
           )}
         </div>
         <div className="w-full h-[95%] flex justify-center">
@@ -236,8 +246,9 @@ const MyDiaryDetail: React.FC = () => {
                     </div>
                   </>
                 ) : (
+                  
                   <div className="flex justify-center font-['BMJUA'] text-xl text-main-green-color h-[50%] items-center">
-                    일기를 작성해주세요!
+                    {isBeforeStartDate ? '일정이 시작되지 않았습니다!':'일기를 작성해주세요!'}
                   </div>
                 )}
               </div>
