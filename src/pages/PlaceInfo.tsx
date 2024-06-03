@@ -473,7 +473,7 @@ const PlaceInfo: React.FC = () => {
                     {diariesRes.map((data: DiariesData, index: number) => {
                       return (
                           <div className="w-full h-full flex flex-col items-center pt-3">
-                            <SearchResultDiary key={index} props={data}/>
+                            <SearchResultDiary key={index} props={data} locationId={place.locationId} />
                           </div>
                       );
                     })}
