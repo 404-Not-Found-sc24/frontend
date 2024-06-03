@@ -20,6 +20,7 @@ const DiaryDetail: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const Diary = location.state.PlanData;
+  const locationId = location.state.locationId;
   const [diaryData, setDiaryData] = useState<Diary>();
 
   useEffect(() => {
@@ -46,7 +47,7 @@ const DiaryDetail: React.FC = () => {
   };
 
   const getData = async () => {
-    console.log(Diary);
+    console.log("Diary", Diary);
     try {
       await axios
         .get(`/tour/diary/${Diary.diaryId}`, {
@@ -134,7 +135,7 @@ const DiaryDetail: React.FC = () => {
         </div>
         <PastePlace
           isOpen={isOpen}
-          locationId={Diary.locationId}
+          locationId={locationId}
           handleCloseModal={handleCloseModal}
         />
       </div>
