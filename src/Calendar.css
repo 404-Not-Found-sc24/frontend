@@ -96,7 +96,7 @@ abbr[title] {
     background: #6f48eb;
     color: white;
 }
-.react-calendar__tile--rangeEnd {
+.react-calendar__tile--rangeEnd:enabled:hover {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
     border-top-right-radius: 6px;
