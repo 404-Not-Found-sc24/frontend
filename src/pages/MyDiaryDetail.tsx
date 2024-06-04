@@ -40,26 +40,27 @@ const MyDiaryDetail: React.FC = () => {
   const [showSuccessPopup, setShowSuccessPopup] = useState<boolean>(false);
   const [isBeforeStartDate, setIsBeforeStartDate] = useState<boolean>(false);
 
-  useEffect(() => {
-    const getData = async () => {
-      console.log(PlanData);
-      try {
-        await axios
-          .get(`/tour/diary/${PlanData.diaryId}`, {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          })
-          .then((response) => {
-            console.log(response.data);
-            setDiaryData(response.data);
-          });
-      } catch (e) {
-        console.error('Error:', e);
-      }
-    };
-    getData();
+  const getData = async () => {
+    console.log(PlanData);
+    try {
+      await axios
+        .get(`/tour/diary/${PlanData.diaryId}`, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+        .then((response) => {
+          console.log(response.data);
+          setDiaryData(response.data);
+        });
+    } catch (e) {
+      console.error('Error:', e);
+      setDiaryData(null);
+    }
+  };
 
+  useEffect(() => {
+    getData();
 
     const today = new Date();
     const startDate = new Date(PlanData.date);
@@ -101,12 +102,12 @@ const MyDiaryDetail: React.FC = () => {
 
   const initialMarkers = PlanData
     ? [
-      {
-        placeId: PlanData.placeId,
-        latitude: PlanData.latitude,
-        longitude: PlanData.longitude,
-      },
-    ]
+        {
+          placeId: PlanData.placeId,
+          latitude: PlanData.latitude,
+          longitude: PlanData.longitude,
+        },
+      ]
     : [];
 
   const initialCenter = PlanData
@@ -114,10 +115,6 @@ const MyDiaryDetail: React.FC = () => {
     : { latitude: 37.2795, longitude: 127.0438 };
 
   const naviBack = () => {
-    console.log(PlanData.imageUrl);
-    console.log(PlanData);
-    console.log(planName);
-    console.log(Diarydata);
     window.history.back();
   };
 
@@ -151,7 +148,7 @@ const MyDiaryDetail: React.FC = () => {
   };
   const handleSuccessPopupClose = () => {
     setShowSuccessPopup(false);
-    navigate('/mypage');
+    getData();
   };
 
   return (
@@ -173,7 +170,7 @@ const MyDiaryDetail: React.FC = () => {
             </div>
           </div>
           {!isBeforeStartDate && (
-            <div className='w-[20%] mr-5'>
+            <div className="w-[20%] mr-5">
               {Diarydata ? (
                 <button
                   onClick={navieditdiary}
@@ -222,7 +219,7 @@ const MyDiaryDetail: React.FC = () => {
                     )}
                   </div>
                 </div>
-                {PlanData.title ? (
+                {Diarydata ? (
                   <>
                     <div className="flex justify-center h-fit m-5">
                       <img
@@ -234,21 +231,22 @@ const MyDiaryDetail: React.FC = () => {
                     <div className="mx-10 my-5 h-full">
                       <div className="flex justify-between">
                         <div className="w-[90%] font-['Nanum Gothic'] font-bold text-lg">
-                          {PlanData.title}
+                          {Diarydata.title}
                         </div>
                         {Diarydata && (
                           <div className="w-[10%]">{Diarydata.weather}</div>
                         )}
                       </div>
                       <div className="font-['Nanum Gothic'] mt-3">
-                        {PlanData.content}
+                        {Diarydata.content}
                       </div>
                     </div>
                   </>
                 ) : (
-                  
                   <div className="flex justify-center font-['BMJUA'] text-xl text-main-green-color h-[50%] items-center">
-                    {isBeforeStartDate ? '일정이 시작되지 않았습니다!':'일기를 작성해주세요!'}
+                    {isBeforeStartDate
+                      ? '일정이 시작되지 않았습니다!'
+                      : '일기를 작성해주세요!'}
                   </div>
                 )}
               </div>

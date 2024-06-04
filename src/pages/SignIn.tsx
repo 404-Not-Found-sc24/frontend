@@ -42,6 +42,10 @@ const SignIn: React.FC = () => {
     navigate('/findpassword');
   };
 
+  const handleFindEmail = () => {
+    navigate('/findemail');
+  };
+
   return (
     <div className="max-w-md mx-auto mt-10 px-4">
       <h1 className="text-3xl font-semibold text-center">로그인</h1>
@@ -74,7 +78,7 @@ const SignIn: React.FC = () => {
           </button>
         </div>
         <div className="flex items-center justify-center">
-          <button type="button" className="p-4">
+          <button type="button" onClick={handleFindEmail} className="p-4">
             아이디 찾기
           </button>
           <div className="p-4"> | </div>
