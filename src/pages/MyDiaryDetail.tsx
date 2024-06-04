@@ -61,7 +61,6 @@ const MyDiaryDetail: React.FC = () => {
 
   useEffect(() => {
     getData();
-
     const today = new Date();
     const startDate = new Date(PlanData.date);
     setIsBeforeStartDate(today < startDate);
