@@ -179,7 +179,7 @@ const MyPage: React.FC = () => {
               className="absolute w-24 h-24 -top-10 bg-white rounded-full"
             />
           )}
-          <h1 className="absolute top-16 text-3xl font-medium">
+          <h1 className="absolute top-16 text-3xl font-medium font-['BMJUA'] ">
             {userInfo?.nickname}
           </h1>
           <button
@@ -201,13 +201,13 @@ const MyPage: React.FC = () => {
           <div className="flex flex-row justify-between mb-5">
             <div className="flex flex-row">
               <div className="bg-main-red-color w-[0.3rem] h-8 rounded"></div>
-              <h1 className="text-3xl font-medium mx-3">나의 일정</h1>
-              <h1 className="text-3xl font-medium text-main-red-color">
+              <h1 className="text-3xl font-medium mx-3 font-['BMJUA'] ">나의 일정</h1>
+              <h1 className="text-3xl font-medium text-main-red-color font-['BMJUA'] ">
                 {beforeTravel.length + traveling.length + afterTravel.length}
               </h1>
             </div>
             <button
-              className="bg-main-red-color text-white rounded-full px-3 py-1"
+              className="bg-main-red-color text-white rounded-full px-3 py-1 font-['BMJUA'] "
               onClick={() => navigateToTravel('schedule')}
             >
               + 일정 추가
@@ -255,7 +255,7 @@ const MyPage: React.FC = () => {
               (beforeTravel.length > 0 ? (
                 renderScheduleCards(beforeTravel, onDeleteSchedule)
               ) : (
-                <div className="flex justify-center items-center h-44 shadow-md">
+                <div className="flex justify-center items-center h-44 shadow-md font-['BMJUA'] ">
                   <div className="text-slate-300 font-bold text-3xl">
                     계획 중인 여행이 없습니다.
                   </div>
@@ -265,7 +265,7 @@ const MyPage: React.FC = () => {
               (traveling.length > 0 ? (
                 renderScheduleCards(traveling, onDeleteSchedule)
               ) : (
-                <div className="flex justify-center items-center h-44 shadow-md">
+                <div className="flex justify-center items-center h-44 shadow-md font-['BMJUA'] ">
                   <div className="text-slate-300 font-bold text-3xl">
                     여행 중인 일정이 없습니다.
                   </div>
@@ -275,7 +275,7 @@ const MyPage: React.FC = () => {
               (afterTravel.length > 0 ? (
                 renderScheduleCards(afterTravel, onDeleteSchedule)
               ) : (
-                <div className="flex justify-center items-center h-44 shadow-md">
+                <div className="flex justify-center items-center h-44 shadow-md font-['BMJUA'] ">
                   <div className="text-slate-300 font-bold text-3xl">
                     종료된 여행이 없습니다.
                   </div>

@@ -176,32 +176,34 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({
           {imageUrl !== null ? (
             <img src={imageUrl} alt="" className="h-full w-full"></img>
           ) : (
-              <img src={process.env.PUBLIC_URL + '/image/logo.png'} className='h-full w-full'></img>
+            <img src={process.env.PUBLIC_URL + '/image/logo.png'} className='h-full w-full'></img>
           )}
         </div>
         <div className="flex flex-col w-full">
           <div className="flex flex-row">
-            <div className="text-main-red-color text-xl font-bold w-20 mr-5">
+            <div className="text-main-red-color text-xl font-bold w-20 mr-5 font-['BMJUA'] ">
               {differenceInDays !== undefined &&
                 (differenceInDays === 0
                   ? 'D-Day'
                   : `D${differenceInDays > 0 ? '+' : '-'}${Math.abs(
-                      differenceInDays,
-                    )}`)}
+                    differenceInDays,
+                  )}`)}
             </div>
 
-            <div className="text-xl flex-grow">{location}</div>
-            <div className="text-xl w-20">
+            <div className="text-xl flex-grow font-['BMJUA'] ">{location}</div>
+            <div className="text-xl w-20 font-['BMJUA'] ">
               <button onClick={handleShare} className='hover:font-bold'>
                 {share == 1 ? 'PUBLIC' : 'PRIVATE'}
               </button>
             </div>
           </div>
           <div className="flex flex-grow items-center justify-start">
-            <div className="text-3xl font-bold">{name}</div>
+            <div className="text-3xl font-bold font-['BMJUA'] overflow-hidden whitespace-nowrap overflow-ellipsis">
+              {name.length > 15 ? `${name.substring(0, 15)}...` : name}
+            </div>
           </div>
           <div className="flex justify-between">
-            <div className="texl-lg font-medium">
+            <div className="texl-lg font-medium font-['BMJUA'] ">
               {startDate} ~ {endDate}
             </div>
             <img

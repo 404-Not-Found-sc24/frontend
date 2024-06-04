@@ -10,9 +10,10 @@ import { useLocation, useNavigate } from 'react-router-dom';
 const EditDiary: React.FC = () => {
   const location = useLocation();
   const PlanData = location.state.PlanData;
+  const planName = location.state.planName;
   const Diarydata = location.state.Diarydata;
-  const [title, setTitle] = useState(PlanData.title);
-  const [content, setContent] = useState(PlanData.content);
+  const [title, setTitle] = useState(Diarydata.title);
+  const [content, setContent] = useState(Diarydata.content);
   const [weather, setWeather] = useState(Diarydata.weather);
   const [images, setImages] = useState<File[]>([]);
   const [previewImages, setPreviewImages] = useState<string[]>(
@@ -86,7 +87,9 @@ const EditDiary: React.FC = () => {
       console.log('일기가 성공적으로 수정되었습니다:', response.data);
       notifySuccess();
       const id = setTimeout(() => {
-        navigate('/mypage');
+        navigate('/mydiarydetail', {
+          state: { PlanData: PlanData, planName: planName },
+        });
       }, 3000);
       setTimeoutId(id);
     } catch (error) {

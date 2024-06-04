@@ -129,6 +129,8 @@ const PastePlace = ({ isOpen, locationId, handleCloseModal }: props) => {
         time: selectedTime,
       };
 
+      console.log("req", requestData);
+      
       await axios
           .post('/tour/schedules', requestData, {
             headers: {
