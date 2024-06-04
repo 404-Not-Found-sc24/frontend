@@ -61,7 +61,6 @@ const MyDiaryDetail: React.FC = () => {
 
   useEffect(() => {
     getData();
-
     const today = new Date();
     const startDate = new Date(PlanData.date);
     setIsBeforeStartDate(today < startDate);
@@ -121,14 +120,16 @@ const MyDiaryDetail: React.FC = () => {
   const navimakediary = () => {
     console.log(PlanData);
     console.log(Diarydata);
-    navigate('/makediary', { state: { PlanData: PlanData } });
+    navigate('/makediary', {
+      state: { PlanData: PlanData, planName: planName },
+    });
   };
 
   const navieditdiary = () => {
     console.log(PlanData);
     console.log(Diarydata);
     navigate('/editdiary', {
-      state: { PlanData: PlanData, Diarydata: Diarydata },
+      state: { PlanData: PlanData, Diarydata: Diarydata, planName: planName },
     });
   };
 
@@ -221,13 +222,21 @@ const MyDiaryDetail: React.FC = () => {
                 </div>
                 {Diarydata ? (
                   <>
-                    <div className="flex justify-center h-fit m-5">
-                      <img
-                        src={PlanData.imageUrl}
-                        width="250px"
-                        alt="지역소개사진"
-                      />
-                    </div>
+                    {Diarydata.imageUrl.length != 0 ? (
+                      <div className="flex justify-center h-fit m-5">
+                        <img
+                          src={Diarydata.imageUrl}
+                          width="250px"
+                          alt="사진이없습니다."
+                        />
+                      </div>
+                    ) : (
+                      <div className="flex mx-auto my-4 justify-center items-center w-[80%] h-[80%] border border-gray-300 rounded-md">
+                        <div className="text-gray-500">
+                          사진을 업로드 해주세요
+                        </div>
+                      </div>
+                    )}
                     <div className="mx-10 my-5 h-full">
                       <div className="flex justify-between">
                         <div className="w-[90%] font-['Nanum Gothic'] font-bold text-lg">
