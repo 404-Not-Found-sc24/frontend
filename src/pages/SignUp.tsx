@@ -16,7 +16,12 @@ const SignUp: React.FC = () => {
     email: '',
     phone: '',
     password: '',
+    confirmPassword: '',
   });
+  const [number, setNumber] = useState('');
+  const [emailCheck, setEmailCheck] = useState(false);
+  const [emailRequested, setEmailRequested] = useState(false);
+  const [emailRequestLoading, setEmailRequestLoading] = useState(false);
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().required('이름을 입력하세요!'),
@@ -43,6 +48,11 @@ const SignUp: React.FC = () => {
         /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])[^\s]*$/,
         '알파벳, 숫자, 공백을 제외한 특수문자를 모두 포함해야 합니다!',
       ),
+    confirmPassword: Yup.string()
+      .required('비밀번호를 다시 입력하세요.')
+      .test('passwords-match', '비밀번호가 일치하지 않습니다.', function (value) {
+        return this.parent.password === value;
+      }),
   });
 
   const formatPhoneNumber = (phone: string) => {
@@ -60,14 +70,16 @@ const SignUp: React.FC = () => {
     email: string;
     phone: string;
     password: string;
+    confirmPassword: string;
   }) => {
-    const { name, nickname, email, phone, password } = values;
+    const { name, nickname, email, phone, password, confirmPassword } = values;
     setData({
       name: name,
       nickname: nickname,
       email: email,
       phone: phone,
       password: password,
+      confirmPassword: confirmPassword
     });
     try {
       await axios.post('/auth/sign-up', values, {
@@ -96,6 +108,63 @@ const SignUp: React.FC = () => {
     }
   };
 
+  const emailRequest = async (email: String) => {
+    if (!email || !Yup.string().email().isValidSync(email)) {
+      toast.error('유효한 이메일을 입력하세요!', {
+        position: 'top-center',
+      });
+      return;
+    }
+
+    try {
+      setEmailRequestLoading(true);
+      await axios.get(`/auth/duplicate?email=${email}`);
+
+      toast.success(
+        <h3>
+          이메일로 인증번호를 발송했습니다.
+        </h3>,
+        {
+          position: 'top-center',
+          autoClose: 2000,
+        },
+      );
+
+      setEmailRequested(true);
+      setEmailRequestLoading(false);
+    } catch (e: any) {
+      toast.error(e.response.data.message + '😭', {
+        position: 'top-center',
+      });
+    }
+  }
+
+  const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNumber(e.target.value);
+  };
+
+  const handleEmailCheck = async (email: string, e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    try {
+      await axios.post(`/auth/emailCheck?email=${email}&code=${number}`);
+
+      toast.success(
+        <h3>
+          이메일 인증이 완료되었습니다.
+        </h3>,
+        {
+          position: 'top-center',
+          autoClose: 2000,
+        },
+      );
+      setEmailCheck(true);
+    } catch (e: any) {
+      toast.error(e.response.data.message + '😭', {
+        position: 'top-center',
+      });
+    }
+  };
+
   return (
     <Formik
       initialValues={{
@@ -104,12 +173,13 @@ const SignUp: React.FC = () => {
         email: '',
         nickname: '',
         password: '',
+        confirmPassword: ''
       }}
       validationSchema={validationSchema}
       onSubmit={submit}
       validateOnMount={true}
     >
-      {({ values, handleSubmit, handleChange, setFieldValue, errors }) => (
+      {({ values, handleSubmit, handleChange, setFieldValue, isValid, errors }) => (
         <div className="max-w-sm mx-auto mt-8">
           <ToastContainer />
           <form onSubmit={handleSubmit} autoComplete="off">
@@ -125,7 +195,7 @@ const SignUp: React.FC = () => {
                 onChange={handleChange}
                 className="w-full p-2 border rounded"
               />
-              <div className="text-red-500">{errors.name}</div>
+              {values.name && <div className="text-red-500">{errors.name}</div>}
             </div>
             <div className="mb-4">
               <label htmlFor="nickname" className="block mb-1">
@@ -139,22 +209,64 @@ const SignUp: React.FC = () => {
                 onChange={handleChange}
                 className="w-full p-2 border rounded"
               />
-              <div className="text-red-500">{errors.nickname}</div>
+              {values.nickname && <div className="text-red-500">{errors.nickname}</div>}
             </div>
-            <div className="mb-4">
+            <div className="mb-2">
               <label htmlFor="email" className="block mb-1">
                 이메일
               </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                value={values.email}
-                onChange={handleChange}
-                className="w-full p-2 border rounded"
-              />
-              <div className="text-red-500">{errors.email}</div>
+              <div className="flex flex-row justify-between">
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={values.email}
+                  onChange={handleChange}
+                  className="w-[75%] p-2 border rounded"
+                />
+                {emailRequestLoading ?
+                  <div className='w-[20%] h-full flex justify-center'>
+                    <img
+                      src="Spinner.gif" alt="loading" className='w-[50%]'></img>
+                  </div>
+                  :
+                  <button
+                    type="button"
+                    className={`w-[20%] bg-main-green-color rounded-lg text-white font-semibold tracking-wide focus:outline-none hover:bg-opacity-80 ${!values.email || errors.email ? 'opacity-30 cursor-not-allowed' : 'hover:bg-opacity-80 '
+                      }`}
+                    onClick={() => emailRequest(values.email)}
+                    disabled={!values.email || !!errors.email}
+                  >{emailRequested ? '재요청' : '인증 요청'}</button>
+
+                }
+              </div>
+              {values.email && <div className="text-red-500">{errors.email}</div>}
             </div>
+            {emailRequested &&
+              <div className="flex flex-row justify-between mb-4">
+                <input
+                  id="number"
+                  name="number"
+                  type="text"
+                  value={number}
+                  className="w-[75%] p-2 border rounded"
+                  onChange={handleNumberChange} />
+                {emailCheck ?
+                  <div className="text-main-green-color w-[20%] flex justify-center items-center">
+                    <div>
+                      인증 완료
+                    </div>
+                  </div>
+                  :
+                  <button
+                    type="button"
+                    className={`w-[20%] bg-main-green-color rounded-lg text-white font-semibold tracking-wide focus:outline-none ${!emailRequested || number.length !== 6 ? 'opacity-30 cursor-not-allowed' : 'hover:bg-opacity-80 '
+                      }`}
+                    onClick={(e) => handleEmailCheck(values.email, e)}
+                    disabled={!emailRequested || number.length !== 6}
+                  >인증 확인</button>
+                }
+              </div>}
             <div className="mb-4">
               <label htmlFor="phone" className="block mb-1">
                 전화번호
@@ -169,7 +281,7 @@ const SignUp: React.FC = () => {
                 }}
                 className="w-full p-2 border rounded"
               />
-              <div className="text-red-500">{errors.phone}</div>
+              {values.phone && <div className="text-red-500">{errors.phone}</div>}
             </div>
             <div className="mb-4">
               <label htmlFor="password" className="block mb-1">
@@ -183,14 +295,26 @@ const SignUp: React.FC = () => {
                 onChange={handleChange}
                 className="w-full p-2 border rounded"
               />
-              <div className="text-red-500">{errors.password}</div>
+              {values.password && <div className="text-red-500">{errors.password}</div>}
+            </div>
+            <div className="mb-4">
+              <label htmlFor="password" className="block mb-1">
+                비밀번호 확인
+              </label>
+              <input
+                id="confirmPassword"
+                name="confirmPassword"
+                type="password"
+                value={values.confirmPassword}
+                onChange={handleChange}
+                className="w-full p-2 border rounded"
+              />
+              {values.confirmPassword && <div className="text-red-500">{errors.confirmPassword}</div>}
             </div>
             <button
               type="submit"
-              disabled={loading}
-              className={`w-full p-2 bg-blue-500 text-white rounded ${
-                loading ? 'opacity-50 cursor-not-allowed' : ''
-              }`}
+              disabled={!isValid || !emailCheck || loading}
+              className={`w-full p-2 bg-main-green-color text-white rounded font-semibold tracking-wide focus:outline-none ${!isValid || !emailCheck || loading ? 'opacity-30 cursor-not-allowed' : 'hover:bg-opacity-80'}`}
             >
               회원가입
             </button>
