@@ -1,6 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import SearchBar from '../components/SearchBar';
 const Main: React.FC = () => {
+    useEffect(() => {
+        if (
+            navigator.userAgent.match(/Android/i) ||
+            navigator.userAgent.match(/webOS/i) ||
+            navigator.userAgent.match(/iPhone/i) ||
+            navigator.userAgent.match(/iPad/i) ||
+            navigator.userAgent.match(/iPod/i) ||
+            navigator.userAgent.match(/BlackBerry/i) ||
+            navigator.userAgent.match(/Windows Phone/i)
+        ) {
+            window.location.href = "https://m.nadueli.com"; // 모바일 장치일 때 리다이렉트
+        }
+    }, []); // 페이지가 처음 로드될 때만 실행
+    
     return (
         <div>
             <div className="w-full flex justify-center mt-10">
