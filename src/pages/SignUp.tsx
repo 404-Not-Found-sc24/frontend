@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -10,7 +10,6 @@ import { useState } from 'react';
 const SignUp: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
   const [data, setData] = useState({
     name: '',
     nickname: '',
@@ -23,14 +22,6 @@ const SignUp: React.FC = () => {
   const [emailCheck, setEmailCheck] = useState(false);
   const [emailRequested, setEmailRequested] = useState(false);
   const [emailRequestLoading, setEmailRequestLoading] = useState(false);
-
-  useEffect(() => {
-    return () => {
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
-    };
-  }, [timeoutId]);
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().required('이름을 입력하세요!'),
@@ -107,10 +98,9 @@ const SignUp: React.FC = () => {
           autoClose: 2000,
         },
       );
-      const id = setTimeout(() => {
+      setTimeout(() => {
         navigate('/');
       }, 2000);
-      setTimeoutId(id); // 타이머 ID 설정
     } catch (e: any) {
       toast.error(e.response.data.message + '😭', {
         position: 'top-center',
@@ -146,6 +136,7 @@ const SignUp: React.FC = () => {
       toast.error(e.response.data.message + '😭', {
         position: 'top-center',
       });
+      setEmailRequestLoading(false);
     }
   }
 
