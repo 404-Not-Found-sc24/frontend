@@ -1,4 +1,4 @@
-import React from 'react';
+import { useEffect } from 'react';
 import './App.css';
 import { Route, Routes } from 'react-router-dom';
 import Main from './pages/Main';
@@ -31,6 +31,18 @@ import AddPromotion from './pages/AddPromotion';
 import EditDiary from './pages/EditDiary';
 
 function App() {
+  useEffect(() => {
+      if (
+          navigator.userAgent.match(/Android/i) ||
+          navigator.userAgent.match(/webOS/i) ||
+          navigator.userAgent.match(/iPhone/i) ||
+          navigator.userAgent.match(/BlackBerry/i) ||
+          navigator.userAgent.match(/Windows Phone/i)
+      ) {
+          window.location.href = "https://m.nadueli.com"; // 모바일 장치일 때 리다이렉트
+      }
+  }, []); // 페이지가 처음 로드될 때만 실행
+  
   return (
     <AuthProvider>
       <BrowserRouter>
