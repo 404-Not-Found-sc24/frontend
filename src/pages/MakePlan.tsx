@@ -276,7 +276,6 @@ const MakePlan = () => {
         .get('/schedule/places/' + tripInfo.scheduleId, {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${accessToken}`,
           },
         })
         .then((response) => {

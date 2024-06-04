@@ -56,13 +56,8 @@ const FindEmail: React.FC = () => {
           },
         )
         .then((response) => {
-          console.log(response.data.email);
           setResponseData(response.data.email);
           setShowSuccessPopup(true);
-          // toast.success('고객님의 아이디는' + response.data.email + '입니다.', {
-          //   position: 'top-center',
-          //   // autoClose: 2000,
-          // });
         });
     } catch (e: any) {
       toast.error('입력하신 이메일 아이디를 찾을 수 없습니다.' + '😭', {

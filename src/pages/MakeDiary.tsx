@@ -18,6 +18,7 @@ const MakeDiary: React.FC = () => {
   const { accessToken, refreshAccessToken } = useAuth();
   const location = useLocation();
   const PlanData = location.state.PlanData;
+  const planName = location.state.planName;
   const navigate = useNavigate();
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
   const ALLOW_FILE_EXTENSION = 'jpg,jpeg,png';
@@ -77,7 +78,9 @@ const MakeDiary: React.FC = () => {
         });
       notifySuccess();
       const id = setTimeout(() => {
-        navigate('/mydiarydetail', { state: { PlanData: PlanData } });
+        navigate('/mydiarydetail', {
+          state: { PlanData: PlanData, planName: planName },
+        });
       }, 3000);
       setTimeoutId(id);
     } catch (error) {
