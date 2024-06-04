@@ -136,6 +136,7 @@ const SignUp: React.FC = () => {
       toast.error(e.response.data.message + '😭', {
         position: 'top-center',
       });
+      setEmailRequestLoading(false);
     }
   }
 
