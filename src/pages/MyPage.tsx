@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import ScheduleCard from '../components/ScheduleCard';
 import { useAuth } from '../context/AuthContext';
 import axios, { AxiosError } from 'axios';
-import { ToastContainer, toast } from 'react-toastify';
 
 interface ScheduleData {
   scheduleId: number;
@@ -54,10 +53,7 @@ const MyPage: React.FC = () => {
       setTraveling(response.data.traveling);
       setAfterTravel(response.data.afterTravel);
     } catch (error) {
-      if (
-        (error as AxiosError).response &&
-        (error as AxiosError).response?.status === 401
-      ) {
+      if ((error as AxiosError).response) {
         try {
           await refreshAccessToken();
           // 새로운 액세스 토큰으로 다시 요청을 보냅니다.
@@ -166,7 +162,7 @@ const MyPage: React.FC = () => {
   };
 
   return (
-    <div>
+    <div className="h-full">
       <div className="h-[22rem]">
         <div className="w-full h-44 bg-main-red-color"></div>
         <div className="relative flex justify-center">
@@ -183,7 +179,7 @@ const MyPage: React.FC = () => {
               className="absolute w-24 h-24 -top-10 bg-white rounded-full"
             />
           )}
-          <h1 className="absolute top-16 text-3xl font-medium">
+          <h1 className="absolute top-16 text-3xl font-medium font-['BMJUA'] ">
             {userInfo?.nickname}
           </h1>
           <button
@@ -205,13 +201,13 @@ const MyPage: React.FC = () => {
           <div className="flex flex-row justify-between mb-5">
             <div className="flex flex-row">
               <div className="bg-main-red-color w-[0.3rem] h-8 rounded"></div>
-              <h1 className="text-3xl font-medium mx-3">나의 일정</h1>
-              <h1 className="text-3xl font-medium text-main-red-color">
+              <h1 className="text-3xl font-medium mx-3 font-['BMJUA'] ">나의 일정</h1>
+              <h1 className="text-3xl font-medium text-main-red-color font-['BMJUA'] ">
                 {beforeTravel.length + traveling.length + afterTravel.length}
               </h1>
             </div>
             <button
-              className="bg-main-red-color text-white rounded-full px-3 py-1"
+              className="bg-main-red-color text-white rounded-full px-3 py-1 font-['BMJUA'] "
               onClick={() => navigateToTravel('schedule')}
             >
               + 일정 추가
@@ -259,7 +255,7 @@ const MyPage: React.FC = () => {
               (beforeTravel.length > 0 ? (
                 renderScheduleCards(beforeTravel, onDeleteSchedule)
               ) : (
-                <div className="flex justify-center items-center h-44 shadow-md">
+                <div className="flex justify-center items-center h-44 shadow-md font-['BMJUA'] ">
                   <div className="text-slate-300 font-bold text-3xl">
                     계획 중인 여행이 없습니다.
                   </div>
@@ -269,7 +265,7 @@ const MyPage: React.FC = () => {
               (traveling.length > 0 ? (
                 renderScheduleCards(traveling, onDeleteSchedule)
               ) : (
-                <div className="flex justify-center items-center h-44 shadow-md">
+                <div className="flex justify-center items-center h-44 shadow-md font-['BMJUA'] ">
                   <div className="text-slate-300 font-bold text-3xl">
                     여행 중인 일정이 없습니다.
                   </div>
@@ -279,7 +275,7 @@ const MyPage: React.FC = () => {
               (afterTravel.length > 0 ? (
                 renderScheduleCards(afterTravel, onDeleteSchedule)
               ) : (
-                <div className="flex justify-center items-center h-44 shadow-md">
+                <div className="flex justify-center items-center h-44 shadow-md font-['BMJUA'] ">
                   <div className="text-slate-300 font-bold text-3xl">
                     종료된 여행이 없습니다.
                   </div>
@@ -289,7 +285,7 @@ const MyPage: React.FC = () => {
         </div>
       </div>
       {showSuccessPopup && (
-        <div className="popup absolute top-0 l-0 w-full h-full bg-black/50 flex justify-center">
+        <div className="popup fixed top-0 l-0 w-full h-100% bg-black/50 flex justify-center">
           <div className="bg-white p-3 rounded mt-10 w-1/3 h-36 flex items-center flex-col">
             <div className="h-24 flex items-center">일정이 삭제되었습니다.</div>
             <button

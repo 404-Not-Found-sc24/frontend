@@ -5,6 +5,19 @@ import SearchResults from '../components/SearchResults';
 import { MapProvider } from '../context/MapContext';
 import Map from '../components/Map';
 import PlaceData from '../../types/PlaceData';
+import '../index.css';
+import axios from 'axios';
+
+type DivisionsType = {
+  전체: PlaceData[];
+  음식점: PlaceData[];
+  문화시설: PlaceData[];
+  '축제 공연 행사': PlaceData[];
+  관광지: PlaceData[];
+  레포츠: PlaceData[];
+  숙박: PlaceData[];
+  쇼핑: PlaceData[];
+};
 
 const SearchPlace: React.FC = () => {
   const [activeTab, setActiveTab] = useState('장소 보기');
@@ -18,12 +31,30 @@ const SearchPlace: React.FC = () => {
     longitude: 127.0438,
   });
   const location = useLocation();
+  const [divisions, setDivisions] = useState<DivisionsType>({
+    전체: [],
+    음식점: [],
+    문화시설: [],
+    '축제 공연 행사': [],
+    관광지: [],
+    레포츠: [],
+    숙박: [],
+    쇼핑: [],
+  });
+
+  const [activeDivision, setActiveDivision] =
+    useState<keyof DivisionsType>('전체');
+
+  const handleDivisionClick = (division: keyof DivisionsType) => {
+    setActiveDivision(division);
+  };
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const term = queryParams.get('q') || '';
     setSearchTerm(term);
   }, [location.search]);
+
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
   };
@@ -86,33 +117,63 @@ const SearchPlace: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className="flex max-w-4xl justify-end h-[2%] w-full px-10">
-          <Link
-            to="/addplaceform"
-            className="text-ms text-main-green-color font-Nanum Gothic underline underline-offset-4"
+        <div className="tab-content h-[82%] justify-between ">
+          <div
+            id="active-white-bg"
+            className={activeTab === '장소 보기' ? 'active h-full w-full' : ''}
           >
-            장소 직접 추가하기
-          </Link>
-        </div>
-        <div className="tab-content h-[80%] overflow-y-scroll justify-center">
-          <div className={activeTab === '장소 보기' ? 'active' : ''}>
             {activeTab === '장소 보기' && (
-              <div className="h-[90%]">
-                <SearchResults
-                  tab={activeTab}
-                  onResultsUpdate={handleResultsUpdate}
-                />
+              <div className="flex flex-col">
+                <div className="w-full whitespace-nowrap overflow-x-auto no-scrollbar flex justify-start xl:justify-center">
+                  {(Object.keys(divisions) as Array<keyof DivisionsType>).map(
+                    (division) => (
+                      <button
+                        key={division}
+                        className={`py-1 px-2 m-1 border rounded-full ${
+                          activeDivision === division
+                            ? 'bg-main-red-color text-white'
+                            : 'bg-white text-main-red-color'
+                        }`}
+                        onClick={() => handleDivisionClick(division)}
+                      >
+                        {division}
+                      </button>
+                    ),
+                  )}
+                </div>
+                <div className="flex max-w-4xl justify-end w-full px-10">
+                  <Link
+                    to="/addplaceform"
+                    className="text-ms text-main-green-color font-Nanum Gothic underline underline-offset-4"
+                  >
+                    장소 직접 추가하기
+                  </Link>
+                </div>
+                <div className="flex-grow w-full h-[65vh]">
+                  <SearchResults
+                    tab={activeTab}
+                    onResultsUpdate={handleResultsUpdate}
+                    activeDivision={activeDivision}
+                    divisions={divisions}
+                    setDivisions={setDivisions}
+                    setActiveDivision={setActiveDivision}
+                  />
+                </div>
               </div>
             )}
           </div>
           <div className={activeTab === '일정 보기' ? 'active' : ''}>
             {activeTab === '일정 보기' && (
-                <div className="h-[90%]">
-              <SearchResults
-                tab={activeTab}
-                onResultsUpdate={handleResultsUpdate}
-              />
-                </div>
+              <div className="h-[90%]">
+                <SearchResults
+                  tab={activeTab}
+                  onResultsUpdate={handleResultsUpdate}
+                  activeDivision={activeDivision}
+                  divisions={divisions}
+                  setDivisions={setDivisions}
+                  setActiveDivision={setActiveDivision}
+                />
+              </div>
             )}
           </div>
         </div>

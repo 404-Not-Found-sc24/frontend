@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -10,6 +10,7 @@ import { useState } from 'react';
 const SignUp: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
   const [data, setData] = useState({
     name: '',
     nickname: '',
@@ -22,6 +23,14 @@ const SignUp: React.FC = () => {
   const [emailCheck, setEmailCheck] = useState(false);
   const [emailRequested, setEmailRequested] = useState(false);
   const [emailRequestLoading, setEmailRequestLoading] = useState(false);
+  
+  useEffect(() => {
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [timeoutId]);
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().required('이름을 입력하세요!'),
@@ -98,9 +107,67 @@ const SignUp: React.FC = () => {
           autoClose: 2000,
         },
       );
-      setTimeout(() => {
+      const id = setTimeout(() => {
         navigate('/');
       }, 2000);
+      setTimeoutId(id); // 타이머 ID 설정
+    } catch (e: any) {
+      toast.error(e.response.data.message + '😭', {
+        position: 'top-center',
+      });
+    }
+  };
+
+  const emailRequest = async (email: String) => {
+    if (!email || !Yup.string().email().isValidSync(email)) {
+      toast.error('유효한 이메일을 입력하세요!', {
+        position: 'top-center',
+      });
+      return;
+    }
+
+    try {
+      setEmailRequestLoading(true);
+      await axios.get(`/auth/duplicate?email=${email}`);
+
+      toast.success(
+        <h3>
+          이메일로 인증번호를 발송했습니다.
+        </h3>,
+        {
+          position: 'top-center',
+          autoClose: 2000,
+        },
+      );
+
+      setEmailRequested(true);
+      setEmailRequestLoading(false);
+    } catch (e: any) {
+      toast.error(e.response.data.message + '😭', {
+        position: 'top-center',
+      });
+    }
+  }
+
+  const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNumber(e.target.value);
+  };
+
+  const handleEmailCheck = async (email: string, e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    try {
+      await axios.post(`/auth/emailCheck?email=${email}&code=${number}`);
+
+      toast.success(
+        <h3>
+          이메일 인증이 완료되었습니다.
+        </h3>,
+        {
+          position: 'top-center',
+          autoClose: 2000,
+        },
+      );
+      setEmailCheck(true);
     } catch (e: any) {
       toast.error(e.response.data.message + '😭', {
         position: 'top-center',

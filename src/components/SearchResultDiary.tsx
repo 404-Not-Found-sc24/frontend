@@ -5,19 +5,22 @@ import '../index.css';
 
 interface PlanBoxProps {
   props: DiariesData;
+  locationId: number;
 }
 
 const SearchResultDiary: React.FC<PlanBoxProps> = (props) => {
   const { diaryId, placeId, title, date, content, imageUrl , userName} = props.props;
+  const locationId = props.locationId;
   const navigate = useNavigate();
 
   const toDiaryDetail = () => {
     navigate('/diarydetail', {
-      state: { PlanData: props.props },
+      state: { PlanData: props.props, locationId: locationId },
     });
   };
 
   return (
+    console.log("ldf", locationId),
     <div
       className="w-full h-[30%] p-5 flex rounded-md shadow-xl mb-5"
       onClick={toDiaryDetail}

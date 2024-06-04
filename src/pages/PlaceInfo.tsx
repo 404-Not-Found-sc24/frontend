@@ -178,10 +178,7 @@ const PlaceInfo: React.FC = () => {
                                   className="rounded-4 w-[400px] h-[250px] object-cover"
                               />
                           ) : (
-                              <div
-                                  className="border-2 flex w-[400px] h-[250px] mt-2 text-gray-600 justify-center items-center">
-                                사진이 없습니다.
-                              </div>
+                              <img src={process.env.PUBLIC_URL + '/image/logo.png'} className='w-[400px] h-[250px]'></img>
                           )}
                         </div>
                         <div className="m-5 w-4/5 overflow-y-scroll">
@@ -473,7 +470,7 @@ const PlaceInfo: React.FC = () => {
                     {diariesRes.map((data: DiariesData, index: number) => {
                       return (
                           <div className="w-full h-full flex flex-col items-center pt-3">
-                            <SearchResultDiary key={index} props={data}/>
+                            <SearchResultDiary key={index} props={data} locationId={place.locationId} />
                           </div>
                       );
                     })}

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import Map from '../components/Map';
-import PlanDetailBox from '../components/PlanDetailBox';
 import { MapProvider } from '../context/MapContext';
 import axios, { AxiosError } from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
+import MyPlanDetailBox from '../components/MyPlanDetailBox';
 
 interface ScheduleData {
   placeId: number;
@@ -153,6 +153,7 @@ const PlanDetail: React.FC = () => {
 
   const copySchedule = async () => {
     try {
+      console.log(scheduleId);
       // 복사된 일정 데이터를 서버에 전송하여 저장합니다.
       const response = await axios.post(
         `/tour/schedules/${scheduleId}`,
@@ -164,7 +165,7 @@ const PlanDetail: React.FC = () => {
       // 저장이 완료되면 사용자에게 알립니다. (예: 모달, 알림 등)
       console.log('일정이 성공적으로 복사되었습니다:', response.data);
       notifySuccess();
-      navigate('/myplanpage', { state: { copiedSchedule: scheduleData } });
+      navigate('/mypage', { state: { copiedSchedule: scheduleData } });
     } catch (error) {
       if (
         (error as AxiosError).response &&
@@ -195,10 +196,10 @@ const PlanDetail: React.FC = () => {
       <div className="w-1/2 h-full">
         <div className="flex w-full h-[10%]">
           <i
-            className="backArrow w-[10%] ml-2 cursor-pointer"
+            className="backArrow ml-2 cursor-pointer w-[10%]"
             onClick={naviBack}
           ></i>
-          <div className="flex items-center">
+          <div className="flex items-center w-[90%]">
             <div className="font-['BMJUA'] text-3xl text-black ml-2 flex items-center">
               {plan.name}
             </div>
@@ -236,9 +237,10 @@ const PlanDetail: React.FC = () => {
                           index + 1,
                       )
                       .map((filteredData, dataIndex) => (
-                        <PlanDetailBox
+                        <MyPlanDetailBox
                           key={dataIndex}
                           scheduleData={filteredData}
+                          planName={plan.name}
                         />
                       ))}
                   </div>

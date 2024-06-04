@@ -209,6 +209,9 @@ code {
 .tab-content > div.active {
   display: block;
 }
+#active-white-bg {
+  background-color: white;
+}
 
 .active {
   background-color: #ff9a9a;
@@ -219,6 +222,7 @@ code {
   background-color: white;
   height: 100%;
 }
+
 
 /* 표 */
 table{
@@ -248,4 +252,43 @@ td{
 
 .header-center {
   text-align: center;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+  
+.select-container {
+  display: flex;
+  justify-content: center;
+  margin: 10px 0;
+}
+
+.day-select {
+  width: 150px;
+  padding: 10px;
+  border: 2px solid #FF9A9A;
+  border-radius: 5px;
+  font-size: 1rem;
+  color: #333;
+  background-color: #fff;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='black' height='38' viewBox='0 0 24 24' width='38' xmlns='http://www.w3.org/2000/svg'><path d='M0 0h24v24H0z' fill='none'/><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position-x: 100%;
+  background-position-y: 5px;
+  font-weight: bold;
+}
+
+.day-select:focus {
+  outline: none;
+  border-color: #FF6868;
 }

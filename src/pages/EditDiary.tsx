@@ -7,17 +7,22 @@ import { MapProvider } from '../context/MapContext';
 import { useAuth } from '../context/AuthContext';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-const MakeDiary: React.FC = () => {
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [weather, setWeather] = useState('맑음');
-  const [images, setImages] = useState<File[]>([]);
-  const [previewImages, setPreviewImages] = useState<string[]>([]);
-  const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
-  const [showUploadMessage, setShowUploadMessage] = useState<boolean>(true);
-  const { accessToken, refreshAccessToken } = useAuth();
+const EditDiary: React.FC = () => {
   const location = useLocation();
   const PlanData = location.state.PlanData;
+  const Diarydata = location.state.Diarydata;
+  const [title, setTitle] = useState(PlanData.title);
+  const [content, setContent] = useState(PlanData.content);
+  const [weather, setWeather] = useState(Diarydata.weather);
+  const [images, setImages] = useState<File[]>([]);
+  const [previewImages, setPreviewImages] = useState<string[]>(
+    Diarydata.imageUrl ? [Diarydata.imageUrl] : [],
+  );
+  const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
+  const [showUploadMessage, setShowUploadMessage] = useState<boolean>(
+    !Diarydata.imageUrl || Diarydata.imageUrl.length === 0,
+  );
+  const { accessToken, refreshAccessToken } = useAuth();
   const navigate = useNavigate();
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
   const ALLOW_FILE_EXTENSION = 'jpg,jpeg,png';
@@ -46,15 +51,19 @@ const MakeDiary: React.FC = () => {
     : { latitude: 37.2795, longitude: 127.0438 };
 
   const notifySuccess = () =>
-    toast.success('일기가 성공적으로 작성되었습니다.', {
+    toast.success('일기가 성공적으로 수정되었습니다.', {
       position: 'top-center',
     });
   const notifyError = () =>
-    toast.error('일기 작성 중 오류가 발생했습니다.', {
+    toast.error('일기 수정 중 오류가 발생했습니다.', {
       position: 'top-center',
     });
 
   const handleSubmit = async () => {
+    console.log(title);
+    console.log(content);
+    console.log(weather);
+    console.log(images);
     try {
       const formData = new FormData();
       formData.append('title', title);
@@ -64,20 +73,20 @@ const MakeDiary: React.FC = () => {
         formData.append('images', image);
       });
 
-      const response = await axios
-        .post(`schedule/diary/${PlanData.placeId}`, formData, {
+      const response = await axios.patch(
+        `schedule/diary/${PlanData.diaryId}`,
+        formData,
+        {
           headers: {
             'Content-Type': 'multipart/form-data',
             Authorization: `Bearer ${accessToken}`,
           },
-        })
-        .then((response) => {
-          console.log(response.data);
-          PlanData.diaryId = response.data.diaryId;
-        });
+        },
+      );
+      console.log('일기가 성공적으로 수정되었습니다:', response.data);
       notifySuccess();
       const id = setTimeout(() => {
-        navigate('/mydiarydetail', { state: { PlanData: PlanData } });
+        navigate('/mypage');
       }, 3000);
       setTimeoutId(id);
     } catch (error) {
@@ -95,7 +104,7 @@ const MakeDiary: React.FC = () => {
           // 액세스 토큰 갱신에 실패한 경우 사용자에게 알립니다.
         }
       } else {
-        console.error('일기 작성 중 오류 발생:', error);
+        console.error('일기 수정 중 오류 발생:', error);
         notifyError();
       }
     }
@@ -138,7 +147,6 @@ const MakeDiary: React.FC = () => {
       }
     }
   };
-
   const handleTitleChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
       console.log(event.target.value);
@@ -159,18 +167,6 @@ const MakeDiary: React.FC = () => {
     window.history.back();
   };
 
-  const handlePrevImage = () => {
-    setCurrentImageIndex((prevIndex) =>
-      prevIndex === 0 ? previewImages.length - 1 : prevIndex - 1,
-    );
-  };
-
-  const handleNextImage = () => {
-    setCurrentImageIndex((prevIndex) =>
-      prevIndex === previewImages.length - 1 ? 0 : prevIndex + 1,
-    );
-  };
-
   return (
     <div className="w-full h-[90%] flex">
       <div className="w-1/2 h-full flex-col">
@@ -187,19 +183,18 @@ const MakeDiary: React.FC = () => {
           </div>
         </div>
         <div className="px-5 pb-5 flex flex-col items-center h-[92%]">
-          <div className="flex w-full border h-[30%] justify-center">
-            <div className="flex h-full w-full items-center justify-center">
-              {showUploadMessage && (
-                <div className="flex justify-center items-center w-[70%] h-[90%] border border-gray-300 rounded-md">
-                  <div className="text-gray-500">사진을 업로드 해주세요</div>
+          <div className="flex w-full border h-[30%] justify-center items-center">
+            <div className="relative w-[70%] h-[90%] flex justify-center items-center border border-gray-300 rounded-md">
+              {showUploadMessage ? (
+                <div className="text-gray-500">사진을 업로드 해주세요</div>
+              ) : (
+                <div className="relative w-full h-full flex justify-center items-center">
+                  <img
+                    src={previewImages[currentImageIndex] || 'placeholder.png'}
+                    alt={`Image preview ${currentImageIndex}`}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
-              )}
-              {!showUploadMessage && (
-                <img
-                  src={previewImages[currentImageIndex] || 'placeholder.png'}
-                  alt={`Image preview ${currentImageIndex}`}
-                  className="w-[70%] object-cover h-[90%]"
-                />
               )}
             </div>
           </div>
@@ -219,6 +214,7 @@ const MakeDiary: React.FC = () => {
                 날씨 :
                 <select
                   onChange={(e) => setWeather(e.target.value)}
+                  value={weather}
                   className="2xl:w-32 w-20  p-2 mx-2 my-2 border-2 border-main-red-color rounded-md"
                 >
                   <option value="맑음">맑음</option>
@@ -251,7 +247,7 @@ const MakeDiary: React.FC = () => {
               onClick={handleSubmit}
               className="px-4 py-2 bg-main-red-color text-white rounded-md"
             >
-              일기 작성
+              일기 수정
             </button>
           </div>
         </div>
@@ -266,4 +262,4 @@ const MakeDiary: React.FC = () => {
   );
 };
 
-export default MakeDiary;
+export default EditDiary;

@@ -1,13 +1,15 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 
 const FindEmail: React.FC = () => {
   const navigate = useNavigate();
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null); // 타이머 ID 상태 추가
+  const [responseData, setResponseData] = useState('');
+  const [showSuccessPopup, setShowSuccessPopup] = useState<boolean>(false);
 
   useEffect(() => {
     return () => {
@@ -36,33 +38,32 @@ const FindEmail: React.FC = () => {
     setPhone(formattedPhoneNumber);
   };
 
+  const handleSuccessPopupClose = () => {
+    setShowSuccessPopup(false);
+    navigate('/signin');
+  };
+
   const submit = async () => {
     try {
-      await axios.post(
-        '/auth/find-email',
-        { name, phone },
-        {
-          headers: {
-            'Content-Type': 'application/json',
+      await axios
+        .post(
+          '/auth/find-email',
+          { name, phone },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
           },
-        },
-      );
-      toast.success(
-        <h3>
-          비밀번호가 재발급 되었습니다.
-          <br />
-          다시 로그인 하세요😎
-        </h3>,
-        {
-          position: 'top-center',
-          autoClose: 2000,
-        },
-      );
-
-      const id = setTimeout(() => {
-        navigate('/');
-      }, 2000);
-      setTimeoutId(id);
+        )
+        .then((response) => {
+          console.log(response.data.email);
+          setResponseData(response.data.email);
+          setShowSuccessPopup(true);
+          // toast.success('고객님의 아이디는' + response.data.email + '입니다.', {
+          //   position: 'top-center',
+          //   // autoClose: 2000,
+          // });
+        });
     } catch (e: any) {
       toast.error('입력하신 이메일 아이디를 찾을 수 없습니다.' + '😭', {
         position: 'top-center',
@@ -72,6 +73,7 @@ const FindEmail: React.FC = () => {
 
   return (
     <div className="flex flex-col justify-center mx-auto mt-10 px-4">
+      <ToastContainer />
       <button
         onClick={navimain}
         className="flex justify-center items-center text-6xl font-Dongle-Regular whitespace-nowrap text-main-green-color"
@@ -108,6 +110,21 @@ const FindEmail: React.FC = () => {
           확인
         </button>
       </div>
+      {showSuccessPopup && (
+        <div className="popup absolute top-0 left-0 z-50 w-full h-full bg-black/50 flex justify-center">
+          <div className="bg-white p-3 rounded mt-10 w-1/3 h-36 flex items-center flex-col">
+            <div className="h-24 flex items-center">
+              고객님의 아이디는 {responseData} 입니다.
+            </div>
+            <button
+              onClick={handleSuccessPopupClose}
+              className="w-16 text-white bg-main-red-color py-0.5 px-3"
+            >
+              확인
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
