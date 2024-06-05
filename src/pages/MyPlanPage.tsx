@@ -138,7 +138,6 @@ const MyPlanPage: React.FC = () => {
     [activeTab, planData],
   );
 
-  console.log(activePlaces);
   const initialMarkers = activePlaces.map((place) => ({
     placeId: place.locationId,
     latitude: place.latitude,

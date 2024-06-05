@@ -86,7 +86,6 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({
         headers: { Authorization: `Bearer ${accessToken}` },
       });
       // 저장이 완료되면 사용자에게 알립니다. (예: 모달, 알림 등)
-      console.log('일정이 성공적으로 삭제되었습니다:', response.data);
       onDeleteSchedule(scheduleId);
       setShowDeletePopup(false);
     } catch (error) {
@@ -134,7 +133,6 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({
   ) => {
     e.stopPropagation();
     try {
-      console.log(scheduleId);
       const newShareValue = share === 1 ? 0 : 1;
       await axios.patch(
         `/schedule/sharing/` + scheduleId,
@@ -145,7 +143,6 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({
           },
         },
       );
-      console.log(newShareValue);
       setShare(newShareValue);
       toast.success('공유 설정이 변경되었습니다.');
     } catch (error) {
