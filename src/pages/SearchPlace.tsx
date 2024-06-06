@@ -81,7 +81,7 @@ const SearchPlace: React.FC = () => {
 
   return (
     <div className="w-full h-[90%] flex">
-      <div className="w-1/2 h-full">
+      <div className="w-3/5 h-full">
         <div className="h-[10%] w-full">
           <i
             className="absolute backArrow cursor-pointer h-[10%] w-[5%]"
