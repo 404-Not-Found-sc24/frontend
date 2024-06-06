@@ -112,18 +112,30 @@ const MakePlan = () => {
     placeIndex: number,
     time: string,
   ) => {
-    setTimes((prevTimes) => {
-      const updatedTimes = [...prevTimes];
-      if (!updatedTimes[dayIndex - 1]) {
-        updatedTimes[dayIndex - 1] = [];
-      }
-      updatedTimes[dayIndex - 1][placeIndex] = time;
-      return updatedTimes;
+    setSelectedPlaces((prevSelectedPlaces) => {
+      const newSelectedPlaces = prevSelectedPlaces.map((day, idx) => {
+        if (idx === dayIndex - 1) {
+          return day.map((place, i) => {
+            if (i === placeIndex) {
+              return { ...place, time };
+            }
+            return place;
+          }).sort((a, b) => {
+            if (a.time && b.time) {
+              return a.time.localeCompare(b.time);
+            }
+            return 0;
+          });
+        }
+        return day;
+      });
+
+      return newSelectedPlaces;
     });
   };
 
   useEffect(() => {
-    console.log(times);
+    console.log("itmes", times);
   }, [times]);
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
 
@@ -176,8 +188,16 @@ const MakePlan = () => {
       if (!newSelectedPlaces[dayIndex - 1]) {
         newSelectedPlaces[dayIndex - 1] = [];
       }
-      const modifiedPlace = { ...selectedPlace, placeId: null };
+      const modifiedPlace = { ...selectedPlace, placeId: null, time: '00:00' };
       newSelectedPlaces[dayIndex - 1].push(modifiedPlace);
+
+      newSelectedPlaces[dayIndex - 1].sort((a, b) => {
+        if (a.time && b.time) {
+          return a.time.localeCompare(b.time);
+        }
+        return 0;
+      });
+      
       return newSelectedPlaces;
     });
   };
@@ -219,7 +239,7 @@ const MakePlan = () => {
   const addPlace = async () => {
     try {
       const postData = selectedPlaces.flatMap((innerArray, index) => {
-        console.log(index, innerArray);
+        console.log("index", index, innerArray);
         const startDate = new Date(tripdataRef.current.startDate);
         const currentDate = new Date(startDate);
         if (tripInfo.check === 0) {
@@ -229,12 +249,12 @@ const MakePlan = () => {
         }
         return innerArray
           .map((place, innerIndex) => {
-            console.log(times[index]);
+            console.log("times", times[index]);
             return {
               placeId: place.placeId != null ? place.placeId : null,
               locationId: place.locationId,
               date: currentDate.toISOString().slice(0, 10),
-              time: times[index][innerIndex],
+              time: place.time,
             };
           })
           .filter((placeData) => placeData !== null);
@@ -366,10 +386,6 @@ const MakePlan = () => {
     setRes([]);
   }, [location.search]);
 
-  useEffect(() => {
-    console.log(initialMarkers);
-    setKey(JSON.stringify(initialMarkers));
-  }, [selectedPlaces]);
 
   const initialMarkers = activePlaces.map((place) => ({
     placeId: place.locationId,
@@ -377,11 +393,18 @@ const MakePlan = () => {
     longitude: place.longitude,
   }));
 
+  useEffect(() => {
+    console.log("initial ", initialMarkers);
+    setKey(JSON.stringify(initialMarkers));
+  }, [selectedPlaces]);
+
+
   return (
+    console.log("sele", selectedPlaces),
     <div className="w-full h-[90%] flex">
       <ToastContainer />
-      <div className="w-1/2 h-full flex">
-        <div className="w-1/2 h-full flex flex-col">
+      <div className="w-3/5 h-full flex">
+        <div className="w-3/5 h-full flex flex-col">
           <div className="flex w-full h-[10%]">
             <i
               className="backArrow ml-2 cursor-pointer w-[10%]"
@@ -425,9 +448,8 @@ const MakePlan = () => {
                 <div
                   key={tabIndex + 1}
                   id={`content${tabIndex + 1}`}
-                  className={`content ${
-                    activeTab === tabIndex + 1 ? 'active' : ''
-                  }`}
+                  className={`content ${activeTab === tabIndex + 1 ? 'active' : ''
+                    }`}
                 >
                   <div className="contentBox">
                     {selectedPlaces[activeTab - 1] && (
