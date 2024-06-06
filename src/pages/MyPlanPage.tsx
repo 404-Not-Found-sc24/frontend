@@ -176,8 +176,8 @@ const MyPlanPage: React.FC = () => {
   }
 
   return (
-    <div className="flex w-full h-[90%]">
-      <div className="w-1/2 h-full">
+    <div className="flex w-full h-[90%] overflow-hidden">
+      <div className="w-1/2 h-full overflow-auto">
         <div className="flex w-full">
           <i
             className="backArrow ml-2 cursor-pointer w-[10%]"
@@ -192,8 +192,8 @@ const MyPlanPage: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className="w-full flex justify-center">
-          <div className="w-11/12 h-full pt-3 pb-5 flex flex-col">
+        <div className="w-full flex justify-center overflow-hidden">
+          <div className="w-11/12 h-full pt-3 pb-5 flex flex-col overflow-auto">
             <div className="flex justify-between h-7">
               <div className="flex items-center">{generateTabs()}</div>
               <button
@@ -204,9 +204,9 @@ const MyPlanPage: React.FC = () => {
               </button>
             </div>
             {Array.from({ length: diffDays }, (_, index) => (
-              <div key={index}>
+              <div key={index} className="overflow-auto">
                 {activeTab === index + 1 && (
-                  <div>
+                  <div className="overflow-auto">
                     {planData
                       .filter(
                         (data) =>
