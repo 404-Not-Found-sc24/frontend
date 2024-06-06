@@ -26,7 +26,6 @@ const MyPlanDetailBox: React.FC<PlanDetailBoxProps> = ({
   const navigate = useNavigate();
 
   const toDiaryDetail = () => {
-    console.log(scheduleData);
     navigate('/mydiarydetail', {
       state: { PlanData: scheduleData, planName: planName },
     });

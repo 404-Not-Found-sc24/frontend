@@ -154,7 +154,7 @@ const MyDiaryDetail: React.FC = () => {
 
   return (
     <div className="flex w-full h-[90%]">
-      <div className="w-1/2 h-full">
+      <div className="w-3/5 h-full">
         <div className="flex justify-between items-center">
           <div className="flex w-full">
             <i
