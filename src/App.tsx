@@ -29,20 +29,21 @@ import PrivateRoute from './components/PrivateRoute';
 import AddEvent from './pages/AddEvent';
 import AddPromotion from './pages/AddPromotion';
 import EditDiary from './pages/EditDiary';
+import ChangePassword from './pages/ChangePassword';
 
 function App() {
   useEffect(() => {
-      if (
-          navigator.userAgent.match(/Android/i) ||
-          navigator.userAgent.match(/webOS/i) ||
-          navigator.userAgent.match(/iPhone/i) ||
-          navigator.userAgent.match(/BlackBerry/i) ||
-          navigator.userAgent.match(/Windows Phone/i)
-      ) {
-          window.location.href = "https://m.nadueli.com"; // 모바일 장치일 때 리다이렉트
-      }
+    if (
+      navigator.userAgent.match(/Android/i) ||
+      navigator.userAgent.match(/webOS/i) ||
+      navigator.userAgent.match(/iPhone/i) ||
+      navigator.userAgent.match(/BlackBerry/i) ||
+      navigator.userAgent.match(/Windows Phone/i)
+    ) {
+      window.location.href = 'https://m.nadueli.com'; // 모바일 장치일 때 리다이렉트
+    }
   }, []); // 페이지가 처음 로드될 때만 실행
-  
+
   return (
     <AuthProvider>
       <BrowserRouter>
@@ -73,6 +74,7 @@ function App() {
             <Route path="/mypage-setting" element={<MyPageSetting />} />
             <Route path="/addevent" element={<AddEvent />} />
             <Route path="/addpromotion" element={<AddPromotion />} />
+            <Route path="/changepassword" element={<ChangePassword />}></Route>
           </Route>
         </Routes>
       </BrowserRouter>

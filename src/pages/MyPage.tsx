@@ -201,7 +201,9 @@ const MyPage: React.FC = () => {
           <div className="flex flex-row justify-between mb-5">
             <div className="flex flex-row">
               <div className="bg-main-red-color w-[0.3rem] h-8 rounded"></div>
-              <h1 className="text-3xl font-medium mx-3 font-['BMJUA'] ">나의 일정</h1>
+              <h1 className="text-3xl font-medium mx-3 font-['BMJUA'] ">
+                나의 일정
+              </h1>
               <h1 className="text-3xl font-medium text-main-red-color font-['BMJUA'] ">
                 {beforeTravel.length + traveling.length + afterTravel.length}
               </h1>
@@ -285,21 +287,27 @@ const MyPage: React.FC = () => {
         </div>
       </div>
       {showSuccessPopup && (
-          <div className="fixed inset-0 bg-black/50 flex justify-center items-center" onClick={handlePopupClose}>
-            <div className="bg-white p-3 rounded w-fit h-fit px-20 py-10 flex flex-col items-center" onClick={(e) => e.stopPropagation()}>
-              <div className="h-24 flex items-center font-[BMJUA] text-2xl">
-                일정이 삭제되었습니다.
-              </div>
-              <div>
-                <button
-                    onClick={handlePopupClose}
-                    className="w-16 text-white bg-main-red-color py-0.5 px-3 font-[BMJUA]"
-                >
-                  확인
-                </button>
-              </div>
+        <div
+          className="fixed inset-0 bg-black/50 flex justify-center items-center"
+          onClick={handlePopupClose}
+        >
+          <div
+            className="bg-white p-3 rounded w-fit h-fit px-20 py-10 flex flex-col items-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="h-24 flex items-center font-[BMJUA] text-2xl">
+              일정이 삭제되었습니다.
+            </div>
+            <div>
+              <button
+                onClick={handlePopupClose}
+                className="w-16 text-white bg-main-red-color py-0.5 px-3 font-[BMJUA]"
+              >
+                확인
+              </button>
             </div>
           </div>
+        </div>
       )}
     </div>
   );
