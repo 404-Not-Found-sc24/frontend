@@ -209,7 +209,7 @@ const MakePlan = () => {
   };
 
   const naviBack = () => {
-    navigate('/');
+    window.history.back();
   };
 
   const notifySuccess = () =>
