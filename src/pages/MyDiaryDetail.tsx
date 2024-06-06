@@ -31,7 +31,7 @@ interface Diary {
 const MyDiaryDetail: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const PlanData = location.state.PlanData;
+  const [PlanData, setPlanData] = useState<PlanData>(location.state.PlanData);
   const planName = location.state.planName;
   const [Diarydata, setDiaryData] = useState<Diary | null>(null);
   const accessToken = localStorage.getItem('accessToken');
@@ -41,30 +41,40 @@ const MyDiaryDetail: React.FC = () => {
   const [isBeforeStartDate, setIsBeforeStartDate] = useState<boolean>(false);
 
   const getData = async () => {
-    console.log(PlanData);
-    try {
-      await axios
-        .get(`/tour/diary/${PlanData.diaryId}`, {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        })
-        .then((response) => {
-          console.log(response.data);
-          setDiaryData(response.data);
-        });
-    } catch (e) {
-      console.error('Error:', e);
-      setDiaryData(null);
+    if (PlanData.diaryId) {
+      try {
+        await axios
+          .get(`/tour/diary/${PlanData.diaryId}`, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          })
+          .then((response) => {
+            setDiaryData(response.data);
+          });
+      } catch (e) {
+        console.error('Error:', e);
+        setDiaryData(null);
+      }
     }
   };
 
   useEffect(() => {
-    getData();
     const today = new Date();
     const startDate = new Date(PlanData.date);
     setIsBeforeStartDate(today < startDate);
+
+    const storedState = sessionStorage.getItem('planState');
+
+    if (storedState) {
+      setPlanData(JSON.parse(storedState).PlanData);
+      sessionStorage.removeItem('planState'); // 상태를 복원한 후 삭제
+    }
   }, []);
+
+  useEffect(() => {
+    getData();
+  }, [PlanData]);
 
   const handleDeleteDiary = async (
     e: React.MouseEvent<HTMLImageElement, MouseEvent>,
@@ -101,12 +111,12 @@ const MyDiaryDetail: React.FC = () => {
 
   const initialMarkers = PlanData
     ? [
-        {
-          placeId: PlanData.placeId,
-          latitude: PlanData.latitude,
-          longitude: PlanData.longitude,
-        },
-      ]
+      {
+        placeId: PlanData.placeId,
+        latitude: PlanData.latitude,
+        longitude: PlanData.longitude,
+      },
+    ]
     : [];
 
   const initialCenter = PlanData

@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useCallback, useEffect, useState } from 'react';
+import React, { ChangeEvent, useCallback, useEffect, useState, useRef } from 'react';
 import axios, { AxiosError } from 'axios';
 import Map from '../components/Map';
 import '../index.css';
@@ -23,6 +23,7 @@ const MakeDiary: React.FC = () => {
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
   const ALLOW_FILE_EXTENSION = 'jpg,jpeg,png';
   const FILE_SIZE_MAX_LIMIT = 1 * 1024 * 1024;
+  const imageInput = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     return () => {
@@ -34,12 +35,12 @@ const MakeDiary: React.FC = () => {
 
   const initialMarkers = PlanData
     ? [
-        {
-          placeId: PlanData.placeId,
-          latitude: PlanData.latitude,
-          longitude: PlanData.longitude,
-        },
-      ]
+      {
+        placeId: PlanData.placeId,
+        latitude: PlanData.latitude,
+        longitude: PlanData.longitude,
+      },
+    ]
     : [];
 
   const initialCenter = PlanData
@@ -73,14 +74,12 @@ const MakeDiary: React.FC = () => {
           },
         })
         .then((response) => {
-          console.log(response.data);
           PlanData.diaryId = response.data.diaryId;
         });
+      sessionStorage.setItem('planState', JSON.stringify({ PlanData, planName }));
       notifySuccess();
       const id = setTimeout(() => {
-        navigate('/mydiarydetail', {
-          state: { PlanData: PlanData, planName: planName },
-        });
+        navigate(-1);
       }, 3000);
       setTimeoutId(id);
     } catch (error) {
@@ -144,7 +143,6 @@ const MakeDiary: React.FC = () => {
 
   const handleTitleChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
-      console.log(event.target.value);
       setTitle(event.target.value);
     },
     [],
@@ -152,7 +150,6 @@ const MakeDiary: React.FC = () => {
 
   const handleContentChange = useCallback(
     (event: ChangeEvent<HTMLTextAreaElement>) => {
-      console.log(event.target.value);
       setContent(event.target.value);
     },
     [],
@@ -174,6 +171,12 @@ const MakeDiary: React.FC = () => {
     );
   };
 
+  const onClickImageUplaod = () => {
+    if (imageInput.current) {
+      imageInput.current.click();
+    }
+  }
+
   return (
     <div className="w-full h-[90%] flex">
       <div className="w-3/5 h-full flex-col">
@@ -190,20 +193,33 @@ const MakeDiary: React.FC = () => {
           </div>
         </div>
         <div className="px-5 pb-5 flex flex-col items-center h-[92%]">
-          <div className="flex w-full border h-[30%] justify-center">
-            <div className="flex h-full w-full items-center justify-center">
-              {showUploadMessage && (
-                <div className="flex justify-center items-center w-[70%] h-[90%] border border-gray-300 rounded-md">
-                  <div className="text-gray-500">사진을 업로드 해주세요</div>
+          <div className="flex w-full border h-[40%] justify-center">
+            <div className="flex h-full w-full items-center justify-center flex-col">
+              {showUploadMessage ? (
+                <div className="flex justify-center items-center w-[70%] h-48 mb-2 border border-gray-300 rounded-md">
+                  등록된 사진이 없습니다.
+                </div>
+              ) : (
+                <div className='flex justify-center flex-col border border-gray-300 rounded-md mb-2 w-[70%] h-48'>
+                  <div className=" flex justify-center items-center">
+                    <img
+                      src={previewImages[currentImageIndex] || 'placeholder.png'}
+                      alt={`Image preview ${currentImageIndex}`}
+                      className="object-cover max-h-44"
+                    />
+                  </div>
                 </div>
               )}
-              {!showUploadMessage && (
-                <img
-                  src={previewImages[currentImageIndex] || 'placeholder.png'}
-                  alt={`Image preview ${currentImageIndex}`}
-                  className="w-[70%] object-cover h-[90%]"
-                />
-              )}
+
+              <button className="bg-main-red-color opacity-75 rounded text-white py-1 px-3 text-sm font-BMJUA" onClick={onClickImageUplaod}>사진 등록</button>
+              <input
+                type="file"
+                multiple
+                accept="image/jpg, image/png, image/jpeg"
+                onChange={handleImageChange}
+                className="hidden w-full p-2 my-2  border-2 border-main-red-color rounded-md h-[10%]"
+                ref={imageInput}
+              />
             </div>
           </div>
           <div className="w-full my-2 shadow-xl border p-5 h-[50%]">
@@ -243,12 +259,6 @@ const MakeDiary: React.FC = () => {
               />
             </div>
           </div>
-          <input
-            type="file"
-            multiple
-            onChange={handleImageChange}
-            className="w-full p-2 my-2  border-2 border-main-red-color rounded-md h-[10%]"
-          />
           <div className="mt-4 flex justify-end w-full w-[10%]">
             <button
               onClick={handleSubmit}
