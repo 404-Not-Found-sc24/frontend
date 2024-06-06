@@ -163,7 +163,7 @@ const PlaceInfo: React.FC = () => {
         </div>
         <div className="h-[82%] w-full flex justify-center">
           <div className="w-full flex justify-center">
-            <div className="w-[90%] h-full mb-5">
+            <div className="w-[90%] h-full mb-5 overflow-auto">
               {activeTab === '장소 소개' && (
                 <div className="w-full h-full flex flex-col items-center pt-3">
                   <div className="w-full h-[95%] flex justify-center py-5 rounded-md shadow-xl">
