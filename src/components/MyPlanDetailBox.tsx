@@ -53,11 +53,11 @@ const MyPlanDetailBox: React.FC<PlanDetailBoxProps> = ({
         <div className="w-full flex flex-1 font-['Nanum Gothic'] pr-2">
           {content}
         </div>
-        <div className="w-[25%]">
+        <div className="w-[25%] flex justify-center">
           {imageUrl ? (
-            <img src={imageUrl} width="250px" alt="일기사진" />
+            <img src={imageUrl} className="h-[100px]" alt="일기사진" />
           ) : (
-            <div className="w-[100%] h-[60px] flex items-center justify-center">
+            <div className="w-[100%] h-[100px] flex items-center justify-center">
               <div className="text-center text-main-green-color font-bold font-BMJUA">
                 {title || content ? '' : '일기가 없습니다.'}
               </div>
