@@ -83,11 +83,19 @@ const SignIn: React.FC = () => {
           </button>
         </div>
         <div className="flex items-center justify-center">
-          <button type="button" onClick={handleFindEmail} className="p-4">
+          <button
+            type="button"
+            onClick={handleFindEmail}
+            className="text-main-green-color text-sm underline mt-1 p-4"
+          >
             아이디 찾기
           </button>
-          <div className="p-4"> | </div>
-          <button type="button" onClick={handleFindPassword} className="p-4">
+          <div className="text-main-green-color text-sm underline mt-1">|</div>
+          <button
+            type="button"
+            onClick={handleFindPassword}
+            className="text-main-green-color text-sm underline mt-1 p-4"
+          >
             비밀번호 찾기
           </button>
         </div>

@@ -45,9 +45,9 @@ export const MapProvider: React.FC<MapProviderProps> = ({
     setMarkers((prevMarkers) => prevMarkers.filter(marker => marker.placeId !== placeId));
   };
 
-  useEffect(() => {
-    console.log(markers);
-  }, [markers]);
+  // useEffect(() => {
+  //   console.log(markers);
+  // }, [markers]);
 
   return (
       <MapContext.Provider value={{ markers, centerPosition, addMarker, removeMarker }}>
