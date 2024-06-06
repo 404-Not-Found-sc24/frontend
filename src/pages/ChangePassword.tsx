@@ -114,10 +114,9 @@ const ChangePassword: React.FC = () => {
     getUserInfo();
   }, [refreshAccessToken]);
 
-  const handleSuccessPopupClose = () => {
+  const handleSuccessPopupClose = (data: UserInfo) => {
     setShowSuccessPopup(false);
-    logout();
-    navigate('/');
+    navigate('/mypage-setting', { state: { data } });
   };
 
   return (
@@ -222,11 +221,15 @@ const ChangePassword: React.FC = () => {
           <div className="bg-white p-3 rounded w-fit h-fit px-20 py-10 flex flex-col items-center">
             <div className="h-24 flex items-center font-[BMJUA] text-2xl">
               비밀번호가 변경되었습니다.
-              <br />
-              다시 로그인 해주세요.
             </div>
             <button
-              onClick={handleSuccessPopupClose}
+              onClick={() => {
+                if (userInfo) {
+                  handleSuccessPopupClose(userInfo);
+                } else {
+                  console.log('User info is not available');
+                }
+              }}
               className="w-16 text-white bg-main-red-color py-0.5 px-3 font-[BMJUA]"
             >
               확인
