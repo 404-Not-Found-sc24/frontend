@@ -56,7 +56,6 @@ const SearchTravelDes: React.FC = () => {
             {
               headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${accessToken}`,
               },
             },
           );
@@ -75,7 +74,6 @@ const SearchTravelDes: React.FC = () => {
             {
               headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${accessToken}`,
               },
             },
           );
@@ -92,8 +90,6 @@ const SearchTravelDes: React.FC = () => {
   }, [location.search]);
 
   return (
-    console.log('curr: ', curr),
-    console.log('res', placeSearchResults),
     (
       <div>
         <div className="w-full flex justify-center my-10">

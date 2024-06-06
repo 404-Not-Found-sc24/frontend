@@ -5,6 +5,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   accessToken: string | null;
   login: (email: string, password: string) => Promise<void>;
+  googleLogin: () => void;
   logout: () => void;
   refreshAccessToken: () => Promise<void>;
 }
@@ -48,6 +49,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  const googleLogin = () => {
+    setIsAuthenticated(true);
+  }
+
   const logout = () => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
@@ -81,6 +86,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         isAuthenticated,
         accessToken,
         login,
+        googleLogin,
         logout,
         refreshAccessToken,
       }}
