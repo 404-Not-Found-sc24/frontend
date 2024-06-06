@@ -220,9 +220,9 @@ const PlanDetail: React.FC = () => {
               </button>
             </div>
             {Array.from({ length: diffDays }, (_, index) => (
-              <div key={index}>
+              <div key={index} className="overflow-auto">
                 {activeTab === index + 1 && (
-                  <div>
+                  <div className="overflow-auto">
                     {scheduleData
                       .filter(
                         (data) =>
