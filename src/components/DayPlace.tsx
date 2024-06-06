@@ -1,4 +1,4 @@
-import {ChangeEvent, useEffect, useState} from "react";
+import React, {ChangeEvent, useEffect, useState} from "react";
 import Place from "../../types/Place";
 
 interface DayPlaceProps {
@@ -10,15 +10,39 @@ interface DayPlaceProps {
 }
 
 const DayPlace: React.FC<DayPlaceProps> = ({ dayIndex, placeIndex, selectedPlace, removePlace, onTimeChange }) => {
-    const [hours, setHours] = useState<string>('');
-    const [minutes, setMinutes] = useState<string>('');
+    const [hours, setHours] = useState<string>(() => {
+        const time = selectedPlace.time ? selectedPlace.time.split(':')[0] : '';
+        return time.padStart(2, '0');
+    });
+    const [minutes, setMinutes] = useState<string>(() => {
+        const time = selectedPlace.time ? selectedPlace.time.split(':')[1] : '';
+        return time.padStart(2, '0');
+    });
+
+    const [newTime, setNewTime] = useState<string>('');
 
     useEffect(() => {
         const formattedHours = hours.padStart(2, '0');
         const formattedMinutes = minutes.padStart(2, '0');
-        const newTime = `${formattedHours}:${formattedMinutes}`;
-        onTimeChange(dayIndex, placeIndex, newTime);
+        setNewTime(`${formattedHours}:${formattedMinutes}`);
+        
     }, [hours, minutes]);
+
+    useEffect(() => {
+        setHours(() => {
+            const time = selectedPlace.time ? selectedPlace.time.split(':')[0] : '';
+            return time.padStart(2, '0');
+        });
+        setMinutes(() => {
+            const time = selectedPlace.time ? selectedPlace.time.split(':')[1] : '';
+            return time.padStart(2, '0');
+        });
+
+    },[selectedPlace])
+
+    const handleTimeBlur = () => {
+        onTimeChange(dayIndex, placeIndex, newTime);
+    }
 
     const handleHoursChange = (e: ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
@@ -39,22 +63,23 @@ const DayPlace: React.FC<DayPlaceProps> = ({ dayIndex, placeIndex, selectedPlace
     };
 
     return (
+        console.log("dya", selectedPlace),
         <div className="w-11/12 h-[80px] flex items-center mb-3">
             <button className="delete mr-3" onClick={() => handleRemovePlace()}></button>
             <div className="w-full h-full rounded-md shadow-xl flex items-center">
                 <div className="flex w-[40%] p-1 ml-1 font-['BMJUA'] text-[#ED661A] items-center">
                     <input
-                        placeholder="00"
                         className="w-[45%] p-1 text-center rounded text-xl font-['BMJUA'] text-[#ED661A]"
                         value={hours}
                         onChange={handleHoursChange}
+                        onBlur={handleTimeBlur}
                     />
                     <span className="mx-1">:</span>
                     <input
-                        placeholder="00"
                         className="w-[45%] p-1 text-center rounded text-xl font-['BMJUA'] text-[#ED661A]"
                         value={minutes}
                         onChange={handleMinutesChange}
+                        onBlur={handleTimeBlur}
                     />
                 </div>
                 <div className="w-full ml-1">

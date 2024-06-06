@@ -6,6 +6,7 @@ type Place = {
     latitude: number,
     longitude: number,
     imageUrl: string,
+    time: string,
 };
 
 export default Place; 
