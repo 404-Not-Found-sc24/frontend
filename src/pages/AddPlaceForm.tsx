@@ -60,12 +60,31 @@ const AddPlaceForm: React.FC = () => {
   };
 
   const handleMapClick = (lat: number, lng: number) => {
+    // 클릭한 좌표를 상태에 업데이트합니다.
     setPlaceInfo((prevState) => ({
       ...prevState,
       latitude: lat,
       longitude: lng,
     }));
+
+    // 클릭한 좌표로 주소를 검색합니다.
+    const geocoder = new window.kakao.maps.services.Geocoder();
+    geocoder.coord2Address(lng, lat, (result: any, status: any) => {
+      if (status === window.kakao.maps.services.Status.OK) {
+        // 검색 결과에서 주소를 가져와서 상태에 업데이트합니다.
+        const address = result[0].address.address_name;
+        setPlaceInfo((prevState) => ({
+          ...prevState,
+          address: address,
+        }));
+      } else {
+        toast.error('주소 검색에 실패했습니다.', {
+          position: 'top-center',
+        });
+      }
+    });
   };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const selectedImages = Array.from(e.target.files);
