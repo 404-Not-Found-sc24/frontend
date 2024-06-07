@@ -197,7 +197,7 @@ const MakePlan = () => {
         }
         return 0;
       });
-      
+
       return newSelectedPlaces;
     });
   };
@@ -394,17 +394,16 @@ const MakePlan = () => {
   }));
 
   useEffect(() => {
-    console.log("initial ", initialMarkers);
+    console.log("activeTab", activeTab, "selectedPlaces", selectedPlaces, "initial ", initialMarkers);
     setKey(JSON.stringify(initialMarkers));
-  }, [selectedPlaces]);
-
+  }, [selectedPlaces, activeTab]);
 
   return (
     console.log("sele", selectedPlaces),
     <div className="w-full h-[90%] flex">
       <ToastContainer />
       <div className="w-3/5 h-full flex">
-        <div className="w-3/5 h-full flex flex-col">
+        <div className="w-1/2 h-full flex flex-col">
           <div className="flex w-full h-[10%]">
             <i
               className="backArrow ml-2 cursor-pointer w-[10%]"

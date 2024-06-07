@@ -63,7 +63,6 @@ const DayPlace: React.FC<DayPlaceProps> = ({ dayIndex, placeIndex, selectedPlace
     };
 
     return (
-        console.log("dya", selectedPlace),
         <div className="w-11/12 h-[80px] flex items-center mb-3">
             <button className="delete mr-3" onClick={() => handleRemovePlace()}></button>
             <div className="w-full h-full rounded-md shadow-xl flex items-center">
