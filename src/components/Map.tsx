@@ -33,6 +33,20 @@ const Map: React.FC<MapProps> = ({ onMapClick }) => {
                 marker.setMap(map);
             });
 
+            if (markers.length > 1) {
+                const linePath = markers.map(marker => new window.kakao.maps.LatLng(marker.latitude, marker.longitude));
+
+                const polyline = new window.kakao.maps.Polyline({
+                    path: linePath,
+                    strokeWeight: 5,
+                    strokeColor: '#000000',
+                    strokeOpacity: 0.8,
+                    strokeStyle: 'solid',
+                });
+
+                polyline.setMap(map);
+            }
+
             // 클릭 이벤트 처리
             window.kakao.maps.event.addListener(map, 'click', function (mouseEvent: any) {
                 const latLng = mouseEvent.latLng;
