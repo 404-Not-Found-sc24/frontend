@@ -30,6 +30,8 @@ interface Props {
   setActiveDivision: React.Dispatch<React.SetStateAction<keyof DivisionsType>>;
   divisions: DivisionsType;
   setDivisions: React.Dispatch<React.SetStateAction<DivisionsType>>;
+  setInitialCenter: React.Dispatch<React.SetStateAction<{ latitude: number; longitude: number }>>; // Add this line
+
 }
 
 const SearchResults: React.FC<Props> = ({
@@ -39,6 +41,7 @@ const SearchResults: React.FC<Props> = ({
   setActiveDivision,
   divisions,
   setDivisions,
+  setInitialCenter
 }) => {
   const [planSearchResults, setPlanSearchResults] = useState<PlanData[]>([]);
   const [lastPlaceIdx, setLastPlaceIdx] = useState<
@@ -221,6 +224,17 @@ const SearchResults: React.FC<Props> = ({
     };
   }, [location.search]);
 
+  const handleMarker = (
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    latitude: number,
+    longitude: number
+  ) => {
+    e.preventDefault();
+    e.stopPropagation(); 
+    console.log("lat", latitude, "long", longitude);
+    setInitialCenter({latitude: latitude, longitude: longitude});
+  };
+
   return (
     <div className="bg-white px-5 w-full h-full overflow-y-auto">
       {tab === '장소 보기' &&
@@ -235,29 +249,38 @@ const SearchResults: React.FC<Props> = ({
             <div
               ref={
                 index === divisions[activeDivision].length - 1 &&
-                lastPlaceIdx[activeDivision] !== -1
+                  lastPlaceIdx[activeDivision] !== -1
                   ? placeLoadMoreRef
                   : null
               }
+              className="w-full"
             >
-              <div className="flex h-[100%]">
-                {place.imageUrl ? (
-                  <img
-                    src={place.imageUrl}
-                    alt={place.name}
-                    className="w-32 h-full mt-2"
-                  />
-                ) : (
-                  <img
-                    src={process.env.PUBLIC_URL + '/image/logo.png'}
-                    className="h-32 w-32"
-                  ></img>
-                )}
-                <div className="flex flex-col p-2">
-                  <h3 className="font-[BMJUA] text-xl">{place.name}</h3>
-                  <p className="font-[Nanum Gothic] text-gray-600">
-                    {place.address}
-                  </p>
+              <div className="flex h-full w-full justify-between">
+                <div className="flex h-full">
+                  {place.imageUrl ? (
+                    <img
+                      src={place.imageUrl}
+                      alt={place.name}
+                      className="w-32 h-full mt-2"
+                    />
+                  ) : (
+                    <img
+                      src={process.env.PUBLIC_URL + '/image/logo.png'}
+                      className="h-32 w-32"
+                    ></img>
+                  )}
+                  <div className="flex flex-col p-2">
+                    <h3 className="font-[BMJUA] text-xl">{place.name}</h3>
+                    <p className="font-[Nanum Gothic] text-gray-600">
+                      {place.address}
+                    </p>
+                  </div>
+                </div>
+                <div>
+                  <img src="location.svg" 
+                  alt="location logo" 
+                  onClick={(e) => handleMarker(e, place.latitude, place.longitude)}
+                  className="w-10 h-10" />
                 </div>
               </div>
             </div>

@@ -157,6 +157,7 @@ const SearchPlace: React.FC = () => {
                         divisions={divisions}
                         setDivisions={setDivisions}
                         setActiveDivision={setActiveDivision}
+                        setInitialCenter={setInitialCenter} 
                     />
                   </div>
               </div>
@@ -175,6 +176,7 @@ const SearchPlace: React.FC = () => {
                   divisions={divisions}
                   setDivisions={setDivisions}
                   setActiveDivision={setActiveDivision}
+                  setInitialCenter={setInitialCenter} 
                 />
               </div>
             )}
@@ -182,7 +184,7 @@ const SearchPlace: React.FC = () => {
         </div>
       </div>
       <MapProvider
-        key={JSON.stringify(initialMarkers)}
+        key={`${JSON.stringify(initialMarkers)}-${JSON.stringify(initialCenter)}`}
         initialCenter={initialCenter}
         initialMarkers={initialMarkers}
       >
