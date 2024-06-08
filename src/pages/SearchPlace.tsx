@@ -117,7 +117,7 @@ const SearchPlace: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className="tab-content h-[82%] justify-between ">
+        <div className="tab-content h-[100%] justify-between ">
           <div
             id="active-white-bg"
             className={activeTab === '장소 보기' ? 'active h-full w-full' : ''}
@@ -162,9 +162,12 @@ const SearchPlace: React.FC = () => {
               </div>
             )}
           </div>
-          <div className={activeTab === '일정 보기' ? 'active' : ''}>
+          <div
+            id="active-white-bg"
+            className={activeTab === '일정 보기' ? 'active h-full w-full' : ''}
+          >
             {activeTab === '일정 보기' && (
-              <div className="h-[90%]">
+              <div className="h-[80%]">
                 <SearchResults
                   tab={activeTab}
                   onResultsUpdate={handleResultsUpdate}
