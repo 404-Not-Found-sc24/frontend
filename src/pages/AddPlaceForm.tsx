@@ -212,7 +212,7 @@ const AddPlaceForm: React.FC = () => {
   return (
     <div className="w-full h-[90%] flex">
       <ToastContainer />
-      <div className="flex flex-col w-3/5 p-4 h-full">
+      <div className="flex flex-col w-3/5 2xl:w-1/2 p-4 h-full">
         <div className="flex items-center w-full h-[5%]">
           <button
             className="backArrow w-[10%] h-full"

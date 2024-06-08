@@ -112,7 +112,7 @@ const PlaceInfo: React.FC = () => {
 
   return (
     <div className="flex w-full h-[90%]">
-      <div className="w-3/5 h-full">
+      <div className=" w-3/5 2xl:w-1/2 h-full">
         <div className="h-[10%] w-full">
           <i
             className="absolute backArrow cursor-pointer h-[10%] w-[5%]"

@@ -64,7 +64,7 @@ const Map: React.FC<MapProps> = ({ onMapClick , isLine }) => {
         }
     }, [centerPosition, markers, addMarker, onMapClick]);
 
-    return <div id="map" className="w-2/5 h-full"></div>;
+    return <div id="map" className="w-2/5 2xl:w-1/2 h-full"></div>;
 };
 
 export default Map;
