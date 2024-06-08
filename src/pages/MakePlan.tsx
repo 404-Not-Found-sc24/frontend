@@ -489,7 +489,7 @@ const MakePlan = () => {
         initialCenter={initialCenter}
         initialMarkers={initialMarkers}
       >
-        <Map />
+        <Map isLine={true}/>
       </MapProvider>
     </div>
   );

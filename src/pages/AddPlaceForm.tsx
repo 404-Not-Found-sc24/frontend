@@ -193,7 +193,7 @@ const AddPlaceForm: React.FC = () => {
   return (
     <div className="w-full h-[90%] flex">
       <ToastContainer />
-      <div className="flex flex-col w-1/2 p-4 h-full">
+      <div className="flex flex-col w-3/5 p-4 h-full">
         <div className="flex items-center w-full h-[5%]">
           <button
             className="backArrow w-[10%] h-full"
@@ -333,7 +333,7 @@ const AddPlaceForm: React.FC = () => {
         initialCenter={initialCenter}
         initialMarkers={initialMarkers}
       >
-        <Map onMapClick={handleMapClick} />
+        <Map onMapClick={handleMapClick} isLine={false}/>
       </MapProvider>
     </div>
   );

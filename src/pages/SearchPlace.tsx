@@ -123,7 +123,7 @@ const SearchPlace: React.FC = () => {
             className={activeTab === '장소 보기' ? 'active h-full w-full' : ''}
           >
             {activeTab === '장소 보기' && (
-              <div className="flex flex-col">
+              <div className="flex flex-col justify-center">
                 <div className="w-full whitespace-nowrap overflow-x-auto no-scrollbar flex justify-start xl:justify-center">
                   {(Object.keys(divisions) as Array<keyof DivisionsType>).map(
                     (division) => (
@@ -141,24 +141,24 @@ const SearchPlace: React.FC = () => {
                     ),
                   )}
                 </div>
-                <div className="flex max-w-4xl justify-end w-full px-10">
+                <div className="flex max-w-4xl justify-end w-full px-20 mb-3">
                   <Link
                     to="/addplaceform"
-                    className="text-ms text-main-green-color font-Nanum Gothic underline underline-offset-4"
+                    className="py-1 px-2 m-1 border rounded-full border-main-green-color text-sm text-main-green-color font-[Nanum Gothic]"
                   >
                     장소 직접 추가하기
                   </Link>
                 </div>
-                <div className="flex-grow w-full h-[65vh]">
-                  <SearchResults
-                    tab={activeTab}
-                    onResultsUpdate={handleResultsUpdate}
-                    activeDivision={activeDivision}
-                    divisions={divisions}
-                    setDivisions={setDivisions}
-                    setActiveDivision={setActiveDivision}
-                  />
-                </div>
+                <div className="flex-grow w-full h-[60vh]">
+                    <SearchResults
+                        tab={activeTab}
+                        onResultsUpdate={handleResultsUpdate}
+                        activeDivision={activeDivision}
+                        divisions={divisions}
+                        setDivisions={setDivisions}
+                        setActiveDivision={setActiveDivision}
+                    />
+                  </div>
               </div>
             )}
           </div>
@@ -183,7 +183,7 @@ const SearchPlace: React.FC = () => {
         initialCenter={initialCenter}
         initialMarkers={initialMarkers}
       >
-        <Map />
+        <Map isLine={false}/>
       </MapProvider>
     </div>
   );
