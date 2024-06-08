@@ -411,7 +411,7 @@ const MakePlan = () => {
     (
       <div className="w-full h-[90%] flex">
         <ToastContainer />
-        <div className="w-3/5 h-full flex">
+        <div className="w-3/5 2xl:w-1/2 h-full flex">
           <div className="w-1/2 h-full flex flex-col">
             <div className="flex w-full h-[10%]">
               <i

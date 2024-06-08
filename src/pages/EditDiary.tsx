@@ -171,7 +171,7 @@ const EditDiary: React.FC = () => {
 
   return (
     <div className="w-full h-[90%] flex">
-      <div className="w-3/5 h-full flex-col">
+      <div className="w-3/5 2xl:w-1/2 h-full flex-col">
         <ToastContainer />
         <div className="h-[8%] flex flex-row">
           <div

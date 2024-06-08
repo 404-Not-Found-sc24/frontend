@@ -176,7 +176,7 @@ const MyPlanPage: React.FC = () => {
 
   return (
     <div className="flex w-full h-[90%] overflow-hidden">
-      <div className="w-3/5 h-full overflow-auto">
+      <div className=" w-3/5 2xl:w-1/2 h-full overflow-auto">
         <div className="flex w-full">
           <i
             className="backArrow ml-2 cursor-pointer w-[10%]"
