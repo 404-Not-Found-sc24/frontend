@@ -1,21 +1,12 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const NavBar: React.FC = () => {
   const { isAuthenticated, logout } = useAuth();
-  const navigate = useNavigate();
 
   const handleLogout = () => {
     logout();
-  };
-
-  const navigateToTravel = (curr: string) => {
-    navigate('/traveldes', {
-      state: {
-        curr: curr,
-      },
-    });
   };
 
   return (
@@ -43,9 +34,9 @@ const NavBar: React.FC = () => {
                 </li>
                 <li>
                   <Link
-                      to="/traveldes"
-                      state= {{ curr: 'tour'}}
-                      className="py-4 px-3 item-center text-main-green-color font-BMJUA"
+                    to="/traveldes"
+                    state={{ curr: 'tour' }}
+                    className="py-4 px-3 item-center text-main-green-color font-BMJUA"
                   >
                     여행지
                   </Link>
@@ -78,7 +69,7 @@ const NavBar: React.FC = () => {
                     회원가입
                   </Link>
                 </li>
-                <li className="flex-shrink-0" >
+                <li className="flex-shrink-0">
                   <Link
                     to="/signin"
                     className="py-2 px-3 border-2 border-white hover:border-main-green-color text-main-green-color font-BMJUA"

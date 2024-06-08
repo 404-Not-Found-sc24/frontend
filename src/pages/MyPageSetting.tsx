@@ -28,7 +28,7 @@ const MyPageSetting: React.FC = () => {
   const [showSuccessPopup, setShowSuccessPopup] = useState<boolean>(false);
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null); // 타이머 ID 상태 추가
 
-  const { refreshAccessToken } = useAuth();
+  const { refreshAccessToken, logout } = useAuth();
   useEffect(() => {
     const checkAuth = async () => {
       const storedAccessToken = localStorage.getItem('accessToken');
@@ -140,14 +140,7 @@ const MyPageSetting: React.FC = () => {
         },
       });
 
-      // Clear local storage values
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
-
-      // Clear context values
-      setAccessToken(null);
-      setRefreshToken(null);
-      setIsAuthenticated(false);
+      logout();
 
       // Navigate to login or home page
       navigate('/');
