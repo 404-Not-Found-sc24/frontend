@@ -23,4 +23,7 @@ yarn-debug.log*
 yarn-error.log*
 
 .idea
+src/.env
+
+#API KEY
 .env
