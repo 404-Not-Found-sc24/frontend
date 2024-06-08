@@ -9,9 +9,10 @@ declare global {
 
 interface MapProps {
     onMapClick?: (lat: number, lng: number) => void;
+    isLine?: boolean;
 }
 
-const Map: React.FC<MapProps> = ({ onMapClick }) => {
+const Map: React.FC<MapProps> = ({ onMapClick , isLine }) => {
     const { markers, centerPosition, addMarker, removeMarker } = useMap();
 
     useEffect(() => {
@@ -33,19 +34,22 @@ const Map: React.FC<MapProps> = ({ onMapClick }) => {
                 marker.setMap(map);
             });
 
-            if (markers.length > 1) {
-                const linePath = markers.map(marker => new window.kakao.maps.LatLng(marker.latitude, marker.longitude));
+            if (isLine) {
+                if (markers.length > 1) {
+                    const linePath = markers.map(marker => new window.kakao.maps.LatLng(marker.latitude, marker.longitude));
 
-                const polyline = new window.kakao.maps.Polyline({
-                    path: linePath,
-                    strokeWeight: 5,
-                    strokeColor: '#000000',
-                    strokeOpacity: 0.8,
-                    strokeStyle: 'solid',
-                });
+                    const polyline = new window.kakao.maps.Polyline({
+                        path: linePath,
+                        strokeWeight: 5,
+                        strokeColor: '#000000',
+                        strokeOpacity: 0.8,
+                        strokeStyle: 'solid',
+                    });
 
-                polyline.setMap(map);
+                    polyline.setMap(map);
+                }
             }
+
 
             // 클릭 이벤트 처리
             window.kakao.maps.event.addListener(map, 'click', function (mouseEvent: any) {

@@ -277,7 +277,7 @@ const MyDiaryDetail: React.FC = () => {
         initialMarkers={initialMarkers}
         initialCenter={initialCenter}
       >
-        <Map />
+        <Map isLine={false}/>
       </MapProvider>
       {showDeletePopup && (
         <div className="popup absolute top-0 left-0 z-50 w-full h-full bg-black/50 flex justify-center">

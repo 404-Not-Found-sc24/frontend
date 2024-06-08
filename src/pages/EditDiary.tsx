@@ -265,7 +265,7 @@ const EditDiary: React.FC = () => {
         initialMarkers={initialMarkers}
         initialCenter={initialCenter}
       >
-        <Map />
+        <Map isLine={false}/>
       </MapProvider>
     </div>
   );
