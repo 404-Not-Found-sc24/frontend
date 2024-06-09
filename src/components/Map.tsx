@@ -10,9 +10,10 @@ declare global {
 interface MapProps {
     onMapClick?: (lat: number, lng: number) => void;
     isLine?: boolean;
+    isClicked?: boolean;
 }
 
-const Map: React.FC<MapProps> = ({ onMapClick , isLine }) => {
+const Map: React.FC<MapProps> = ({ onMapClick , isLine, isClicked }) => {
     const { markers, centerPosition, addMarker, removeMarker } = useMap();
 
     useEffect(() => {
@@ -51,15 +52,18 @@ const Map: React.FC<MapProps> = ({ onMapClick , isLine }) => {
             }
 
             // 클릭 이벤트 처리
-            window.kakao.maps.event.addListener(map, 'click', function (mouseEvent: any) {
-                const latLng = mouseEvent.latLng;
-                const lat = latLng.getLat();
-                const lng = latLng.getLng();
-                addMarker(Date.now(), lat, lng); // 임시 placeId로 Date.now() 사용
-                if (onMapClick) {
-                    onMapClick(lat, lng);
-                }
-            });
+            if (isClicked) {
+                window.kakao.maps.event.addListener(map, 'click', function (mouseEvent: any) {
+                    const latLng = mouseEvent.latLng;
+                    const lat = latLng.getLat();
+                    const lng = latLng.getLng();
+                    addMarker(Date.now(), lat, lng); // 임시 placeId로 Date.now() 사용
+                    if (onMapClick) {
+                        onMapClick(lat, lng);
+                    }
+                });
+            }
+
         }
     }, [centerPosition, markers, addMarker, onMapClick]);
 

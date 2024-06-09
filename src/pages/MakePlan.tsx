@@ -510,7 +510,7 @@ const MakePlan = () => {
           initialCenter={initialCenter}
           initialMarkers={initialMarkers}
         >
-          <Map isLine={true} />
+          <Map isLine={true} isClicked={false}/>
         </MapProvider>
       </div>
     )

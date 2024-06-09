@@ -285,7 +285,7 @@ const MyPlanPage: React.FC = () => {
         initialCenter={initialCenter}
         initialMarkers={initialMarkers}
       >
-        <Map isLine={true} />
+        <Map isLine={false} isClicked={false}/>
       </MapProvider>
     </div>
   );
