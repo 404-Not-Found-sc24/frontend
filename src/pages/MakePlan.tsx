@@ -33,7 +33,10 @@ type DivisionsType = {
 
 const MakePlan = () => {
   const location = useLocation();
-  const tripInfo = { ...location.state };
+  const [tripInfo, setTripInfo] = useState(location.state);
+  if (Object.keys(tripInfo).length === 0) {
+    throw new Error('Trip info is missing');
+  }
   tripInfo.startDate = new Date(tripInfo.startDate);
   tripInfo.endDate = new Date(tripInfo.endDate);
   const tripdataRef = useRef(tripInfo);
@@ -238,7 +241,6 @@ const MakePlan = () => {
           },
         },
       );
-
       setRes([...divisions[division], ...response.data]);
       setLastIdx((prevLastIdx) => prevLastIdx + response.data.length);
       const newLastPlaceIdx =
@@ -501,6 +503,7 @@ const MakePlan = () => {
     });
     if (activeDivision === '전체') {
       setActiveDivision('음식점');
+      console.log("df");
     } else {
       setActiveDivision('전체');
     }
