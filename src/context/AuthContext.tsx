@@ -78,7 +78,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       console.log('Access token has been refreshed successfully.');
     } catch (error) {
       console.error('Failed to refresh access token:', error);
-      throw error;
+      logout();
     }
   };
 

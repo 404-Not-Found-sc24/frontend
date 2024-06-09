@@ -31,6 +31,7 @@ import AddPromotion from './pages/AddPromotion';
 import EditDiary from './pages/EditDiary';
 import LoginSuccess from './pages/LoginSuccess';
 import ChangePassword from './pages/ChangePassword';
+import NotFound from './pages/NotFound';
 
 function App() {
   useEffect(() => {
@@ -52,7 +53,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Main />} />
           <Route path="/signin" element={<SignIn />} />
-          <Route path="/loginSuccess" element={<LoginSuccess/>} />
+          <Route path="/loginSuccess" element={<LoginSuccess />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/placeinfo" element={<PlaceInfo />} />
           <Route path="/searchplace" element={<SearchPlace />} />
@@ -78,6 +79,7 @@ function App() {
             <Route path="/addpromotion" element={<AddPromotion />} />
             <Route path="/changepassword" element={<ChangePassword />}></Route>
           </Route>
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
