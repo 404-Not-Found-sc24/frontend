@@ -90,7 +90,7 @@ const DayPlace: React.FC<DayPlaceProps> = ({ dayIndex, placeIndex, selectedPlace
                     <div className="text-sm font-['Nanum Gothic']"
                          style={{overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis"}}
                     >
-                        {selectedPlace.address.length > 20 ? `${selectedPlace.address.slice(0, 20)}...` : selectedPlace.address}
+                        {selectedPlace.address.length > 15 ? `${selectedPlace.address.slice(0, 15)}...` : selectedPlace.address}
                     </div>
                 </div>
             </div>

@@ -21,6 +21,7 @@ const Event: React.FC = () => {
   const [rowsEventData, setRowsEventData] = useState([]);
   const [rowsPromotionData, setRowsPromotionData] = useState([]);
   const navigate = useNavigate();
+  const role = localStorage.getItem('role');
 
   useEffect(() => {
     getNoticeData();
@@ -104,27 +105,27 @@ const Event: React.FC = () => {
           params.node && params.node.rowIndex != null
             ? params.node.rowIndex + 1
             : '',
-        width: 70,
+        flex: 2,
         cellStyle: { textAlign: 'center' },
       },
-      { headerName: '제목', field: 'title', width: 250 },
-      { headerName: '내용', field: 'content', width: 300 },
+      { headerName: '제목', field: 'title', flex: 7 },
+      { headerName: '내용', field: 'content', flex: 13 },
       {
         headerName: '작성일자',
         field: 'createdDate',
-        width: 150,
+        flex: 5,
         cellStyle: { textAlign: 'center' },
       },
       {
         headerName: '수정일자',
         field: 'updatedDate',
-        width: 150,
+        flex: 5,
         cellStyle: { textAlign: 'center' },
       },
       {
         headerName: '작성자',
         field: 'memberName',
-        width: 100,
+        flex: 3,
         cellStyle: { textAlign: 'center' },
       },
     ],
@@ -234,14 +235,16 @@ const Event: React.FC = () => {
         )}
         {activeTab === '이벤트' && (
           <div className="w-[70%] h-[100%] flex flex-col ">
-            <div>
-              <button
-                className="bg-main-green-color text-white rounded-full px-3 py-1 font-bold text-sm float-end mb-3"
-                onClick={writeEvent}
-              >
-                + 이벤트 작성
-              </button>
-            </div>
+            {role === 'COMPANY' && (
+              <div>
+                <button
+                  className="bg-main-green-color text-white rounded-full px-3 py-1 font-bold text-sm float-end mb-3"
+                  onClick={writeEvent}
+                >
+                  + 이벤트 작성
+                </button>
+              </div>
+            )}
             <div
               className="ag-theme-alpine"
               style={{ height: '90%', width: '100%' }}
@@ -259,14 +262,16 @@ const Event: React.FC = () => {
         )}
         {activeTab === '홍보' && (
           <div className="w-[70%] h-[100%] flex flex-col ">
-            <div>
-              <button
-                className="bg-main-green-color text-white rounded-full px-3 py-1 font-bold text-sm float-end mb-3"
-                onClick={writePromotion}
-              >
-                + 홍보 작성
-              </button>
-            </div>
+            {role === 'COMPANY' && (
+              <div>
+                <button
+                  className="bg-main-green-color text-white rounded-full px-3 py-1 font-bold text-sm float-end mb-3"
+                  onClick={writePromotion}
+                >
+                  + 홍보 작성
+                </button>
+              </div>
+            )}
             <div
               className="ag-theme-alpine"
               style={{ height: '90%', width: '100%' }}

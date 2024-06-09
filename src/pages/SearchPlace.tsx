@@ -81,7 +81,7 @@ const SearchPlace: React.FC = () => {
 
   return (
     <div className="w-full h-[90%] flex">
-      <div className="w-3/5 h-full">
+      <div className="w-3/5 2xl:w-1/2 h-full">
         <div className="h-[10%] w-full">
           <i
             className="absolute backArrow cursor-pointer h-[10%] w-[5%]"
@@ -117,7 +117,7 @@ const SearchPlace: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className="tab-content h-[82%] justify-between ">
+        <div className="tab-content h-[100%] justify-between ">
           <div
             id="active-white-bg"
             className={activeTab === '장소 보기' ? 'active h-full w-full' : ''}
@@ -157,14 +157,18 @@ const SearchPlace: React.FC = () => {
                         divisions={divisions}
                         setDivisions={setDivisions}
                         setActiveDivision={setActiveDivision}
+                        setInitialCenter={setInitialCenter} 
                     />
                   </div>
               </div>
             )}
           </div>
-          <div className={activeTab === '일정 보기' ? 'active' : ''}>
+          <div
+            id="active-white-bg"
+            className={activeTab === '일정 보기' ? 'active h-full w-full' : ''}
+          >
             {activeTab === '일정 보기' && (
-              <div className="h-[90%]">
+              <div className="h-[80%]">
                 <SearchResults
                   tab={activeTab}
                   onResultsUpdate={handleResultsUpdate}
@@ -172,6 +176,7 @@ const SearchPlace: React.FC = () => {
                   divisions={divisions}
                   setDivisions={setDivisions}
                   setActiveDivision={setActiveDivision}
+                  setInitialCenter={setInitialCenter} 
                 />
               </div>
             )}
@@ -179,7 +184,7 @@ const SearchPlace: React.FC = () => {
         </div>
       </div>
       <MapProvider
-        key={JSON.stringify(initialMarkers)}
+        key={`${JSON.stringify(initialMarkers)}-${JSON.stringify(initialCenter)}`}
         initialCenter={initialCenter}
         initialMarkers={initialMarkers}
       >
