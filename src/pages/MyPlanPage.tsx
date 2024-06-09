@@ -63,7 +63,7 @@ const MyPlanPage: React.FC = () => {
               }`}
             onClick={() => setDropdownVisible(!dropdownVisible)}
           >
-            ...
+            {activeTab > 5 ? `${activeTab}일차` : '...'}
           </button>
           {dropdownVisible && (
             <div className="fixed bg-white w-24 z-10 mt-2 rounded-2xl max-h-48 overflow-y-auto">
@@ -182,11 +182,11 @@ const MyPlanPage: React.FC = () => {
             className="backArrow ml-2 cursor-pointer w-[10%]"
             onClick={naviBack}
           ></i>
-          <div className="flex items-center w-[90%]">
-            <div className="font-['BMJUA'] text-3xl text-black ml-2 flex items-center">
+          <div className="flex flex-col ml-2">
+            <div className="font-['BMJUA'] text-3xl text-black flex items-center">
               {plan.name}
             </div>
-            <div className="font-['BMJUA'] text-xl text-[#ED661A] ml-5 flex items-center">
+            <div className="font-['BMJUA'] text-xl text-[#ED661A] flex items-center">
               {plan.startDate} ~ {plan.endDate}
             </div>
           </div>
