@@ -201,7 +201,7 @@ const MakePlan = () => {
       try {
         const currDivision = division === '전체' ? '' : division;
         const placeResponse = await axios.get(
-          `/tour/locations?city=${city}&keyword=${searchTerm}&lastIdx=${lastPlaceIdx[division]}&division=${currDivision}`,
+          `/tour/locations?city=${tripInfo.city}&keyword=${searchTerm}&lastIdx=${lastPlaceIdx[division]}&division=${currDivision}`,
         );
 
         setRes([...divisions[division], ...placeResponse.data]);
@@ -234,7 +234,7 @@ const MakePlan = () => {
     try {
       const currDivision = division === '전체' ? '' : division;
       const response = await axios.get(
-        `/tour/locations?city=${city}&keyword=${searchTerm}&lastIdx=${lastPlaceIdx[division]}&division=${currDivision}`,
+        `/tour/locations?city=${tripInfo.city}&keyword=${searchTerm}&lastIdx=${lastPlaceIdx[division]}&division=${currDivision}`,
         {
           headers: {
             'Content-Type': 'application/json',
