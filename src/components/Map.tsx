@@ -7,13 +7,27 @@ declare global {
     }
 }
 
+interface LocationAndTime {
+    locationName: string;
+    time: string;
+}
+
+interface LocationAndLngLat {
+    locationName: string;
+    longitude: number;
+    latitude: number;
+}
+
 interface MapProps {
     onMapClick?: (lat: number, lng: number) => void;
     isLine?: boolean;
     isClicked?: boolean;
+    isSearch?: boolean;
+    mapData?: LocationAndTime[];
+    searchData?: LocationAndLngLat[];
 }
 
-const Map: React.FC<MapProps> = ({ onMapClick , isLine, isClicked }) => {
+const Map: React.FC<MapProps> = ({ onMapClick, isLine, isClicked, isSearch, mapData, searchData }) => {
     const { markers, centerPosition, addMarker, removeMarker } = useMap();
 
     useEffect(() => {
@@ -26,14 +40,60 @@ const Map: React.FC<MapProps> = ({ onMapClick , isLine, isClicked }) => {
 
             const map = new window.kakao.maps.Map(mapContainer, mapOption);
 
-            // 기존 마커를 모두 삭제
-            markers.forEach(({ latitude, longitude }) => {
-                const markerPosition = new window.kakao.maps.LatLng(latitude, longitude);
-                const marker = new window.kakao.maps.Marker({
-                    position: markerPosition,
+            const overlayInfos = mapData?.map(info => ({
+                title: info.locationName,
+                time: info.time,
+            }));
+
+            if (markers.length > 0) {
+                markers.forEach((marker, index) => {
+                    const markerPosition = new window.kakao.maps.LatLng(marker.latitude, marker.longitude);
+                    const mapMarker = new window.kakao.maps.Marker({
+                        position: markerPosition,
+                    });
+                    mapMarker.setMap(map);
+
+                    if (mapData && mapData[index]) {
+                        const info = mapData[index];
+                        const content = `
+                            <div class="bg-white rounded-md w-fit h-[50px] p-2 shadow-lg">
+                                <div class="accommInfoWrap">
+                                    <h1 class="text-sm font-bold">${info.locationName}</h1>
+                                    <p class="text-xs">${info.time}</p>
+                                </div>
+                            </div>
+                        `;
+
+                        const customOverlay = new window.kakao.maps.CustomOverlay({
+                            position: markerPosition,
+                            content: content,
+                            yAnchor: 1.5, // 오버레이의 y 앵커를 조정하여 마커 위에 위치하게 함
+                        });
+
+                        customOverlay.setMap(map);
+                    }
+
+                    if (searchData && isSearch) {
+                        const info = searchData[0];
+                        const centerPosition = new window.kakao.maps.LatLng(info.latitude, info.longitude);
+                        const content = `
+                            <div class="bg-white rounded-md w-fit h-fit p-2 shadow-md">
+                                <div class="accommInfoWrap">
+                                    <h1 class="text-sm font-bold">${info.locationName}</h1>
+                                </div>
+                            </div>
+                        `;
+
+                        const customOverlay = new window.kakao.maps.CustomOverlay({
+                            position: centerPosition,
+                            content: content,
+                            yAnchor: 1.5, // 오버레이의 y 앵커를 조정하여 마커 위에 위치하게 함
+                        });
+
+                        customOverlay.setMap(map);
+                    }
                 });
-                marker.setMap(map);
-            });
+            }
 
             if (isLine) {
                 if (markers.length > 1) {
@@ -63,9 +123,8 @@ const Map: React.FC<MapProps> = ({ onMapClick , isLine, isClicked }) => {
                     }
                 });
             }
-
         }
-    }, [centerPosition, markers, addMarker, onMapClick]);
+    }, [centerPosition, markers, addMarker, onMapClick, mapData, isLine, isClicked]);
 
     return <div id="map" className="w-2/5 2xl:w-1/2 h-full"></div>;
 };

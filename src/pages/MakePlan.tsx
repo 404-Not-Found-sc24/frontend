@@ -20,6 +20,11 @@ interface State {
   isLoading: boolean;
 }
 
+interface LocationAndTime {
+  locationName: string;
+  time: string;
+}
+
 const MakePlan = () => {
   const location = useLocation();
   const tripInfo = { ...location.state };
@@ -50,15 +55,19 @@ const MakePlan = () => {
     errMsg: null,
     isLoading: true,
   });
-
   const [initialCenter, setInitialCenter] = useState({
     latitude: state.center.lat,
     longitude: state.center.lng,
   });
   const [key, setKey] = useState(JSON.stringify(initialCenter));
-
   const activePlaces = selectedPlaces[activeTab - 1] || [];
 
+  const locationAndTimeArray: LocationAndTime[] = selectedPlaces.flatMap(placeGroup =>
+      placeGroup.map(place => ({
+        locationName: place.name,
+        time: place.time,
+      }))
+  );
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -510,7 +519,7 @@ const MakePlan = () => {
           initialCenter={initialCenter}
           initialMarkers={initialMarkers}
         >
-          <Map isLine={true} isClicked={false}/>
+          <Map isLine={true} isClicked={false} mapData={locationAndTimeArray}/>
         </MapProvider>
       </div>
     )

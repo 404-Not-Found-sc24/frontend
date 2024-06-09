@@ -22,6 +22,11 @@ interface PlanData {
   longitude: number;
 }
 
+interface LocationAndTime {
+  locationName: string;
+  time: string;
+}
+
 const MyPlanPage: React.FC = () => {
   const location = useLocation();
   const plan = location.state.data;
@@ -42,6 +47,12 @@ const MyPlanPage: React.FC = () => {
 
   console.log(plan);
   console.log(planData);
+
+  const locationAndTimeArray: LocationAndTime[] = planData.map(item => ({
+    locationName: item.locationName,
+    time: item.time
+  }));
+
   const handleTabClick = (tab: number) => {
     setActiveTab(tab);
     setDropdownVisible(false); // 드롭다운 닫기
@@ -285,7 +296,7 @@ const MyPlanPage: React.FC = () => {
         initialCenter={initialCenter}
         initialMarkers={initialMarkers}
       >
-        <Map isLine={true} isClicked={false}/>
+        <Map isLine={true} isClicked={false} mapData={locationAndTimeArray}/>
       </MapProvider>
     </div>
   );
