@@ -37,10 +37,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         email,
         password,
       });
-      const { accessToken, refreshToken } = response.data;
+      const { accessToken, refreshToken, role } = response.data;
       setAccessToken(accessToken);
       setRefreshToken(refreshToken);
       setIsAuthenticated(true);
+      localStorage.setItem('role', role);
       localStorage.setItem('accessToken', accessToken);
       localStorage.setItem('refreshToken', refreshToken);
     } catch (error) {
@@ -51,11 +52,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const googleLogin = () => {
     setIsAuthenticated(true);
-  }
+  };
 
   const logout = () => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
+    localStorage.removeItem('role');
     setAccessToken(null);
     setRefreshToken(null);
     setIsAuthenticated(false);
