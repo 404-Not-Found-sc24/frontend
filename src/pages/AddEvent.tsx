@@ -10,11 +10,14 @@ const AddEvent: React.FC = () => {
   const [content, setContent] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [showUploadMessage, setShowUploadMessage] = useState<boolean>(true);
-  const { accessToken } = useAuth();
+  const { accessToken, role } = useAuth();
   const navigate = useNavigate();
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null); // 타이머 ID 상태 추가
 
   useEffect(() => {
+    if (role !== 'COMPANY') {
+      throw new Error('Invalid access');
+    }
     return () => {
       if (timeoutId) {
         clearTimeout(timeoutId); // 언마운트 시 타이머 제거

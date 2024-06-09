@@ -45,9 +45,6 @@ const MyPlanPage: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [isOpen, setIsOpen] = useState(false);
 
-  console.log(plan);
-  console.log(planData);
-
   const locationAndTimeArray: LocationAndTime[] = planData.map(item => ({
     locationName: item.locationName,
     time: item.time
@@ -119,12 +116,6 @@ const MyPlanPage: React.FC = () => {
   };
 
   useEffect(() => {
-    if (!scheduleId) {
-      setErrorMessage('잘못된 접근입니다.');
-      setLoading(false);
-      return;
-    }
-
     const fetchScheduleData = async () => {
       try {
         const response = await axios.get(`/schedule/schedules/${scheduleId}`, {
@@ -148,7 +139,6 @@ const MyPlanPage: React.FC = () => {
             console.error('Failed to refresh access token:', refreshError);
           }
         } else {
-          setErrorMessage('일정 데이터를 불러오는 중 오류가 발생했습니다.');
           console.error('일정 데이터를 불러오는 중 오류가 발생했습니다.', e);
         }
       }
@@ -162,8 +152,8 @@ const MyPlanPage: React.FC = () => {
       (data) =>
         Math.ceil(
           Math.abs(new Date(data.date).getTime() - startDate.getTime()) /
-            (1000 * 3600 * 24) +
-            1,
+          (1000 * 3600 * 24) +
+          1,
         ) === day,
     );
   };
@@ -182,9 +172,9 @@ const MyPlanPage: React.FC = () => {
   const initialCenter =
     activePlaces.length > 0
       ? {
-          latitude: activePlaces[0].latitude,
-          longitude: activePlaces[0].longitude,
-        }
+        latitude: activePlaces[0].latitude,
+        longitude: activePlaces[0].longitude,
+      }
       : { latitude: 37.2795, longitude: 127.0438 };
 
   const navieditplan = () => {
@@ -220,8 +210,8 @@ const MyPlanPage: React.FC = () => {
   return (
     <div className="flex w-full h-[90%] overflow-hidden">
       <ToastContainer />
-      <div className=" w-3/5 2xl:w-1/2 h-full overflow-auto">
-        <div className="flex w-full">
+      <div className=" w-3/5 2xl:w-1/2 h-full flex flex-col overflow-hidden">
+        <div className="flex w-full min-h-20">
           <i
             className="backArrow ml-2 cursor-pointer w-[10%]"
             onClick={naviBack}
@@ -243,9 +233,9 @@ const MyPlanPage: React.FC = () => {
             />
           </div>
         </div>
-        <div className="w-full flex justify-center overflow-hidden">
-          <div className="w-11/12 h-full pt-3 pb-5 flex flex-col overflow-auto">
-            <div className="flex justify-between h-7">
+        <div className="w-full flex justify-center overflow-hidden flex-grow">
+          <div className="w-11/12 h-full pt-3 pb-5 flex flex-col overflow-hidden">
+            <div className="flex justify-between h-7 mb-3">
               <div className="flex items-center">{generateTabs()}</div>
               <button
                 onClick={navieditplan}
@@ -255,19 +245,19 @@ const MyPlanPage: React.FC = () => {
               </button>
             </div>
             {Array.from({ length: diffDays }, (_, index) => (
-              <div key={index} className="overflow-auto">
+              <div key={index} className="flex flex-grow overflow-hidden">
                 {activeTab === index + 1 && (
-                  <div className="overflow-auto">
+                  <div className="flex-col flex-1 overflow-y-auto h-full">
                     {planData
                       .filter(
                         (data) =>
                           Math.ceil(
                             Math.abs(
                               new Date(data.date).getTime() -
-                                startDate.getTime(),
+                              startDate.getTime(),
                             ) /
-                              (1000 * 3600 * 24) +
-                              1,
+                            (1000 * 3600 * 24) +
+                            1,
                           ) ===
                           index + 1,
                       )

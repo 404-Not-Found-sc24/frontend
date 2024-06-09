@@ -25,12 +25,32 @@ interface LocationAndTime {
   time: string;
 }
 
+type DivisionsType = {
+  전체: Place[];
+  음식점: Place[];
+  문화시설: Place[];
+  '축제 공연 행사': Place[];
+  관광지: Place[];
+  레포츠: Place[];
+  숙박: Place[];
+  쇼핑: Place[];
+};
+
 const MakePlan = () => {
   const location = useLocation();
-  const tripInfo = { ...location.state };
+  const [tripInfo, setTripInfo] = useState(location.state);
+  if (Object.keys(tripInfo).length === 0) {
+    throw new Error('Trip info is missing');
+  }
   tripInfo.startDate = new Date(tripInfo.startDate);
   tripInfo.endDate = new Date(tripInfo.endDate);
   const tripdataRef = useRef(tripInfo);
+  if (
+    isNaN(tripdataRef.current.startDate.getTime()) ||
+    isNaN(tripdataRef.current.endDate.getTime())
+  ) {
+    throw new Error('Invalid start or end date');
+  }
   const navigate = useNavigate();
   const [tripDays, setTripDays] = useState<number>(0);
   const [keyword, setKeyword] = useState('');
@@ -55,11 +75,42 @@ const MakePlan = () => {
     errMsg: null,
     isLoading: true,
   });
+  const [lastPlaceIdx, setLastPlaceIdx] = useState<
+    Record<keyof DivisionsType, number>
+  >({
+    전체: 0,
+    음식점: 0,
+    문화시설: 0,
+    '축제 공연 행사': 0,
+    관광지: 0,
+    레포츠: 0,
+    숙박: 0,
+    쇼핑: 0,
+  });
+
   const [initialCenter, setInitialCenter] = useState({
     latitude: state.center.lat,
     longitude: state.center.lng,
   });
   const [key, setKey] = useState(JSON.stringify(initialCenter));
+
+  const [divisions, setDivisions] = useState<DivisionsType>({
+    전체: [],
+    음식점: [],
+    문화시설: [],
+    '축제 공연 행사': [],
+    관광지: [],
+    레포츠: [],
+    숙박: [],
+    쇼핑: [],
+  });
+  const [activeDivision, setActiveDivision] =
+    useState<keyof DivisionsType>('전체');
+
+  const handleDivisionClick = (division: keyof DivisionsType) => {
+    setActiveDivision(division);
+  };
+
   const activePlaces = selectedPlaces[activeTab - 1] || [];
 
   const locationAndTimeArray: LocationAndTime[] = selectedPlaces.flatMap(placeGroup =>
@@ -104,7 +155,6 @@ const MakePlan = () => {
 
   useEffect(() => {
     if (activePlaces.length > 0) {
-      console.log(activePlaces[activePlaces.length - 1].latitude);
       setInitialCenter({
         latitude: activePlaces[activePlaces.length - 1].latitude,
         longitude: activePlaces[activePlaces.length - 1].longitude,
@@ -145,9 +195,7 @@ const MakePlan = () => {
     });
   };
 
-  useEffect(() => {
-    console.log('itmes', times);
-  }, [times]);
+  useEffect(() => {}, [times]);
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -158,16 +206,33 @@ const MakePlan = () => {
     };
   }, [timeoutId]);
 
-  const fetchPlaceDataOnScroll = async () => {
+  const fetchPlaceDataOnScroll = async (division: keyof DivisionsType) => {
     if (!isLoading.current) {
       isLoading.current = true;
       try {
+        const currDivision = division === '전체' ? '' : division;
         const placeResponse = await axios.get(
-          `/tour/locations?city=${city}&keyword=${searchTerm}&lastIdx=${lastIdx}`,
+          `/tour/locations?city=${city}&keyword=${searchTerm}&lastIdx=${lastPlaceIdx[division]}&division=${currDivision}`,
         );
 
-        setRes((prevData) => [...prevData, ...placeResponse.data]);
+        setRes([...divisions[division], ...placeResponse.data]);
         setLastIdx((prevLastIdx) => prevLastIdx + placeResponse.data.length);
+
+        const newPlaceResults = [...divisions[division], ...placeResponse.data];
+        const newLastPlaceIdx =
+          placeResponse.data.length < 20
+            ? -1
+            : lastPlaceIdx[division] + placeResponse.data.length;
+
+        setLastPlaceIdx((prevIdx) => ({
+          ...prevIdx,
+          [division]: newLastPlaceIdx,
+        }));
+
+        setDivisions((preDivisions: DivisionsType) => ({
+          ...preDivisions,
+          [division]: [...preDivisions[division], ...placeResponse.data],
+        }));
       } catch (error) {
         console.error('Failed to fetch place search results:', error);
       } finally {
@@ -176,18 +241,33 @@ const MakePlan = () => {
     }
   };
 
-  const getData = async () => {
+  const getData = async (division: keyof DivisionsType) => {
     try {
+      const currDivision = division === '전체' ? '' : division;
       const response = await axios.get(
-        `tour/locations?city=${tripdataRef.current.city}&keyword=${keyword}&lastIdx=${lastIdx}`,
+        `/tour/locations?city=${city}&keyword=${searchTerm}&lastIdx=${lastPlaceIdx[division]}&division=${currDivision}`,
         {
           headers: {
             'Content-Type': 'application/json',
           },
         },
       );
-      setRes((prevData) => [...prevData, ...response.data]);
+      setRes([...divisions[division], ...response.data]);
       setLastIdx((prevLastIdx) => prevLastIdx + response.data.length);
+      const newLastPlaceIdx =
+        response.data.length < 20
+          ? -1
+          : lastPlaceIdx[division] + response.data.length;
+
+      setLastPlaceIdx((prevIdx) => ({
+        ...prevIdx,
+        [division]: newLastPlaceIdx,
+      }));
+
+      setDivisions((preDivisions: DivisionsType) => ({
+        ...preDivisions,
+        [division]: [...preDivisions[division], ...response.data],
+      }));
     } catch (error) {
       console.error('Failed to fetch place search results:', error);
     }
@@ -256,7 +336,6 @@ const MakePlan = () => {
   const addPlace = async () => {
     try {
       const postData = selectedPlaces.flatMap((innerArray, index) => {
-        console.log('index', index, innerArray);
         const startDate = new Date(tripdataRef.current.startDate);
         const currentDate = new Date(startDate);
         if (tripInfo.check === 0) {
@@ -266,7 +345,6 @@ const MakePlan = () => {
         }
         return innerArray
           .map((place, innerIndex) => {
-            console.log('times', times[index]);
             return {
               placeId: place.placeId != null ? place.placeId : null,
               locationId: place.locationId,
@@ -376,9 +454,9 @@ const MakePlan = () => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           if (searchTerm) {
-            fetchPlaceDataOnScroll();
+            fetchPlaceDataOnScroll(activeDivision);
           } else {
-            getData();
+            getData(activeDivision);
           }
         }
       });
@@ -395,14 +473,51 @@ const MakePlan = () => {
 
     return () => {
       if (placeObserver.current) {
+        if (placeLoadMoreRef.current) {
+          placeObserver.current.unobserve(placeLoadMoreRef.current);
+        }
         placeObserver.current.disconnect();
       }
     };
-  }, [placeLoadMoreRef, location.search, lastIdx]);
+  }, [placeLoadMoreRef, location.search, lastIdx, activeDivision, divisions]);
+
+  useEffect(() => {
+    if (searchTerm) {
+      fetchPlaceDataOnScroll(activeDivision);
+    } else {
+      getData(activeDivision);
+    }
+  }, [activeDivision]);
 
   useEffect(() => {
     setLastIdx(0);
     setRes([]);
+    setDivisions({
+      전체: [],
+      음식점: [],
+      문화시설: [],
+      '축제 공연 행사': [],
+      관광지: [],
+      레포츠: [],
+      숙박: [],
+      쇼핑: [],
+    });
+    setLastPlaceIdx({
+      전체: 0,
+      음식점: 0,
+      문화시설: 0,
+      '축제 공연 행사': 0,
+      관광지: 0,
+      레포츠: 0,
+      숙박: 0,
+      쇼핑: 0,
+    });
+    if (activeDivision === '전체') {
+      setActiveDivision('음식점');
+      console.log("df");
+    } else {
+      setActiveDivision('전체');
+    }
   }, [location.search]);
 
   const initialMarkers = activePlaces.map((place) => ({
@@ -412,117 +527,123 @@ const MakePlan = () => {
   }));
 
   useEffect(() => {
-    console.log(
-      'activeTab',
-      activeTab,
-      'selectedPlaces',
-      selectedPlaces,
-      'initial ',
-      initialMarkers,
-    );
     setKey(JSON.stringify(initialMarkers));
   }, [selectedPlaces, activeTab]);
 
   return (
-    console.log('sele', selectedPlaces),
-    (
-      <div className="w-full h-[90%] flex">
-        <ToastContainer />
-        <div className="w-3/5 2xl:w-1/2 h-full flex">
-          <div className="w-1/2 h-full flex flex-col">
-            <div className="flex w-full h-[10%]">
-              <i
-                className="backArrow ml-2 cursor-pointer w-[10%]"
-                onClick={naviBack}
-              ></i>
-              <div className="flex items-center w-[90%]">
-                <div className="font-['BMJUA'] text-3xl text-black ml-2 flex items-center">
-                  {tripInfo.city}
-                </div>
-              </div>
-            </div>
-            <div className="h-[10%]">
-              <SearchBar curr={curr} />
-            </div>
-            <div className="flex justify-center h-[80%] overscroll-y-auto">
-              <div
-                id="scroll-container"
-                className="w-11/12 grid grid-cols-2 justify-items-center items-center gap-3 mt-4 overflow-y-auto"
-              >
-                {res.map((place: Place, index: number) => (
-                  <PlaceBox
-                    key={index}
-                    place={place}
-                    addSelectedPlace={() => addSelectedPlace(place, activeTab)}
-                  />
-                ))}
-                <div ref={placeLoadMoreRef}></div>
+    <div className="w-full h-[90%] flex">
+      <ToastContainer />
+      <div className="w-3/5 2xl:w-1/2 h-full flex">
+        <div className="w-1/2 h-full flex flex-col">
+          <div className="flex w-full h-[10%]">
+            <i
+              className="backArrow ml-2 cursor-pointer w-[10%]"
+              onClick={naviBack}
+            ></i>
+            <div className="flex items-center w-[90%]">
+              <div className="font-['BMJUA'] text-3xl text-black ml-2 flex items-center">
+                {tripInfo.city}
               </div>
             </div>
           </div>
-          <div className="w-1/2 h-full flex">
-            <div className="flex flex-col w-full h-full border-4 border-[#FF9A9A] justify-between">
-              <div className="select-container">
-                <select
-                  className="day-select"
-                  value={activeTab}
-                  onChange={(e) => handleTabClick(Number(e.target.value))}
-                >
-                  {generateSelectOptions(tripDays)}
-                </select>
-              </div>
-              <div className="tab-content h-[80%] overflow-y-scroll">
-                {Array.from({ length: tripDays }, (_, tabIndex) => (
-                  <div
-                    key={tabIndex + 1}
-                    id={`content${tabIndex + 1}`}
-                    className={`content ${
-                      activeTab === tabIndex + 1 ? 'active' : ''
+          <div className="h-[10%]">
+            <SearchBar curr={curr} />
+          </div>
+          <div className="flex items-center h-[80%] flex-col">
+            <div className="w-full whitespace-nowrap overflow-x-auto no-scrollbar flex justify-start h-9 min-h-9">
+              {(Object.keys(divisions) as Array<keyof DivisionsType>).map(
+                (division) => (
+                  <button
+                    key={division}
+                    className={`py-1 px-2 mx-1 h-[95%] border rounded-full ${
+                      activeDivision === division
+                        ? 'bg-main-red-color text-white'
+                        : 'bg-white text-main-red-color'
                     }`}
+                    onClick={() => handleDivisionClick(division)}
                   >
-                    <div className="contentBox">
-                      {selectedPlaces[activeTab - 1] && (
-                        <div className="w-full h-full flex flex-col items-center pt-3">
-                          {selectedPlaces[activeTab - 1].map(
-                            (selectedPlace, index) => (
-                              <DayPlace
-                                key={index}
-                                dayIndex={activeTab}
-                                placeIndex={index}
-                                selectedPlace={selectedPlace}
-                                removePlace={(dayIndex, placeIndex) =>
-                                  removePlace(dayIndex, placeIndex)
-                                }
-                                onTimeChange={handleTimeChange}
-                              />
-                            ),
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="h-[100px] w-full flex justify-center items-center">
-                <button
-                  className="h-1/2 bg-black text-white px-10 rounded-md text-xl font-['BMJUA']"
-                  onClick={addPlace}
-                >
-                  추가
-                </button>
-              </div>
+                    {division}
+                  </button>
+                ),
+              )}
+            </div>
+            <div
+              id="scroll-container"
+              className="w-11/12 grid grid-cols-2 flex flex flex-wrap justify-items-center gap-3 mt-1 overflow-y-auto"
+            >
+              {res.map((place: Place, index: number) => (
+                <PlaceBox
+                  key={index}
+                  place={place}
+                  addSelectedPlace={() => addSelectedPlace(place, activeTab)}
+                />
+              ))}
+              <div ref={placeLoadMoreRef}></div>
             </div>
           </div>
         </div>
-        <MapProvider
-          key={key}
-          initialCenter={initialCenter}
-          initialMarkers={initialMarkers}
-        >
-          <Map isLine={true} isClicked={false} mapData={locationAndTimeArray}/>
-        </MapProvider>
+        <div className="w-1/2 h-full flex">
+          <div className="flex flex-col w-full h-full border-4 border-[#FF9A9A] justify-between">
+            <div className="select-container">
+              <select
+                className="day-select"
+                value={activeTab}
+                onChange={(e) => handleTabClick(Number(e.target.value))}
+              >
+                {generateSelectOptions(tripDays)}
+              </select>
+            </div>
+            <div className="tab-content h-[80%] overflow-y-scroll flex flex-col">
+              {Array.from({ length: tripDays }, (_, tabIndex) => (
+                <div
+                  key={tabIndex + 1}
+                  id={`content${tabIndex + 1}`}
+                  className={`content ${
+                    activeTab === tabIndex + 1 ? 'active' : ''
+                  }`}
+                >
+                  <div className="contentBox">
+                    {selectedPlaces[activeTab - 1] && (
+                      <div className="w-full h-full flex flex-col items-center pt-3">
+                        {selectedPlaces[activeTab - 1].map(
+                          (selectedPlace, index) => (
+                            <DayPlace
+                              key={index}
+                              dayIndex={activeTab}
+                              placeIndex={index}
+                              selectedPlace={selectedPlace}
+                              removePlace={(dayIndex, placeIndex) =>
+                                removePlace(dayIndex, placeIndex)
+                              }
+                              onTimeChange={handleTimeChange}
+                            />
+                          ),
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="h-[100px] w-full flex justify-center items-center">
+              <button
+                className="h-1/2 bg-black text-white px-10 rounded-md text-xl font-['BMJUA']"
+                onClick={addPlace}
+              >
+                추가
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
-    )
+      <MapProvider
+        key={key}
+        initialCenter={initialCenter}
+        initialMarkers={initialMarkers}
+      >
+        <Map isLine={true} isClicked={false} mapData={locationAndTimeArray}/>
+      </MapProvider>
+    </div>
   );
 };
 
