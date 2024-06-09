@@ -240,9 +240,9 @@ const MakePlan = () => {
     });
 
   const notifyFail = () =>
-      toast.error('장소 추가에 문제가 생겼습니다. 확인해주세요!', {
-        position: 'top-center',
-      });
+    toast.error('장소 추가에 문제가 생겼습니다. 확인해주세요!', {
+      position: 'top-center',
+    });
 
   const addPlace = async () => {
     try {
@@ -278,7 +278,7 @@ const MakePlan = () => {
         .then((response) => {
           notifySuccess();
           const id = setTimeout(() => {
-            navigate('/');
+            navigate('/mypage');
           }, 3000);
           setTimeoutId(id);
         });
