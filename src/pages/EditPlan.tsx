@@ -13,10 +13,11 @@ import ScheduleData from "../../types/ScheduleData";
 interface props {
     isOpen: boolean;
     scheduleId: number;
+    location: string;
     handleCloseModal: () => void;
 }
 
-const PastePlan = ({isOpen, scheduleId, handleCloseModal}: props) => {
+const EditPlan = ({isOpen, scheduleId, location, handleCloseModal}: props) => {
     const [modalOpen, setModalOpen] = useState(false);
     const {accessToken, refreshAccessToken} = useAuth();
     const navigate = useNavigate();
@@ -54,26 +55,30 @@ const PastePlan = ({isOpen, scheduleId, handleCloseModal}: props) => {
   }, []);
 
     const notifySuccess = () =>
-        toast.success('일정이 성공적으로 저장되었습니다.', {
+        toast.success('일정 정보가 성공적으로 수정되었습니다.', {
             position: 'top-center',
         });
     const notifyError = () =>
-        toast.error('일정 작성 중 오류가 발생했습니다.', {
+        toast.error('일정 수정 중 오류가 발생했습니다.', {
             position: 'top-center',
         });
 
-    const copySchedule = async () => {
+    const editPlan = async () => {
         try {
+            console.log(scheduleName);
+            console.log(location);
+            console.log(startDate);
+            console.log(endDate);
             // 복사된 일정 데이터를 서버에 전송하여 저장합니다.
-            const response = await axios.post(
-                `/tour/schedules/${scheduleId}`,
-                {name: scheduleName, startDate: startDate, endDate: endDate},
+            const response = await axios.patch(
+                `/schedule/${scheduleId}`,
+                {name: scheduleName, location: location, startDate: startDate, endDate: endDate},
                 {
                     headers: {Authorization: `Bearer ${accessToken}`},
                 },
             );
             // 저장이 완료되면 사용자에게 알립니다. (예: 모달, 알림 등)
-            console.log('일정이 성공적으로 복사되었습니다:', response.data);
+            console.log('일정이 성공적으로 수정되었습니다:', response.data);
             notifySuccess();
             const id = setTimeout(() => {
                 navigate('/');
@@ -94,7 +99,7 @@ const PastePlan = ({isOpen, scheduleId, handleCloseModal}: props) => {
                     // 액세스 토큰 갱신에 실패한 경우 사용자에게 알립니다.
                 }
             } else {
-                console.error('일정 복사 중 오류 발생:', error);
+                console.error('일정 수정 중 오류 발생:', error);
                 notifyError();
             }
         }
@@ -108,7 +113,7 @@ const PastePlan = ({isOpen, scheduleId, handleCloseModal}: props) => {
                         {step == 1 && (
                             <>
                                 <div className="font-['BMJUA'] text-2xl mb-6">
-                                    내 일정으로 <span className="text-[#ff9a9a]">복사</span>하기
+                                    일정 정보 <span className="text-[#ff9a9a]">수정</span>하기
                                 </div>
                                 <>
                                     <div className="flex w-full flex-col">
@@ -169,7 +174,7 @@ const PastePlan = ({isOpen, scheduleId, handleCloseModal}: props) => {
                               </button>
                               <button
                                   className="mt-5 border-4 border-[#FF9A9A] bg-[#FF9A9A] rounded-md px-8 py-2 text-xl font-['BMJUA'] ml-3"
-                                  onClick={copySchedule}
+                                  onClick={editPlan}
                               >
                                 확인
                               </button>
@@ -182,4 +187,4 @@ const PastePlan = ({isOpen, scheduleId, handleCloseModal}: props) => {
         </>
     );
 };
-export default PastePlan;
+export default EditPlan;
