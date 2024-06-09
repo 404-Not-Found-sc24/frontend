@@ -40,6 +40,12 @@ const MakePlan = () => {
   tripInfo.startDate = new Date(tripInfo.startDate);
   tripInfo.endDate = new Date(tripInfo.endDate);
   const tripdataRef = useRef(tripInfo);
+  if (
+    isNaN(tripdataRef.current.startDate.getTime()) ||
+    isNaN(tripdataRef.current.endDate.getTime())
+  ) {
+    throw new Error('Invalid start or end date');
+  }
   const navigate = useNavigate();
   const [tripDays, setTripDays] = useState<number>(0);
   const [keyword, setKeyword] = useState('');
@@ -190,7 +196,6 @@ const MakePlan = () => {
   }, [timeoutId]);
 
   const fetchPlaceDataOnScroll = async (division: keyof DivisionsType) => {
-    console.log("se", searchTerm, division);
     if (!isLoading.current) {
       isLoading.current = true;
       try {

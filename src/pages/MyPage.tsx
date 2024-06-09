@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import ScheduleCard from '../components/ScheduleCard';
 import { useAuth } from '../context/AuthContext';
 import axios, { AxiosError } from 'axios';
+import { ToastContainer } from 'react-toastify';
 
 interface ScheduleData {
   scheduleId: number;
@@ -163,6 +164,7 @@ const MyPage: React.FC = () => {
 
   return (
     <div className="h-full">
+      <ToastContainer />
       <div className="h-[22rem]">
         <div className="w-full h-44 bg-main-red-color"></div>
         <div className="relative flex justify-center">
