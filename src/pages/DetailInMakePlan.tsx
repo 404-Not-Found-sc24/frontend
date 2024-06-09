@@ -99,7 +99,7 @@ const DetailInMakePlan: React.FC<MakePlanProps> = ({ isOpen, place, handleCloseM
             {modalOpen && (
                 <ModalBig onClose={handleCloseModal}>
                     <div className='flex flex items-center flex-col h-full'>
-                        <div className="h-[8%] w-[80%] flex justify-center">
+                        <div className="h-[10%] w-[80%] flex justify-center">
                             <div className="flex max-w-2xl mx-5 pt-4 w-[80%]">
                                 <div
                                     id="1"
@@ -123,7 +123,7 @@ const DetailInMakePlan: React.FC<MakePlanProps> = ({ isOpen, place, handleCloseM
                                 </div>
                             </div>
                         </div>
-                        <div className="h-[82%] w-full flex flex-grow justify-center">
+                        <div className="h-[82%] w-full flex flex-grow justify-center mt-3">
                             <div className="w-full flex justify-center">
                                 <div className="w-[90%] h-full mb-5 overflow-auto">
                                     {activeTab === '장소 소개' && res != undefined && (

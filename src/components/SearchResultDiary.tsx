@@ -9,7 +9,7 @@ interface PlanBoxProps {
 }
 
 const SearchResultDiary: React.FC<PlanBoxProps> = (props) => {
-  const { diaryId, placeId, title, date, content, imageUrl , userName} = props.props;
+  const { diaryId, placeId, title, date, content, imageUrl, userName } = props.props;
   const locationId = props.locationId;
   const navigate = useNavigate();
 
@@ -20,7 +20,6 @@ const SearchResultDiary: React.FC<PlanBoxProps> = (props) => {
   };
 
   return (
-    console.log("ldf", locationId),
     <div
       className="w-full h-[30%] p-5 flex rounded-md shadow-xl mb-5"
       onClick={toDiaryDetail}
@@ -45,7 +44,9 @@ const SearchResultDiary: React.FC<PlanBoxProps> = (props) => {
           {userName}
         </div>
         <div className="font-['Nanum Gothic'] text-black text-sm mt-2">
-          {content}
+          {content.split('\n').map((line: string, index: number) => (
+            <div key={index}>{line}</div>
+          ))}
         </div>
       </div>
     </div>

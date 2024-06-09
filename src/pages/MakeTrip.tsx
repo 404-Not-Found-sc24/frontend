@@ -213,15 +213,15 @@ const MakeTrip = ({
         <ModalBig onClose={handleCloseModal}>
           <>
             {step === 1 && (
-              <>
-                <div className="font-['Nanum Gothic'] w-full h-full text-lg sm:text-3xl md:text-3xl lg:text-3xl xl:text-3xl font-semibold text-black mb-5">
+              <div className="h-full flex justify-between flex-col">
+                <div className="font-['Nanum Gothic'] w-full h-12 text-lg sm:text-3xl md:text-3xl lg:text-3xl xl:text-3xl font-semibold text-black mb-5">
                   {city}
                 </div>
-                <div className="flex flex-col sm:flex-row md:flex-row lg:flex-row xl:flex-row justify-between items-center w-full h-full">
-                  <div className="mr-5 w-full h-full text-xs sm:text-md md:text-md lg:text-lg xl:text-lg">
+                <div className="flex flex-col sm:flex-row md:flex-row lg:flex-row xl:flex-row justify-between w-full h-full">
+                  <div className="mr-5 w-full h-full text-xs sm:text-md md:text-md lg:text-lg xl:text-lg flex items-center">
                     {cityDetail}
                   </div>
-                  <div className="w-full h-full flex justify-center">
+                  <div className="w-full h-full flex items-center justify-center">
                     <img
                       src={imageUrl}
                       className="max-h-80 object-cover"
@@ -237,10 +237,10 @@ const MakeTrip = ({
                     다음
                   </button>
                 </div>
-              </>
+              </div>
             )}
             {step === 2 && (
-              <div className="flex justify-center items-center flex-col">
+              <div className="flex justify-center items-center flex-col h-full">
                 <div className="font-['Nanum Gothic'] text-2xl mb-6">
                   여행 기간이 어떻게 되시나요?
                 </div>
@@ -273,7 +273,7 @@ const MakeTrip = ({
                   <></>
                 )}
                 <button
-                  className="font-['Nanum Gothic'] flex justify-center text-[10px] mt-2 text-[#FF9A9A] underline"
+                  className="font-['Nanum Gothic'] flex justify-center text-md mt-2 text-[#FF9A9A] underline"
                   onClick={handleResetDates}
                 >
                   날짜 다시 설정하기
@@ -295,7 +295,7 @@ const MakeTrip = ({
               </div>
             )}
             {step === 3 && (
-              <div className="flex justify-center items-center flex-col">
+              <div className="flex justify-center items-center flex-col h-full">
                 <div className="font-['Nanum Gothic'] text-2xl mb-6">
                   여행 일정의 이름을 지어주세요!
                 </div>
@@ -347,7 +347,7 @@ const MakeTrip = ({
               </div>
             )}
             {step === 4 && (
-              <div className="flex justify-center items-center flex-col">
+              <div className="flex justify-center items-center flex-col h-full">
                 <div className="font-['Nanum Gothic'] text-2xl mb-6">
                   여행 장소 추가하러 가기!
                 </div>
