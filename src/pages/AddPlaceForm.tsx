@@ -333,7 +333,7 @@ const AddPlaceForm: React.FC = () => {
         initialCenter={initialCenter}
         initialMarkers={initialMarkers}
       >
-        <Map onMapClick={handleMapClick} isLine={false}/>
+        <Map onMapClick={handleMapClick} isLine={false} isClicked={true}/>
       </MapProvider>
     </div>
   );

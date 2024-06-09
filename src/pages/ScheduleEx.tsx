@@ -268,7 +268,7 @@ const ScheduleEx: React.FC = () => {
         initialCenter={initialCenter}
         initialMarkers={initialMarkers}
       >
-        <Map isLine={false}/>
+        <Map isLine={false} isClicked={false}/>
       </MapProvider>
     </div>
   );
