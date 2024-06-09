@@ -1,10 +1,12 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, {useState, useEffect, useMemo, useCallback} from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { MapProvider } from '../context/MapContext';
 import Map from '../components/Map';
 import axios, { AxiosError } from 'axios';
 import MyPlanDetailBox from '../components/MyPlanDetailBox';
+import EditPlan from "./EditPlan";
+import {ToastContainer} from "react-toastify";
 
 interface PlanData {
   placeId: number;
@@ -35,11 +37,22 @@ const MyPlanPage: React.FC = () => {
   const timeDiff = Math.abs(endDate.getTime() - startDate.getTime());
   const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1;
   const navigate = useNavigate();
+  const [isOpen, setIsOpen] = useState(false);
 
+  console.log(plan);
+  console.log(planData);
   const handleTabClick = (tab: number) => {
     setActiveTab(tab);
     setDropdownVisible(false); // 드롭다운 닫기
   };
+
+  const handleOpenModal = useCallback(() => {
+    setIsOpen(true);
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    setIsOpen(false);
+  }, []);
 
   const generateTabs = () => {
     const tabs = [];
@@ -176,19 +189,28 @@ const MyPlanPage: React.FC = () => {
 
   return (
     <div className="flex w-full h-[90%] overflow-hidden">
+      <ToastContainer />
       <div className=" w-3/5 2xl:w-1/2 h-full overflow-auto">
         <div className="flex w-full">
           <i
             className="backArrow ml-2 cursor-pointer w-[10%]"
             onClick={naviBack}
           ></i>
-          <div className="flex items-center w-[90%]">
-            <div className="font-['BMJUA'] text-3xl text-black ml-2 flex items-center">
-              {plan.name}
+          <div className="flex items-center w-[90%] justify-between">
+            <div className="flex flex-col">
+              <div className="font-['BMJUA'] text-3xl text-black ml-2 flex items-center">
+                {plan.name}
+              </div>
+              <div className="font-['BMJUA'] text-xl text-[#ED661A] ml-2 flex items-center">
+                {plan.startDate} ~ {plan.endDate}
+              </div>
             </div>
-            <div className="font-['BMJUA'] text-xl text-[#ED661A] ml-5 flex items-center">
-              {plan.startDate} ~ {plan.endDate}
-            </div>
+            <img
+                src="icon-pencil.png"
+                alt="일정 수정"
+                className="h-5 w-5 cursor-pointer mr-10"
+                onClick={() => handleOpenModal()}
+            />
           </div>
         </div>
         <div className="w-full flex justify-center overflow-hidden">
@@ -232,6 +254,12 @@ const MyPlanPage: React.FC = () => {
             ))}
           </div>
         </div>
+        <EditPlan
+            isOpen={isOpen}
+            scheduleId={scheduleId}
+            location={plan.location}
+            handleCloseModal={handleCloseModal}
+        />
       </div>
       <MapProvider
         key={JSON.stringify(initialMarkers)}
