@@ -40,8 +40,6 @@ const MyPlanPage: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [isOpen, setIsOpen] = useState(false);
 
-  console.log(plan);
-  console.log(planData);
   const handleTabClick = (tab: number) => {
     setActiveTab(tab);
     setDropdownVisible(false); // 드롭다운 닫기
