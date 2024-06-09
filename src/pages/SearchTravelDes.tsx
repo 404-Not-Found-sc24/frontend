@@ -39,6 +39,11 @@ const SearchTravelDes: React.FC = () => {
 
   useEffect(() => {
     const cityparam = { ...location.state };
+    if (Object.keys(cityparam).length === 0) {
+      console.log(cityparam);
+      // 비어있으면 에러 throw
+      throw new Error('Invalid access');
+    }
     setCurr(cityparam.curr);
   }, []);
 
@@ -47,6 +52,12 @@ const SearchTravelDes: React.FC = () => {
       const queryParams = new URLSearchParams(location.search);
       const searchTerm = queryParams.get('q') || '';
       const cityparam = { ...location.state };
+
+      if (Object.keys(cityparam).length === 0) {
+        console.log(cityparam);
+        // 비어있으면 에러 throw
+        throw new Error('Invalid access');
+      }
 
       if (searchTerm) {
         try {
@@ -90,64 +101,62 @@ const SearchTravelDes: React.FC = () => {
   }, [location.search]);
 
   return (
-    (
-      <div>
-        <div className="w-full flex justify-center my-10">
-          <div className="w-2/3 sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/2">
-            <CitySearchBar />
-          </div>
+    <div>
+      <div className="w-full flex justify-center my-10">
+        <div className="w-2/3 sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/2">
+          <CitySearchBar />
         </div>
-        <div className="w-4/5 container mx-auto sm:my-6 md:my-12 lg:my-12 xl:my-20 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
-          {curr === 'schedule' &&
-            placeSearchResults.map((place: CityData, index) => (
-              <button
-                key={index}
-                className="relative flex flex-col w-full aspect-square"
-                onClick={() =>
-                  handleOpenModal(
-                    place.cityName,
-                    place.cityDetail,
-                    place.imageUrl,
-                  )
-                }
-              >
-                <img
-                  src={place.imageUrl}
-                  alt={place.cityName + '이미지'}
-                  className="w-full h-full rounded-4 object-cover"
-                />
-                <div className="absolute bottom-0 right-0 text-lg sm:text-lg md:text-xl lg:text-2xl xl:text-2xl font-['BMHANNApro'] text-white bg-black bg-opacity-50 p-2 rounded-tl rounded-br">
-                  {place.cityName}
-                </div>
-              </button>
-            ))}
-          {curr === 'tour' &&
-            placeSearchResults.map((place: CityData, index) => (
-              <Link
-                to={`/searchplace?city=${place.cityName}`}
-                key={index}
-                className="relative flex flex-col w-full aspect-square"
-              >
-                <img
-                  src={place.imageUrl}
-                  alt={place.cityName + '이미지'}
-                  className="w-full h-full rounded-4 object-cover"
-                />
-                <div className="absolute bottom-0 right-0 text-lg sm:text-lg md:text-xl lg:text-2xl xl:text-2xl font-['BMHANNApro'] text-white bg-black bg-opacity-50 p-2 rounded-tl rounded-br">
-                  {place.cityName}
-                </div>
-              </Link>
-            ))}
-        </div>
-        <MakeTrip
-          isOpen={isOpen}
-          city={city}
-          cityDetail={cityDetail}
-          imageUrl={imageUrl}
-          handleCloseModal={handleCloseModal}
-        />
       </div>
-    )
+      <div className="w-4/5 container mx-auto sm:my-6 md:my-12 lg:my-12 xl:my-20 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
+        {curr === 'schedule' &&
+          placeSearchResults.map((place: CityData, index) => (
+            <button
+              key={index}
+              className="relative flex flex-col w-full aspect-square"
+              onClick={() =>
+                handleOpenModal(
+                  place.cityName,
+                  place.cityDetail,
+                  place.imageUrl,
+                )
+              }
+            >
+              <img
+                src={place.imageUrl}
+                alt={place.cityName + '이미지'}
+                className="w-full h-full rounded-4 object-cover"
+              />
+              <div className="absolute bottom-0 right-0 text-lg sm:text-lg md:text-xl lg:text-2xl xl:text-2xl font-['BMHANNApro'] text-white bg-black bg-opacity-50 p-2 rounded-tl rounded-br">
+                {place.cityName}
+              </div>
+            </button>
+          ))}
+        {curr === 'tour' &&
+          placeSearchResults.map((place: CityData, index) => (
+            <Link
+              to={`/searchplace?city=${place.cityName}`}
+              key={index}
+              className="relative flex flex-col w-full aspect-square"
+            >
+              <img
+                src={place.imageUrl}
+                alt={place.cityName + '이미지'}
+                className="w-full h-full rounded-4 object-cover"
+              />
+              <div className="absolute bottom-0 right-0 text-lg sm:text-lg md:text-xl lg:text-2xl xl:text-2xl font-['BMHANNApro'] text-white bg-black bg-opacity-50 p-2 rounded-tl rounded-br">
+                {place.cityName}
+              </div>
+            </Link>
+          ))}
+      </div>
+      <MakeTrip
+        isOpen={isOpen}
+        city={city}
+        cityDetail={cityDetail}
+        imageUrl={imageUrl}
+        handleCloseModal={handleCloseModal}
+      />
+    </div>
   );
 };
 

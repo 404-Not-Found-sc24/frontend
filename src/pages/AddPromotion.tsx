@@ -10,11 +10,14 @@ const AddPromotion: React.FC = () => {
   const [content, setContent] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [showUploadMessage, setShowUploadMessage] = useState<boolean>(true);
-  const { accessToken } = useAuth();
+  const { accessToken, role } = useAuth();
   const navigate = useNavigate();
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
+    if (role !== 'COMPANY') {
+      throw new Error('Invalid access');
+    }
     return () => {
       if (timeoutId) {
         clearTimeout(timeoutId);
