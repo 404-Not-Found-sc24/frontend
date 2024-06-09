@@ -50,7 +50,6 @@ const Map: React.FC<MapProps> = ({ onMapClick , isLine }) => {
                 }
             }
 
-
             // 클릭 이벤트 처리
             window.kakao.maps.event.addListener(map, 'click', function (mouseEvent: any) {
                 const latLng = mouseEvent.latLng;
