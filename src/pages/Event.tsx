@@ -104,27 +104,27 @@ const Event: React.FC = () => {
           params.node && params.node.rowIndex != null
             ? params.node.rowIndex + 1
             : '',
-        width: 70,
+        flex: 2,
         cellStyle: { textAlign: 'center' },
       },
-      { headerName: '제목', field: 'title', width: 250 },
-      { headerName: '내용', field: 'content', width: 300 },
+      { headerName: '제목', field: 'title', flex: 7 },
+      { headerName: '내용', field: 'content', flex: 13 },
       {
         headerName: '작성일자',
         field: 'createdDate',
-        width: 150,
+        flex: 5,
         cellStyle: { textAlign: 'center' },
       },
       {
         headerName: '수정일자',
         field: 'updatedDate',
-        width: 150,
+        flex: 5,
         cellStyle: { textAlign: 'center' },
       },
       {
         headerName: '작성자',
         field: 'memberName',
-        width: 100,
+        flex: 3,
         cellStyle: { textAlign: 'center' },
       },
     ],
