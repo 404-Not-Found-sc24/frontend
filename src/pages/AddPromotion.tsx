@@ -82,9 +82,9 @@ const AddPromotion: React.FC = () => {
   };
 
   return (
-    <div className="ml-[15%] h-full flex justify-center items-center w-[85%]">
+    <div className="h-[90%] flex justify-center items-center w-full">
       <ToastContainer />
-      <div className="w-4/5 h-4/5 flex-1 flex justify-center flex-col items-center">
+      <div className="w-[70%] h-[90%] flex justify-center flex-col items-center">
         <div className="font-['Nanum Gothic'] text-3xl font-bold text-main-green-color h-[10%]">
           홍보 자료 작성
         </div>
@@ -131,7 +131,7 @@ const AddPromotion: React.FC = () => {
           <div className="w-full flex justify-center h-[10%]">
             <button
               onClick={handleSubmit}
-              className="w-[15%] h-[70%] bg-main-green-color text-white rounded-md font-['Nanum Gothic'] font-bold text-xl"
+              className="w-fit h-fit px-5 py-3 bg-main-green-color text-white rounded-md font-['Nanum Gothic'] font-bold text-xl"
             >
               추가하기
             </button>

@@ -115,17 +115,19 @@ const MakePlan = () => {
     setSelectedPlaces((prevSelectedPlaces) => {
       const newSelectedPlaces = prevSelectedPlaces.map((day, idx) => {
         if (idx === dayIndex - 1) {
-          return day.map((place, i) => {
-            if (i === placeIndex) {
-              return { ...place, time };
-            }
-            return place;
-          }).sort((a, b) => {
-            if (a.time && b.time) {
-              return a.time.localeCompare(b.time);
-            }
-            return 0;
-          });
+          return day
+            .map((place, i) => {
+              if (i === placeIndex) {
+                return { ...place, time };
+              }
+              return place;
+            })
+            .sort((a, b) => {
+              if (a.time && b.time) {
+                return a.time.localeCompare(b.time);
+              }
+              return 0;
+            });
         }
         return day;
       });
@@ -135,7 +137,7 @@ const MakePlan = () => {
   };
 
   useEffect(() => {
-    console.log("itmes", times);
+    console.log('itmes', times);
   }, [times]);
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
 
@@ -236,10 +238,16 @@ const MakePlan = () => {
     toast.success('장소가 성공적으로 추가되었습니다!', {
       position: 'top-center',
     });
+
+  const notifyFail = () =>
+    toast.error('장소 추가에 문제가 생겼습니다. 확인해주세요!', {
+      position: 'top-center',
+    });
+
   const addPlace = async () => {
     try {
       const postData = selectedPlaces.flatMap((innerArray, index) => {
-        console.log("index", index, innerArray);
+        console.log('index', index, innerArray);
         const startDate = new Date(tripdataRef.current.startDate);
         const currentDate = new Date(startDate);
         if (tripInfo.check === 0) {
@@ -249,7 +257,7 @@ const MakePlan = () => {
         }
         return innerArray
           .map((place, innerIndex) => {
-            console.log("times", times[index]);
+            console.log('times', times[index]);
             return {
               placeId: place.placeId != null ? place.placeId : null,
               locationId: place.locationId,
@@ -270,7 +278,7 @@ const MakePlan = () => {
         .then((response) => {
           notifySuccess();
           const id = setTimeout(() => {
-            navigate('/');
+            navigate('/mypage');
           }, 3000);
           setTimeoutId(id);
         });
@@ -285,6 +293,7 @@ const MakePlan = () => {
           console.error('Failed to refresh access token:', refreshError);
         }
       } else {
+        notifyFail();
         console.error('Failed to add place:', error);
       }
     }
@@ -312,6 +321,7 @@ const MakePlan = () => {
           console.error('Failed to refresh access token:', refreshError);
         }
       } else {
+        notifyFail();
         console.error('Failed to add place:', error);
       }
     }
@@ -348,9 +358,9 @@ const MakePlan = () => {
 
   useEffect(() => {
     const placeOptions = {
-      root: null,
-      rootMargin: '0px',
-      threshold: 1,
+      root: document.getElementById('scroll-container'),
+      rootMargin: '20px',
+      threshold: 0.8,
     };
 
     const placeCallback: IntersectionObserverCallback = (entries) => {
@@ -386,7 +396,6 @@ const MakePlan = () => {
     setRes([]);
   }, [location.search]);
 
-
   const initialMarkers = activePlaces.map((place) => ({
     placeId: place.locationId,
     latitude: place.latitude,
@@ -394,104 +403,117 @@ const MakePlan = () => {
   }));
 
   useEffect(() => {
-    console.log("activeTab", activeTab, "selectedPlaces", selectedPlaces, "initial ", initialMarkers);
+    console.log(
+      'activeTab',
+      activeTab,
+      'selectedPlaces',
+      selectedPlaces,
+      'initial ',
+      initialMarkers,
+    );
     setKey(JSON.stringify(initialMarkers));
   }, [selectedPlaces, activeTab]);
 
   return (
-    console.log("sele", selectedPlaces),
-    <div className="w-full h-[90%] flex">
-      <ToastContainer />
-      <div className="w-3/5 h-full flex">
-        <div className="w-1/2 h-full flex flex-col">
-          <div className="flex w-full h-[10%]">
-            <i
-              className="backArrow ml-2 cursor-pointer w-[10%]"
-              onClick={naviBack}
-            ></i>
-            <div className="flex items-center w-[90%]">
-              <div className="font-['BMJUA'] text-3xl text-black ml-2 flex items-center">
-                {tripInfo.city}
+    console.log('sele', selectedPlaces),
+    (
+      <div className="w-full h-[90%] flex">
+        <ToastContainer />
+        <div className="w-3/5 2xl:w-1/2 h-full flex">
+          <div className="w-1/2 h-full flex flex-col">
+            <div className="flex w-full h-[10%]">
+              <i
+                className="backArrow ml-2 cursor-pointer w-[10%]"
+                onClick={naviBack}
+              ></i>
+              <div className="flex items-center w-[90%]">
+                <div className="font-['BMJUA'] text-3xl text-black ml-2 flex items-center">
+                  {tripInfo.city}
+                </div>
+              </div>
+            </div>
+            <div className="h-[10%]">
+              <SearchBar curr={curr} />
+            </div>
+            <div className="flex justify-center h-[80%] overscroll-y-auto">
+              <div
+                id="scroll-container"
+                className="w-11/12 grid grid-cols-2 justify-items-center items-center gap-3 mt-4 overflow-y-auto"
+              >
+                {res.map((place: Place, index: number) => (
+                  <PlaceBox
+                    key={index}
+                    place={place}
+                    addSelectedPlace={() => addSelectedPlace(place, activeTab)}
+                  />
+                ))}
+                <div ref={placeLoadMoreRef}></div>
               </div>
             </div>
           </div>
-          <div className="h-[10%]">
-            <SearchBar curr={curr} />
-          </div>
-          <div className="flex justify-center h-[80%] overscroll-y-auto">
-            <div className="w-11/12 grid grid-cols-2 justify-items-center items-center gap-3 mt-4 overflow-y-auto">
-              {res.map((place: Place, index: number) => (
-                <PlaceBox
-                  key={index}
-                  place={place}
-                  addSelectedPlace={() => addSelectedPlace(place, activeTab)}
-                />
-              ))}
-              <div ref={placeLoadMoreRef}></div>
-            </div>
-          </div>
-        </div>
-        <div className="w-1/2 h-full flex">
-          <div className="flex flex-col w-full h-full border-4 border-[#FF9A9A] justify-between">
-            <div className="select-container">
-              <select
-                className="day-select"
-                value={activeTab}
-                onChange={(e) => handleTabClick(Number(e.target.value))}
-              >
-                {generateSelectOptions(tripDays)}
-              </select>
-            </div>
-            <div className="tab-content h-[80%] overflow-y-scroll">
-              {Array.from({ length: tripDays }, (_, tabIndex) => (
-                <div
-                  key={tabIndex + 1}
-                  id={`content${tabIndex + 1}`}
-                  className={`content ${activeTab === tabIndex + 1 ? 'active' : ''
-                    }`}
+          <div className="w-1/2 h-full flex">
+            <div className="flex flex-col w-full h-full border-4 border-[#FF9A9A] justify-between">
+              <div className="select-container">
+                <select
+                  className="day-select"
+                  value={activeTab}
+                  onChange={(e) => handleTabClick(Number(e.target.value))}
                 >
-                  <div className="contentBox">
-                    {selectedPlaces[activeTab - 1] && (
-                      <div className="w-full h-full flex flex-col items-center pt-3">
-                        {selectedPlaces[activeTab - 1].map(
-                          (selectedPlace, index) => (
-                            <DayPlace
-                              key={index}
-                              dayIndex={activeTab}
-                              placeIndex={index}
-                              selectedPlace={selectedPlace}
-                              removePlace={(dayIndex, placeIndex) =>
-                                removePlace(dayIndex, placeIndex)
-                              }
-                              onTimeChange={handleTimeChange}
-                            />
-                          ),
-                        )}
-                      </div>
-                    )}
+                  {generateSelectOptions(tripDays)}
+                </select>
+              </div>
+              <div className="tab-content h-[80%] overflow-y-scroll">
+                {Array.from({ length: tripDays }, (_, tabIndex) => (
+                  <div
+                    key={tabIndex + 1}
+                    id={`content${tabIndex + 1}`}
+                    className={`content ${
+                      activeTab === tabIndex + 1 ? 'active' : ''
+                    }`}
+                  >
+                    <div className="contentBox">
+                      {selectedPlaces[activeTab - 1] && (
+                        <div className="w-full h-full flex flex-col items-center pt-3">
+                          {selectedPlaces[activeTab - 1].map(
+                            (selectedPlace, index) => (
+                              <DayPlace
+                                key={index}
+                                dayIndex={activeTab}
+                                placeIndex={index}
+                                selectedPlace={selectedPlace}
+                                removePlace={(dayIndex, placeIndex) =>
+                                  removePlace(dayIndex, placeIndex)
+                                }
+                                onTimeChange={handleTimeChange}
+                              />
+                            ),
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-            <div className="h-[100px] w-full flex justify-center items-center">
-              <button
-                className="h-1/2 bg-black text-white px-10 rounded-md text-xl font-['BMJUA']"
-                onClick={addPlace}
-              >
-                추가
-              </button>
+                ))}
+              </div>
+              <div className="h-[100px] w-full flex justify-center items-center">
+                <button
+                  className="h-1/2 bg-black text-white px-10 rounded-md text-xl font-['BMJUA']"
+                  onClick={addPlace}
+                >
+                  추가
+                </button>
+              </div>
             </div>
           </div>
         </div>
+        <MapProvider
+          key={key}
+          initialCenter={initialCenter}
+          initialMarkers={initialMarkers}
+        >
+          <Map isLine={true} isClicked={false}/>
+        </MapProvider>
       </div>
-      <MapProvider
-        key={key}
-        initialCenter={initialCenter}
-        initialMarkers={initialMarkers}
-      >
-        <Map isLine={true} isClicked={false}/>
-      </MapProvider>
-    </div>
+    )
   );
 };
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import Map from '../components/Map';
 import { MapProvider } from '../context/MapContext';
 import axios, { AxiosError } from 'axios';
@@ -6,6 +6,7 @@ import { useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { ToastContainer, toast } from 'react-toastify';
 import MyPlanDetailBox from '../components/MyPlanDetailBox';
+import PastePlan from "./PastePlan";
 
 interface ScheduleData {
   placeId: number;
@@ -28,6 +29,7 @@ const ScheduleEx: React.FC = () => {
   const plan = location.state.plan;
   const queryParams = new URLSearchParams(location.search);
   const scheduleId = queryParams.get('scheduleId');
+  const numScheduleId = scheduleId? parseInt(scheduleId) : 0;
   const startDate = new Date(plan.startDate);
   const endDate = new Date(plan.endDate);
   const timeDiff = Math.abs(endDate.getTime() - startDate.getTime());
@@ -35,6 +37,10 @@ const ScheduleEx: React.FC = () => {
   const { refreshAccessToken } = useAuth();
   const accessToken = localStorage.getItem('accessToken');
   const [dropdownVisible, setDropdownVisible] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState(false);
+
+  console.log(scheduleId);
+  console.log(numScheduleId);
 
   const getPlacesByDay = (day: number) => {
     return scheduleData.filter(
@@ -67,14 +73,7 @@ const ScheduleEx: React.FC = () => {
         }
       : { latitude: 37.2795, longitude: 127.0438 };
 
-  const notifySuccess = () =>
-    toast.success('일정이 성공적으로 저장되었습니다.', {
-      position: 'top-center',
-    });
-  const notifyError = () =>
-    toast.error('일정 작성 중 오류가 발생했습니다.', {
-      position: 'top-center',
-    });
+
 
   const handleTabClick = (tab: number) => {
     setActiveTab(tab);
@@ -165,39 +164,15 @@ const ScheduleEx: React.FC = () => {
     fetchScheduleData();
   }, [scheduleId]);
 
-  const copySchedule = async () => {
-    try {
-      // 복사된 일정 데이터를 서버에 전송하여 저장합니다.
-      const response = await axios.post(
-        `/tour/schedules/${scheduleId}`,
-        { name: plan.name, startDate: plan.startDate, endDate: plan.endDate },
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        },
-      );
-      // 저장이 완료되면 사용자에게 알립니다. (예: 모달, 알림 등)
-      console.log('일정이 성공적으로 복사되었습니다:', response.data);
-      notifySuccess();
-    } catch (error) {
-      if (
-        (error as AxiosError).response &&
-        (error as AxiosError).response?.status === 401
-      ) {
-        try {
-          await refreshAccessToken();
-          // 새로운 액세스 토큰으로 다시 요청을 보냅니다.
-          // 여기에서는 재시도 로직을 추가할 수 있습니다.
-        } catch (refreshError) {
-          console.error('Failed to refresh access token:', refreshError);
-          notifyError();
-          // 액세스 토큰 갱신에 실패한 경우 사용자에게 알립니다.
-        }
-      } else {
-        console.error('일정 복사 중 오류 발생:', error);
-        notifyError();
-      }
-    }
-  };
+  const handleOpenModal = useCallback(() => {
+    setIsOpen(true);
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    setIsOpen(false);
+  }, []);
+
+
 
   const naviBack = () => {
     window.history.back();
@@ -206,7 +181,7 @@ const ScheduleEx: React.FC = () => {
   return (
     <div className="flex w-full h-[90%]">
       <ToastContainer />
-      <div className="w-1/2 h-full">
+      <div className="w-3/5 h-full">
         <div className="flex w-full h-[10%]">
           <i
             className="backArrow ml-2 cursor-pointer w-[10%]"
@@ -226,7 +201,8 @@ const ScheduleEx: React.FC = () => {
             <div className="flex justify-between h-7 mb-5">
               <div className="flex items-center">{generateTabs()}</div>
               <button
-                onClick={copySchedule}
+                  onClick={() => handleOpenModal()}
+                /*onClick={copySchedule}*/
                 className="w-20 h-7 bg-black rounded-2xl text-white font-['Nanum Gothic'] text-sm font-semibold"
               >
                 일정 복사
@@ -262,6 +238,11 @@ const ScheduleEx: React.FC = () => {
             ))}
           </div>
         </div>
+        <PastePlan
+            isOpen={isOpen}
+            scheduleId={numScheduleId}
+            handleCloseModal={handleCloseModal}
+        />
       </div>
       <MapProvider
         key={JSON.stringify(initialMarkers)}
