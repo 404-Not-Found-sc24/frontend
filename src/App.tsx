@@ -32,6 +32,7 @@ import EditDiary from './pages/EditDiary';
 import LoginSuccess from './pages/LoginSuccess';
 import ChangePassword from './pages/ChangePassword';
 import NotFound from './pages/NotFound';
+import { ErrorBoundary } from 'react-error-boundary';
 
 function App() {
   useEffect(() => {
@@ -46,41 +47,52 @@ function App() {
     }
   }, []); // 페이지가 처음 로드될 때만 실행
 
+  const ErrorFallback = ({ error }: { error: Error }) => (
+    <div className="flex h-1/2 justify-center items-center">
+      <div className="text-xl">잘못된 접근입니다.</div>
+    </div>
+  );
+
   return (
     <AuthProvider>
       <BrowserRouter>
         <NavBar />
-        <Routes>
-          <Route path="/" element={<Main />} />
-          <Route path="/signin" element={<SignIn />} />
-          <Route path="/loginSuccess" element={<LoginSuccess />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/placeinfo" element={<PlaceInfo />} />
-          <Route path="/searchplace" element={<SearchPlace />} />
-          <Route path="/event" element={<EventPage />} />
-          <Route path="/notice/view" element={<ViewNotice />} />
-          <Route path="/findpassword" element={<FindPassword />} />
-          <Route path="/findemail" element={<FindEmail />} />
-          <Route element={<PrivateRoute />}>
-            <Route path="/makediary" element={<MakeDiary />} />
-            <Route path="/editdiary" element={<EditDiary />} />
-            <Route path="/makeplan" element={<MakePlan />} />
-            <Route path="/plandetail" element={<PlanDetail />} />
-            <Route path="/diarydetail" element={<DiaryDetail />} />
-            <Route path="/mydiarydetail" element={<MyDiaryDetail />} />
-            <Route path="/addplaceform" element={<AddPlaceForm />} />
-            <Route path="/searchtraveldes" element={<SearchTravelDes />} />
-            <Route path="/traveldes" element={<Travledes />} />
-            <Route path="/mypage" element={<MyPage />} />
-            <Route path="/myplanpage" element={<MyPlanPage />} />
-            <Route path="/scheduleex" element={<ScheduleEx />} />
-            <Route path="/mypage-setting" element={<MyPageSetting />} />
-            <Route path="/addevent" element={<AddEvent />} />
-            <Route path="/addpromotion" element={<AddPromotion />} />
-            <Route path="/changepassword" element={<ChangePassword />}></Route>
-          </Route>
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <ErrorBoundary FallbackComponent={ErrorFallback}>
+          <Routes>
+            <Route path="/" element={<Main />} />
+            <Route path="/signin" element={<SignIn />} />
+            <Route path="/loginSuccess" element={<LoginSuccess />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/placeinfo" element={<PlaceInfo />} />
+            <Route path="/searchplace" element={<SearchPlace />} />
+            <Route path="/event" element={<EventPage />} />
+            <Route path="/notice/view" element={<ViewNotice />} />
+            <Route path="/findpassword" element={<FindPassword />} />
+            <Route path="/findemail" element={<FindEmail />} />
+            <Route element={<PrivateRoute />}>
+              <Route path="/makediary" element={<MakeDiary />} />
+              <Route path="/editdiary" element={<EditDiary />} />
+              <Route path="/makeplan" element={<MakePlan />} />
+              <Route path="/plandetail" element={<PlanDetail />} />
+              <Route path="/diarydetail" element={<DiaryDetail />} />
+              <Route path="/mydiarydetail" element={<MyDiaryDetail />} />
+              <Route path="/addplaceform" element={<AddPlaceForm />} />
+              <Route path="/searchtraveldes" element={<SearchTravelDes />} />
+              <Route path="/traveldes" element={<Travledes />} />
+              <Route path="/mypage" element={<MyPage />} />
+              <Route path="/myplanpage" element={<MyPlanPage />} />
+              <Route path="/scheduleex" element={<ScheduleEx />} />
+              <Route path="/mypage-setting" element={<MyPageSetting />} />
+              <Route path="/addevent" element={<AddEvent />} />
+              <Route path="/addpromotion" element={<AddPromotion />} />
+              <Route
+                path="/changepassword"
+                element={<ChangePassword />}
+              ></Route>
+            </Route>
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </ErrorBoundary>
       </BrowserRouter>
     </AuthProvider>
   );
