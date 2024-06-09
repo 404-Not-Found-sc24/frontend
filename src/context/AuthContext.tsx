@@ -4,6 +4,7 @@ import axios from 'axios';
 interface AuthContextType {
   isAuthenticated: boolean;
   accessToken: string | null;
+  role: string | null;
   login: (email: string, password: string) => Promise<void>;
   googleLogin: () => void;
   logout: () => void;
@@ -18,6 +19,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [refreshToken, setRefreshToken] = useState<string | null>(null);
+  const [role, setRole] = useState<string | null>(null);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -41,6 +43,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       setAccessToken(accessToken);
       setRefreshToken(refreshToken);
       setIsAuthenticated(true);
+      setRole(role);
       localStorage.setItem('role', role);
       localStorage.setItem('accessToken', accessToken);
       localStorage.setItem('refreshToken', refreshToken);
@@ -87,6 +90,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       value={{
         isAuthenticated,
         accessToken,
+        role,
         login,
         googleLogin,
         logout,

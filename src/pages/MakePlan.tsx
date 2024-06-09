@@ -34,6 +34,10 @@ type DivisionsType = {
 const MakePlan = () => {
   const location = useLocation();
   const tripInfo = { ...location.state };
+  console.log(tripInfo);
+  if (Object.keys(tripInfo).length === 0) {
+    throw new Error('Trip info is missing');
+  }
   tripInfo.startDate = new Date(tripInfo.startDate);
   tripInfo.endDate = new Date(tripInfo.endDate);
   const tripdataRef = useRef(tripInfo);
@@ -175,8 +179,7 @@ const MakePlan = () => {
     });
   };
 
-  useEffect(() => {
-  }, [times]);
+  useEffect(() => {}, [times]);
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -188,17 +191,16 @@ const MakePlan = () => {
   }, [timeoutId]);
 
   const fetchPlaceDataOnScroll = async (division: keyof DivisionsType) => {
-    console.log("hel");
+    console.log('hel');
     if (!isLoading.current) {
       isLoading.current = true;
       try {
-
         const currDivision = division === '전체' ? '' : division;
         const placeResponse = await axios.get(
           `/tour/locations?city=${city}&keyword=${searchTerm}&lastIdx=${lastPlaceIdx[division]}&division=${currDivision}`,
         );
 
-        console.log("res", placeResponse.data);
+        console.log('res', placeResponse.data);
         setRes([...divisions[division], ...placeResponse.data]);
         setLastIdx((prevLastIdx) => prevLastIdx + placeResponse.data.length);
 
@@ -226,7 +228,7 @@ const MakePlan = () => {
   };
 
   const getData = async (division: keyof DivisionsType) => {
-    console.log("get");
+    console.log('get');
     try {
       const currDivision = division === '전체' ? '' : division;
       const response = await axios.get(
@@ -237,7 +239,7 @@ const MakePlan = () => {
           },
         },
       );
-      console.log("res", response.data);
+      console.log('res', response.data);
       setRes([...divisions[division], ...response.data]);
       setLastIdx((prevLastIdx) => prevLastIdx + response.data.length);
       const newLastPlaceIdx =
@@ -438,12 +440,12 @@ const MakePlan = () => {
 
     const placeCallback: IntersectionObserverCallback = (entries) => {
       entries.forEach((entry) => {
-        console.log("act", entry.isIntersecting);
+        console.log('act', entry.isIntersecting);
         if (entry.isIntersecting) {
           if (searchTerm) {
             fetchPlaceDataOnScroll(activeDivision);
           } else {
-            console.log("act", activeDivision);
+            console.log('act', activeDivision);
             getData(activeDivision);
           }
         }
@@ -473,7 +475,7 @@ const MakePlan = () => {
     if (searchTerm) {
       fetchPlaceDataOnScroll(activeDivision);
     } else {
-      console.log("act", activeDivision);
+      console.log('act', activeDivision);
       getData(activeDivision);
     }
   }, [activeDivision]);
@@ -519,119 +521,119 @@ const MakePlan = () => {
   }, [selectedPlaces, activeTab]);
 
   return (
-    (
-      <div className="w-full h-[90%] flex">
-        <ToastContainer />
-        <div className="w-3/5 2xl:w-1/2 h-full flex">
-          <div className="w-1/2 h-full flex flex-col">
-            <div className="flex w-full h-[10%]">
-              <i
-                className="backArrow ml-2 cursor-pointer w-[10%]"
-                onClick={naviBack}
-              ></i>
-              <div className="flex items-center w-[90%]">
-                <div className="font-['BMJUA'] text-3xl text-black ml-2 flex items-center">
-                  {tripInfo.city}
-                </div>
-              </div>
-            </div>
-            <div className="h-[10%]">
-              <SearchBar curr={curr} />
-            </div>
-            <div className="flex items-center h-[80%] flex-col">
-              <div className="w-full whitespace-nowrap overflow-x-auto no-scrollbar flex justify-start h-9 min-h-9">
-                {(Object.keys(divisions) as Array<keyof DivisionsType>).map(
-                  (division) => (
-                    <button
-                      key={division}
-                      className={`py-1 px-2 mx-1 h-[95%] border rounded-full ${activeDivision === division
-                        ? 'bg-main-red-color text-white'
-                        : 'bg-white text-main-red-color'
-                        }`}
-                      onClick={() => handleDivisionClick(division)}
-                    >
-                      {division}
-                    </button>
-                  ),
-                )}
-              </div>
-              <div
-                id="scroll-container"
-                className="w-11/12 grid grid-cols-2 flex flex flex-wrap justify-items-center gap-3 mt-1 overflow-y-auto"
-              >
-                {res.map((place: Place, index: number) => (
-                  <PlaceBox
-                    key={index}
-                    place={place}
-                    addSelectedPlace={() => addSelectedPlace(place, activeTab)}
-                  />
-                ))}
-                <div ref={placeLoadMoreRef}></div>
+    <div className="w-full h-[90%] flex">
+      <ToastContainer />
+      <div className="w-3/5 2xl:w-1/2 h-full flex">
+        <div className="w-1/2 h-full flex flex-col">
+          <div className="flex w-full h-[10%]">
+            <i
+              className="backArrow ml-2 cursor-pointer w-[10%]"
+              onClick={naviBack}
+            ></i>
+            <div className="flex items-center w-[90%]">
+              <div className="font-['BMJUA'] text-3xl text-black ml-2 flex items-center">
+                {tripInfo.city}
               </div>
             </div>
           </div>
-          <div className="w-1/2 h-full flex">
-            <div className="flex flex-col w-full h-full border-4 border-[#FF9A9A] justify-between">
-              <div className="select-container">
-                <select
-                  className="day-select"
-                  value={activeTab}
-                  onChange={(e) => handleTabClick(Number(e.target.value))}
-                >
-                  {generateSelectOptions(tripDays)}
-                </select>
-              </div>
-              <div className="tab-content h-[80%] overflow-y-scroll flex flex-col">
-                {Array.from({ length: tripDays }, (_, tabIndex) => (
-                  <div
-                    key={tabIndex + 1}
-                    id={`content${tabIndex + 1}`}
-                    className={`content ${activeTab === tabIndex + 1 ? 'active' : ''
-                      }`}
+          <div className="h-[10%]">
+            <SearchBar curr={curr} />
+          </div>
+          <div className="flex items-center h-[80%] flex-col">
+            <div className="w-full whitespace-nowrap overflow-x-auto no-scrollbar flex justify-start h-9 min-h-9">
+              {(Object.keys(divisions) as Array<keyof DivisionsType>).map(
+                (division) => (
+                  <button
+                    key={division}
+                    className={`py-1 px-2 mx-1 h-[95%] border rounded-full ${
+                      activeDivision === division
+                        ? 'bg-main-red-color text-white'
+                        : 'bg-white text-main-red-color'
+                    }`}
+                    onClick={() => handleDivisionClick(division)}
                   >
-                    <div className="contentBox">
-                      {selectedPlaces[activeTab - 1] && (
-                        <div className="w-full h-full flex flex-col items-center pt-3">
-                          {selectedPlaces[activeTab - 1].map(
-                            (selectedPlace, index) => (
-                              <DayPlace
-                                key={index}
-                                dayIndex={activeTab}
-                                placeIndex={index}
-                                selectedPlace={selectedPlace}
-                                removePlace={(dayIndex, placeIndex) =>
-                                  removePlace(dayIndex, placeIndex)
-                                }
-                                onTimeChange={handleTimeChange}
-                              />
-                            ),
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="h-[100px] w-full flex justify-center items-center">
-                <button
-                  className="h-1/2 bg-black text-white px-10 rounded-md text-xl font-['BMJUA']"
-                  onClick={addPlace}
-                >
-                  추가
-                </button>
-              </div>
+                    {division}
+                  </button>
+                ),
+              )}
+            </div>
+            <div
+              id="scroll-container"
+              className="w-11/12 grid grid-cols-2 flex flex flex-wrap justify-items-center gap-3 mt-1 overflow-y-auto"
+            >
+              {res.map((place: Place, index: number) => (
+                <PlaceBox
+                  key={index}
+                  place={place}
+                  addSelectedPlace={() => addSelectedPlace(place, activeTab)}
+                />
+              ))}
+              <div ref={placeLoadMoreRef}></div>
             </div>
           </div>
         </div>
-        <MapProvider
-          key={key}
-          initialCenter={initialCenter}
-          initialMarkers={initialMarkers}
-        >
-          <Map isLine={true} isClicked={false}/>
-        </MapProvider>
+        <div className="w-1/2 h-full flex">
+          <div className="flex flex-col w-full h-full border-4 border-[#FF9A9A] justify-between">
+            <div className="select-container">
+              <select
+                className="day-select"
+                value={activeTab}
+                onChange={(e) => handleTabClick(Number(e.target.value))}
+              >
+                {generateSelectOptions(tripDays)}
+              </select>
+            </div>
+            <div className="tab-content h-[80%] overflow-y-scroll flex flex-col">
+              {Array.from({ length: tripDays }, (_, tabIndex) => (
+                <div
+                  key={tabIndex + 1}
+                  id={`content${tabIndex + 1}`}
+                  className={`content ${
+                    activeTab === tabIndex + 1 ? 'active' : ''
+                  }`}
+                >
+                  <div className="contentBox">
+                    {selectedPlaces[activeTab - 1] && (
+                      <div className="w-full h-full flex flex-col items-center pt-3">
+                        {selectedPlaces[activeTab - 1].map(
+                          (selectedPlace, index) => (
+                            <DayPlace
+                              key={index}
+                              dayIndex={activeTab}
+                              placeIndex={index}
+                              selectedPlace={selectedPlace}
+                              removePlace={(dayIndex, placeIndex) =>
+                                removePlace(dayIndex, placeIndex)
+                              }
+                              onTimeChange={handleTimeChange}
+                            />
+                          ),
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="h-[100px] w-full flex justify-center items-center">
+              <button
+                className="h-1/2 bg-black text-white px-10 rounded-md text-xl font-['BMJUA']"
+                onClick={addPlace}
+              >
+                추가
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
-    )
+      <MapProvider
+        key={key}
+        initialCenter={initialCenter}
+        initialMarkers={initialMarkers}
+      >
+        <Map isLine={true} isClicked={false} />
+      </MapProvider>
+    </div>
   );
 };
 
