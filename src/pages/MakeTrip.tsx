@@ -34,7 +34,7 @@ const MakeTrip = ({
   const [scheduleId, setScheduleId] = useState(0);
   const [share, setShare] = useState(0);
 
-  useEffect(() => {}, [city, scheduleId]);
+  useEffect(() => { }, [city, scheduleId]);
 
   useEffect(() => {
     // externalParameter에 변화가 있을 때만 modalOpen 상태를 변경
@@ -286,8 +286,10 @@ const MakeTrip = ({
                     이전
                   </button>
                   <button
-                    className="border-4 border-[#FF9A9A] bg-[#FF9A9A] rounded-md px-10 py-2 text-xl font-['BMJUA']"
-                    onClick={handleNextStep}
+                    className={`border-4 rounded-md px-10 py-2 text-xl font-['BMJUA'] ${startDate && endDate ? 'border-[#FF9A9A] bg-[#FF9A9A] cursor-pointer' : 'border-gray-300 bg-gray-200 cursor-not-allowed'
+                      }`}
+                    onClick={startDate && endDate ? handleNextStep : undefined}
+                    disabled={!startDate || !endDate || endDate <= startDate}
                   >
                     다음
                   </button>
