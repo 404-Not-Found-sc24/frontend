@@ -17,7 +17,13 @@ interface props {
   handleCloseModal: () => void;
 }
 
-const MakeTrip = ({ isOpen, city, cityDetail, imageUrl, handleCloseModal }: props) => {
+const MakeTrip = ({
+  isOpen,
+  city,
+  cityDetail,
+  imageUrl,
+  handleCloseModal,
+}: props) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [step, setStep] = useState(1);
   const [startDate, setStartDate] = useState<Date | null>(null);
@@ -28,8 +34,7 @@ const MakeTrip = ({ isOpen, city, cityDetail, imageUrl, handleCloseModal }: prop
   const [scheduleId, setScheduleId] = useState(0);
   const [share, setShare] = useState(0);
 
-  useEffect(() => {
-  }, [city, scheduleId]);
+  useEffect(() => {}, [city, scheduleId]);
 
   useEffect(() => {
     // externalParameter에 변화가 있을 때만 modalOpen 상태를 변경
@@ -122,7 +127,7 @@ const MakeTrip = ({ isOpen, city, cityDetail, imageUrl, handleCloseModal }: prop
   );
 
   const goHome = useCallback(() => {
-    navigate('/');
+    navigate('/mypage');
   }, []);
 
   const naviPage = useCallback(() => {
@@ -145,7 +150,7 @@ const MakeTrip = ({ isOpen, city, cityDetail, imageUrl, handleCloseModal }: prop
         city: city,
         name: title,
         scheduleId: scheduleId,
-        check: 0
+        check: 0,
       },
     });
   }, [city, title, startDate, endDate, scheduleId]);
@@ -213,9 +218,15 @@ const MakeTrip = ({ isOpen, city, cityDetail, imageUrl, handleCloseModal }: prop
                   {city}
                 </div>
                 <div className="flex flex-col sm:flex-row md:flex-row lg:flex-row xl:flex-row justify-between items-center w-full h-full">
-                  <div className="mr-5 w-full h-full text-xs sm:text-md md:text-md lg:text-lg xl:text-lg">{cityDetail}</div>
+                  <div className="mr-5 w-full h-full text-xs sm:text-md md:text-md lg:text-lg xl:text-lg">
+                    {cityDetail}
+                  </div>
                   <div className="w-full h-full flex justify-center">
-                    <img src={imageUrl} className="max-h-80 object-cover" alt="지역소개사진"></img>
+                    <img
+                      src={imageUrl}
+                      className="max-h-80 object-cover"
+                      alt="지역소개사진"
+                    ></img>
                   </div>
                 </div>
                 <div className="flex justify-center mt-10">
