@@ -238,6 +238,12 @@ const MakePlan = () => {
     toast.success('장소가 성공적으로 추가되었습니다!', {
       position: 'top-center',
     });
+
+  const notifyFail = () =>
+    toast.error('장소 추가에 문제가 생겼습니다. 확인해주세요!', {
+      position: 'top-center',
+    });
+
   const addPlace = async () => {
     try {
       const postData = selectedPlaces.flatMap((innerArray, index) => {
@@ -272,7 +278,7 @@ const MakePlan = () => {
         .then((response) => {
           notifySuccess();
           const id = setTimeout(() => {
-            navigate('/');
+            navigate('/mypage');
           }, 3000);
           setTimeoutId(id);
         });
@@ -287,6 +293,7 @@ const MakePlan = () => {
           console.error('Failed to refresh access token:', refreshError);
         }
       } else {
+        notifyFail();
         console.error('Failed to add place:', error);
       }
     }
@@ -314,6 +321,7 @@ const MakePlan = () => {
           console.error('Failed to refresh access token:', refreshError);
         }
       } else {
+        notifyFail();
         console.error('Failed to add place:', error);
       }
     }
