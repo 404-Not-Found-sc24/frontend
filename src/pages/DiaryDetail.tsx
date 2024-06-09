@@ -30,12 +30,12 @@ const DiaryDetail: React.FC = () => {
   const initialMarkers =
     Diary && diaryData
       ? [
-          {
-            placeId: Diary.placeId,
-            latitude: diaryData.latitude,
-            longitude: diaryData.longitude,
-          },
-        ]
+        {
+          placeId: Diary.placeId,
+          latitude: diaryData.latitude,
+          longitude: diaryData.longitude,
+        },
+      ]
       : [];
 
   const initialCenter = diaryData
@@ -74,7 +74,7 @@ const DiaryDetail: React.FC = () => {
 
   return (
     <div className="flex w-full h-[90%]">
-      <div className="x-3/5 2xl:w-1/2 h-full">
+      <div className="w-3/5 2xl:w-1/2 h-full">
         <div className="flex w-full h-[10%]">
           <i
             className="backArrow ml-2 cursor-pointer w-[10%]"
@@ -109,15 +109,15 @@ const DiaryDetail: React.FC = () => {
                     가져오기
                   </button>
                 </div>
-                <div className="flex justify-center h-fit m-5">
+                <div className="flex justify-center h-[30%] m-5">
                   <img
                     src={Diary.imageUrl}
                     width="250px"
                     alt="지역소개사진"
                   ></img>
                 </div>
-                <div className="mx-10 my-5 h-full">
-                  <div className="flex justify-between">
+                <div className="mx-10 my-5 h-[50%] flex flex-col">
+                  <div className="flex justify-between h-10">
                     <div className="font-['Nanum Gothic'] font-bold text-lg">
                       {Diary.title}
                     </div>
@@ -125,8 +125,10 @@ const DiaryDetail: React.FC = () => {
                       {diaryData ? diaryData.weather : ''}
                     </div>
                   </div>
-                  <div className="font-['Nanum Gothic'] mt-3">
-                    {Diary.content}
+                  <div className="font-['Nanum Gothic'] mt-3 overflow-y-auto flex-grow">
+                    {Diary.content.split('\n').map((line: string, index: number) => (
+                      <div key={index}>{line}</div>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -144,7 +146,7 @@ const DiaryDetail: React.FC = () => {
         initialCenter={initialCenter}
         initialMarkers={initialMarkers}
       >
-        <Map isLine={false} isClicked={false}/>
+        <Map isLine={false} isClicked={false} />
       </MapProvider>
     </div>
   );
