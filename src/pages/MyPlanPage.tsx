@@ -37,6 +37,7 @@ const MyPlanPage: React.FC = () => {
   const timeDiff = Math.abs(endDate.getTime() - startDate.getTime());
   const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1;
   const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState<string>('');
   const [isOpen, setIsOpen] = useState(false);
 
   console.log(plan);
@@ -60,8 +61,9 @@ const MyPlanPage: React.FC = () => {
       tabs.push(
         <button
           key={i}
-          className={`w-16 h-full bg-[#FF9A9A] rounded-2xl text-white font-['BMJUA'] text-sm mr-2 ${activeTab === i ? 'opacity-100' : 'opacity-50'
-            }`}
+          className={`w-16 h-full bg-[#FF9A9A] rounded-2xl text-white font-['BMJUA'] text-sm mr-2 ${
+            activeTab === i ? 'opacity-100' : 'opacity-50'
+          }`}
           onClick={() => handleTabClick(i)}
         >
           {`${i}일차`}
@@ -72,8 +74,9 @@ const MyPlanPage: React.FC = () => {
       tabs.push(
         <div key="more" className="relative w-16 h-full">
           <button
-            className={`w-16 h-full bg-[#FF9A9A] rounded-2xl text-white font-['BMJUA'] text-sm mr-2 ${activeTab > 5 ? 'opacity-100' : 'opacity-50'
-              }`}
+            className={`w-16 h-full bg-[#FF9A9A] rounded-2xl text-white font-['BMJUA'] text-sm mr-2 ${
+              activeTab > 5 ? 'opacity-100' : 'opacity-50'
+            }`}
             onClick={() => setDropdownVisible(!dropdownVisible)}
           >
             {activeTab > 5 ? `${activeTab}일차` : '...'}
@@ -84,8 +87,9 @@ const MyPlanPage: React.FC = () => {
                 (day) => (
                   <button
                     key={day}
-                    className={`block w-full my-1 px-4 py-2 bg-[#FF9A9A] rounded-2xl text-white font-['BMJUA'] text-sm ${activeTab === day ? 'opacity-100' : 'opacity-50'
-                      } hover:opacity-100`}
+                    className={`block w-full my-1 px-4 py-2 bg-[#FF9A9A] rounded-2xl text-white font-['BMJUA'] text-sm ${
+                      activeTab === day ? 'opacity-100' : 'opacity-50'
+                    } hover:opacity-100`}
                     onClick={() => {
                       handleTabClick(day);
                       setDropdownVisible(false);
@@ -104,6 +108,12 @@ const MyPlanPage: React.FC = () => {
   };
 
   useEffect(() => {
+    if (!scheduleId) {
+      setErrorMessage('잘못된 접근입니다.');
+      setLoading(false);
+      return;
+    }
+
     const fetchScheduleData = async () => {
       try {
         const response = await axios.get(`/schedule/schedules/${scheduleId}`, {
@@ -127,6 +137,7 @@ const MyPlanPage: React.FC = () => {
             console.error('Failed to refresh access token:', refreshError);
           }
         } else {
+          setErrorMessage('일정 데이터를 불러오는 중 오류가 발생했습니다.');
           console.error('일정 데이터를 불러오는 중 오류가 발생했습니다.', e);
         }
       }
@@ -140,8 +151,8 @@ const MyPlanPage: React.FC = () => {
       (data) =>
         Math.ceil(
           Math.abs(new Date(data.date).getTime() - startDate.getTime()) /
-          (1000 * 3600 * 24) +
-          1,
+            (1000 * 3600 * 24) +
+            1,
         ) === day,
     );
   };
@@ -160,9 +171,9 @@ const MyPlanPage: React.FC = () => {
   const initialCenter =
     activePlaces.length > 0
       ? {
-        latitude: activePlaces[0].latitude,
-        longitude: activePlaces[0].longitude,
-      }
+          latitude: activePlaces[0].latitude,
+          longitude: activePlaces[0].longitude,
+        }
       : { latitude: 37.2795, longitude: 127.0438 };
 
   const navieditplan = () => {
@@ -182,6 +193,14 @@ const MyPlanPage: React.FC = () => {
   const naviBack = () => {
     window.history.back();
   };
+
+  if (errorMessage) {
+    return (
+      <div className="text-red-600 text-center p-4">
+        <p>{errorMessage}</p>
+      </div>
+    );
+  }
 
   if (loading) {
     return <div>Loading...</div>; // 데이터 로드 중일 때 로딩 표시
@@ -234,10 +253,10 @@ const MyPlanPage: React.FC = () => {
                           Math.ceil(
                             Math.abs(
                               new Date(data.date).getTime() -
-                              startDate.getTime(),
+                                startDate.getTime(),
                             ) /
-                            (1000 * 3600 * 24) +
-                            1,
+                              (1000 * 3600 * 24) +
+                              1,
                           ) ===
                           index + 1,
                       )
