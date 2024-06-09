@@ -50,8 +50,10 @@ const MyPlanDetailBox: React.FC<PlanDetailBoxProps> = ({
               : locationName}
           </span>
         </div>
-        <div className="w-full h-full flex flex-1 font-['Nanum Gothic'] pr-2 overflow-y-auto">
-          {content}
+        <div className="w-full h-full flex flex-1 font-['Nanum Gothic'] pr-2 overflow-y-auto flex-col">
+          {content.split('\n').map((line: string, index: number) => (
+            <div key={index}>{line}</div>
+          ))}
         </div>
         <div className="w-[25%] flex justify-center">
           {imageUrl ? (

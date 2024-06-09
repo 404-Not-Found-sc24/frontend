@@ -248,8 +248,8 @@ const MyDiaryDetail: React.FC = () => {
                         </div>
                       </div>
                     )}
-                    <div className="mx-10 my-5 h-full">
-                      <div className="flex justify-between">
+                    <div className="mx-10 my-5 h-full flex flex-col overflow-hidden">
+                      <div className="flex justify-between h-10">
                         <div className="w-[90%] font-['Nanum Gothic'] font-bold text-lg">
                           {Diarydata.title}
                         </div>
@@ -257,8 +257,10 @@ const MyDiaryDetail: React.FC = () => {
                           <div className="w-[10%]">{Diarydata.weather}</div>
                         )}
                       </div>
-                      <div className="font-['Nanum Gothic'] mt-3">
-                        {Diarydata.content}
+                      <div className="font-['Nanum Gothic'] mt-3 overflow-y-auto flex-grow">
+                        {Diarydata.content.split('\n').map((line: string, index: number) => (
+                          <div key={index}>{line}</div>
+                        ))}
                       </div>
                     </div>
                   </>
@@ -278,7 +280,7 @@ const MyDiaryDetail: React.FC = () => {
         initialMarkers={initialMarkers}
         initialCenter={initialCenter}
       >
-        <Map isLine={false} isClicked={false}/>
+        <Map isLine={false} isClicked={false} />
       </MapProvider>
       {showDeletePopup && (
         <div className="popup absolute top-0 left-0 z-50 w-full h-full bg-black/50 flex justify-center">
