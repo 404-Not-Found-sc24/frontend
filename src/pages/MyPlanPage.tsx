@@ -108,12 +108,6 @@ const MyPlanPage: React.FC = () => {
   };
 
   useEffect(() => {
-    if (!scheduleId) {
-      setErrorMessage('잘못된 접근입니다.');
-      setLoading(false);
-      return;
-    }
-
     const fetchScheduleData = async () => {
       try {
         const response = await axios.get(`/schedule/schedules/${scheduleId}`, {
@@ -137,7 +131,6 @@ const MyPlanPage: React.FC = () => {
             console.error('Failed to refresh access token:', refreshError);
           }
         } else {
-          setErrorMessage('일정 데이터를 불러오는 중 오류가 발생했습니다.');
           console.error('일정 데이터를 불러오는 중 오류가 발생했습니다.', e);
         }
       }
