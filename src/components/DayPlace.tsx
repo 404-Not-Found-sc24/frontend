@@ -65,7 +65,7 @@ const DayPlace: React.FC<DayPlaceProps> = ({ dayIndex, placeIndex, selectedPlace
     return (
         <div className="w-11/12 h-[80px] flex items-center mb-3">
             <button className="delete mr-3" onClick={() => handleRemovePlace()}></button>
-            <div className="w-full h-full rounded-md shadow-xl flex items-center">
+            <div className="w-[90%] h-full rounded-md shadow-xl flex items-center">
                 <div className="flex w-[40%] p-1 ml-1 font-['BMJUA'] text-[#ED661A] items-center">
                     <input
                         className="w-[45%] p-1 text-center rounded text-xl font-['BMJUA'] text-[#ED661A]"
@@ -81,7 +81,7 @@ const DayPlace: React.FC<DayPlaceProps> = ({ dayIndex, placeIndex, selectedPlace
                         onBlur={handleTimeBlur}
                     />
                 </div>
-                <div className="w-full ml-1">
+                <div className="w-[40%] ml-1">
                     <div className="font-extrabold text-lg font-['Nanum Gothic']"
                          style={{overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis"}}
                     >

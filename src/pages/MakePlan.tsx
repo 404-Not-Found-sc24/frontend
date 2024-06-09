@@ -20,6 +20,17 @@ interface State {
   isLoading: boolean;
 }
 
+type DivisionsType = {
+  전체: Place[];
+  음식점: Place[];
+  문화시설: Place[];
+  '축제 공연 행사': Place[];
+  관광지: Place[];
+  레포츠: Place[];
+  숙박: Place[];
+  쇼핑: Place[];
+};
+
 const MakePlan = () => {
   const location = useLocation();
   const tripInfo = { ...location.state };
@@ -50,12 +61,41 @@ const MakePlan = () => {
     errMsg: null,
     isLoading: true,
   });
+  const [lastPlaceIdx, setLastPlaceIdx] = useState<
+    Record<keyof DivisionsType, number>
+  >({
+    전체: 0,
+    음식점: 0,
+    문화시설: 0,
+    '축제 공연 행사': 0,
+    관광지: 0,
+    레포츠: 0,
+    숙박: 0,
+    쇼핑: 0,
+  });
 
   const [initialCenter, setInitialCenter] = useState({
     latitude: state.center.lat,
     longitude: state.center.lng,
   });
   const [key, setKey] = useState(JSON.stringify(initialCenter));
+
+  const [divisions, setDivisions] = useState<DivisionsType>({
+    전체: [],
+    음식점: [],
+    문화시설: [],
+    '축제 공연 행사': [],
+    관광지: [],
+    레포츠: [],
+    숙박: [],
+    쇼핑: [],
+  });
+  const [activeDivision, setActiveDivision] =
+    useState<keyof DivisionsType>('전체');
+
+  const handleDivisionClick = (division: keyof DivisionsType) => {
+    setActiveDivision(division);
+  };
 
   const activePlaces = selectedPlaces[activeTab - 1] || [];
 
@@ -95,7 +135,6 @@ const MakePlan = () => {
 
   useEffect(() => {
     if (activePlaces.length > 0) {
-      console.log(activePlaces[activePlaces.length - 1].latitude);
       setInitialCenter({
         latitude: activePlaces[activePlaces.length - 1].latitude,
         longitude: activePlaces[activePlaces.length - 1].longitude,
@@ -137,7 +176,6 @@ const MakePlan = () => {
   };
 
   useEffect(() => {
-    console.log('itmes', times);
   }, [times]);
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
 
@@ -149,16 +187,36 @@ const MakePlan = () => {
     };
   }, [timeoutId]);
 
-  const fetchPlaceDataOnScroll = async () => {
+  const fetchPlaceDataOnScroll = async (division: keyof DivisionsType) => {
+    console.log("hel");
     if (!isLoading.current) {
       isLoading.current = true;
       try {
+
+        const currDivision = division === '전체' ? '' : division;
         const placeResponse = await axios.get(
-          `/tour/locations?city=${city}&keyword=${searchTerm}&lastIdx=${lastIdx}`,
+          `/tour/locations?city=${city}&keyword=${searchTerm}&lastIdx=${lastPlaceIdx[division]}&division=${currDivision}`,
         );
 
-        setRes((prevData) => [...prevData, ...placeResponse.data]);
+        console.log("res", placeResponse.data);
+        setRes([...divisions[division], ...placeResponse.data]);
         setLastIdx((prevLastIdx) => prevLastIdx + placeResponse.data.length);
+
+        const newPlaceResults = [...divisions[division], ...placeResponse.data];
+        const newLastPlaceIdx =
+          placeResponse.data.length < 20
+            ? -1
+            : lastPlaceIdx[division] + placeResponse.data.length;
+
+        setLastPlaceIdx((prevIdx) => ({
+          ...prevIdx,
+          [division]: newLastPlaceIdx,
+        }));
+
+        setDivisions((preDivisions: DivisionsType) => ({
+          ...preDivisions,
+          [division]: [...preDivisions[division], ...placeResponse.data],
+        }));
       } catch (error) {
         console.error('Failed to fetch place search results:', error);
       } finally {
@@ -167,18 +225,35 @@ const MakePlan = () => {
     }
   };
 
-  const getData = async () => {
+  const getData = async (division: keyof DivisionsType) => {
+    console.log("get");
     try {
+      const currDivision = division === '전체' ? '' : division;
       const response = await axios.get(
-        `tour/locations?city=${tripdataRef.current.city}&keyword=${keyword}&lastIdx=${lastIdx}`,
+        `/tour/locations?city=${city}&keyword=${searchTerm}&lastIdx=${lastPlaceIdx[division]}&division=${currDivision}`,
         {
           headers: {
             'Content-Type': 'application/json',
           },
         },
       );
-      setRes((prevData) => [...prevData, ...response.data]);
+      console.log("res", response.data);
+      setRes([...divisions[division], ...response.data]);
       setLastIdx((prevLastIdx) => prevLastIdx + response.data.length);
+      const newLastPlaceIdx =
+        response.data.length < 20
+          ? -1
+          : lastPlaceIdx[division] + response.data.length;
+
+      setLastPlaceIdx((prevIdx) => ({
+        ...prevIdx,
+        [division]: newLastPlaceIdx,
+      }));
+
+      setDivisions((preDivisions: DivisionsType) => ({
+        ...preDivisions,
+        [division]: [...preDivisions[division], ...response.data],
+      }));
     } catch (error) {
       console.error('Failed to fetch place search results:', error);
     }
@@ -247,7 +322,6 @@ const MakePlan = () => {
   const addPlace = async () => {
     try {
       const postData = selectedPlaces.flatMap((innerArray, index) => {
-        console.log('index', index, innerArray);
         const startDate = new Date(tripdataRef.current.startDate);
         const currentDate = new Date(startDate);
         if (tripInfo.check === 0) {
@@ -257,7 +331,6 @@ const MakePlan = () => {
         }
         return innerArray
           .map((place, innerIndex) => {
-            console.log('times', times[index]);
             return {
               placeId: place.placeId != null ? place.placeId : null,
               locationId: place.locationId,
@@ -365,11 +438,13 @@ const MakePlan = () => {
 
     const placeCallback: IntersectionObserverCallback = (entries) => {
       entries.forEach((entry) => {
+        console.log("act", entry.isIntersecting);
         if (entry.isIntersecting) {
           if (searchTerm) {
-            fetchPlaceDataOnScroll();
+            fetchPlaceDataOnScroll(activeDivision);
           } else {
-            getData();
+            console.log("act", activeDivision);
+            getData(activeDivision);
           }
         }
       });
@@ -386,14 +461,51 @@ const MakePlan = () => {
 
     return () => {
       if (placeObserver.current) {
+        if (placeLoadMoreRef.current) {
+          placeObserver.current.unobserve(placeLoadMoreRef.current);
+        }
         placeObserver.current.disconnect();
       }
     };
-  }, [placeLoadMoreRef, location.search, lastIdx]);
+  }, [placeLoadMoreRef, location.search, lastIdx, activeDivision, divisions]);
+
+  useEffect(() => {
+    if (searchTerm) {
+      fetchPlaceDataOnScroll(activeDivision);
+    } else {
+      console.log("act", activeDivision);
+      getData(activeDivision);
+    }
+  }, [activeDivision]);
 
   useEffect(() => {
     setLastIdx(0);
     setRes([]);
+    setDivisions({
+      전체: [],
+      음식점: [],
+      문화시설: [],
+      '축제 공연 행사': [],
+      관광지: [],
+      레포츠: [],
+      숙박: [],
+      쇼핑: [],
+    });
+    setLastPlaceIdx({
+      전체: 0,
+      음식점: 0,
+      문화시설: 0,
+      '축제 공연 행사': 0,
+      관광지: 0,
+      레포츠: 0,
+      숙박: 0,
+      쇼핑: 0,
+    });
+    if (activeDivision === '전체') {
+      setActiveDivision('음식점');
+    } else {
+      setActiveDivision('전체');
+    }
   }, [location.search]);
 
   const initialMarkers = activePlaces.map((place) => ({
@@ -403,19 +515,10 @@ const MakePlan = () => {
   }));
 
   useEffect(() => {
-    console.log(
-      'activeTab',
-      activeTab,
-      'selectedPlaces',
-      selectedPlaces,
-      'initial ',
-      initialMarkers,
-    );
     setKey(JSON.stringify(initialMarkers));
   }, [selectedPlaces, activeTab]);
 
   return (
-    console.log('sele', selectedPlaces),
     (
       <div className="w-full h-[90%] flex">
         <ToastContainer />
@@ -435,10 +538,26 @@ const MakePlan = () => {
             <div className="h-[10%]">
               <SearchBar curr={curr} />
             </div>
-            <div className="flex justify-center h-[80%] overscroll-y-auto">
+            <div className="flex items-center h-[80%] flex-col">
+              <div className="w-full whitespace-nowrap overflow-x-auto no-scrollbar flex justify-start h-9 min-h-9">
+                {(Object.keys(divisions) as Array<keyof DivisionsType>).map(
+                  (division) => (
+                    <button
+                      key={division}
+                      className={`py-1 px-2 mx-1 h-[95%] border rounded-full ${activeDivision === division
+                        ? 'bg-main-red-color text-white'
+                        : 'bg-white text-main-red-color'
+                        }`}
+                      onClick={() => handleDivisionClick(division)}
+                    >
+                      {division}
+                    </button>
+                  ),
+                )}
+              </div>
               <div
                 id="scroll-container"
-                className="w-11/12 grid grid-cols-2 justify-items-center items-center gap-3 mt-4 overflow-y-auto"
+                className="w-11/12 grid grid-cols-2 flex flex flex-wrap justify-items-center gap-3 mt-1 overflow-y-auto"
               >
                 {res.map((place: Place, index: number) => (
                   <PlaceBox
@@ -462,14 +581,13 @@ const MakePlan = () => {
                   {generateSelectOptions(tripDays)}
                 </select>
               </div>
-              <div className="tab-content h-[80%] overflow-y-scroll">
+              <div className="tab-content h-[80%] overflow-y-scroll flex flex-col">
                 {Array.from({ length: tripDays }, (_, tabIndex) => (
                   <div
                     key={tabIndex + 1}
                     id={`content${tabIndex + 1}`}
-                    className={`content ${
-                      activeTab === tabIndex + 1 ? 'active' : ''
-                    }`}
+                    className={`content ${activeTab === tabIndex + 1 ? 'active' : ''
+                      }`}
                   >
                     <div className="contentBox">
                       {selectedPlaces[activeTab - 1] && (
