@@ -40,6 +40,7 @@ const MyDiaryDetail: React.FC = () => {
   const [showSuccessPopup, setShowSuccessPopup] = useState<boolean>(false);
   const [isBeforeStartDate, setIsBeforeStartDate] = useState<boolean>(false);
 
+  console.log(PlanData);
   const getData = async () => {
     if (PlanData.diaryId) {
       try {

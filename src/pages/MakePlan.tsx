@@ -20,6 +20,11 @@ interface State {
   isLoading: boolean;
 }
 
+interface LocationAndTime {
+  locationName: string;
+  time: string;
+}
+
 type DivisionsType = {
   전체: Place[];
   음식점: Place[];
@@ -108,6 +113,12 @@ const MakePlan = () => {
 
   const activePlaces = selectedPlaces[activeTab - 1] || [];
 
+  const locationAndTimeArray: LocationAndTime[] = selectedPlaces.flatMap(placeGroup =>
+      placeGroup.map(place => ({
+        locationName: place.name,
+        time: place.time,
+      }))
+  );
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -630,7 +641,7 @@ const MakePlan = () => {
         initialCenter={initialCenter}
         initialMarkers={initialMarkers}
       >
-        <Map isLine={true} isClicked={false} />
+        <Map isLine={true} isClicked={false} mapData={locationAndTimeArray}/>
       </MapProvider>
     </div>
   );
