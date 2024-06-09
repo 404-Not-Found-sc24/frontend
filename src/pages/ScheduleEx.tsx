@@ -22,6 +22,11 @@ interface ScheduleData {
   latitude: number;
 }
 
+interface LocationAndTime {
+  locationName: string;
+  time: string;
+}
+
 const ScheduleEx: React.FC = () => {
   const location = useLocation();
   const [scheduleData, setScheduleData] = useState<ScheduleData[]>([]);
@@ -39,9 +44,14 @@ const ScheduleEx: React.FC = () => {
   const [dropdownVisible, setDropdownVisible] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState(false);
 
-  console.log(scheduleId);
-  console.log(numScheduleId);
+  console.log(scheduleData);
 
+  const locationAndTimeArray: LocationAndTime[] = scheduleData.map(item => ({
+    locationName: item.locationName,
+    time: item.time
+  }));
+
+  console.log(locationAndTimeArray);
   const getPlacesByDay = (day: number) => {
     return scheduleData.filter(
       (data) =>
@@ -188,17 +198,19 @@ const ScheduleEx: React.FC = () => {
             onClick={naviBack}
           ></i>
           <div className="flex items-center w-[90%]">
-            <div className="font-['BMJUA'] text-3xl text-black ml-2 flex items-center">
-              {plan.name}
-            </div>
-            <div className="font-['BMJUA'] text-xl text-[#ED661A] ml-5 flex items-center">
-              {plan.startDate} ~ {plan.endDate}
+            <div className="flex flex-col">
+              <div className="font-['BMJUA'] text-3xl text-black ml-2 flex items-center">
+                {plan.name}
+              </div>
+              <div className="font-['BMJUA'] text-xl text-[#ED661A] ml-2 flex items-center">
+                {plan.startDate} ~ {plan.endDate}
+              </div>
             </div>
           </div>
         </div>
         <div className="w-full h-[90%] flex justify-center">
           <div className="w-11/12 h-full pt-3 pb-5 flex flex-col">
-            <div className="flex justify-between h-7 mb-5">
+            <div className="flex justify-between h-[5%]">
               <div className="flex items-center">{generateTabs()}</div>
               <button
                   onClick={() => handleOpenModal()}
@@ -208,34 +220,37 @@ const ScheduleEx: React.FC = () => {
                 일정 복사
               </button>
             </div>
-            {Array.from({ length: diffDays }, (_, index) => (
-              <div key={index}>
-                {activeTab === index + 1 && (
-                  <div>
-                    {scheduleData
-                      .filter(
-                        (data) =>
-                          Math.ceil(
-                            Math.abs(
-                              new Date(data.date).getTime() -
-                                startDate.getTime(),
-                            ) /
-                              (1000 * 3600 * 24) +
-                              1,
-                          ) ===
-                          index + 1,
-                      )
-                      .map((filteredData, dataIndex) => (
-                        <MyPlanDetailBox
-                          key={dataIndex}
-                          scheduleData={filteredData}
-                          planName={plan.name}
-                        />
-                      ))}
+            <div className="flex h-[90%] overflow-y-scroll pb-10 mt-5">
+              {Array.from({ length: diffDays }, (_, index) => (
+                  <div key={index}>
+                    {activeTab === index + 1 && (
+                        <div>
+                          {scheduleData
+                              .filter(
+                                  (data) =>
+                                      Math.ceil(
+                                          Math.abs(
+                                              new Date(data.date).getTime() -
+                                              startDate.getTime(),
+                                          ) /
+                                          (1000 * 3600 * 24) +
+                                          1,
+                                      ) ===
+                                      index + 1,
+                              )
+                              .map((filteredData, dataIndex) => (
+                                  <MyPlanDetailBox
+                                      key={dataIndex}
+                                      scheduleData={filteredData}
+                                      planName={plan.name}
+                                  />
+                              ))}
+                        </div>
+                    )}
                   </div>
-                )}
-              </div>
-            ))}
+              ))}
+            </div>
+
           </div>
         </div>
         <PastePlan
@@ -249,7 +264,7 @@ const ScheduleEx: React.FC = () => {
         initialCenter={initialCenter}
         initialMarkers={initialMarkers}
       >
-        <Map isLine={true} isClicked={false}/>
+        <Map isLine={true} isClicked={false} mapData={locationAndTimeArray}/>
       </MapProvider>
     </div>
   );

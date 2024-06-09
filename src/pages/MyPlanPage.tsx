@@ -22,6 +22,11 @@ interface PlanData {
   longitude: number;
 }
 
+interface LocationAndTime {
+  locationName: string;
+  time: string;
+}
+
 const MyPlanPage: React.FC = () => {
   const location = useLocation();
   const plan = location.state.data;
@@ -39,6 +44,11 @@ const MyPlanPage: React.FC = () => {
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [isOpen, setIsOpen] = useState(false);
+
+  const locationAndTimeArray: LocationAndTime[] = planData.map(item => ({
+    locationName: item.locationName,
+    time: item.time
+  }));
 
   const handleTabClick = (tab: number) => {
     setActiveTab(tab);
@@ -276,7 +286,7 @@ const MyPlanPage: React.FC = () => {
         initialCenter={initialCenter}
         initialMarkers={initialMarkers}
       >
-        <Map isLine={true} isClicked={false}/>
+        <Map isLine={true} isClicked={false} mapData={locationAndTimeArray}/>
       </MapProvider>
     </div>
   );

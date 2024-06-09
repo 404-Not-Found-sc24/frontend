@@ -19,6 +19,12 @@ type DivisionsType = {
   쇼핑: PlaceData[];
 };
 
+interface LocationAndLngLat {
+  locationName: string;
+  longitude: number;
+  latitude: number;
+}
+
 const SearchPlace: React.FC = () => {
   const [activeTab, setActiveTab] = useState('장소 보기');
   const [places, setPlaces] = useState<PlaceData[]>([]);
@@ -30,6 +36,10 @@ const SearchPlace: React.FC = () => {
     latitude: 37.2795,
     longitude: 127.0438,
   });
+  const [name, setName] = useState('');
+  const [LocationAndLngLatArray, setLocationAndLngLatArray] = useState<LocationAndLngLat[]>([
+    { locationName: '', longitude: 0, latitude: 0 },
+  ]);
   const location = useLocation();
   const [divisions, setDivisions] = useState<DivisionsType>({
     전체: [],
@@ -43,11 +53,22 @@ const SearchPlace: React.FC = () => {
   });
 
   const [activeDivision, setActiveDivision] =
-    useState<keyof DivisionsType>('전체');
+      useState<keyof DivisionsType>('전체');
 
   const handleDivisionClick = (division: keyof DivisionsType) => {
     setActiveDivision(division);
   };
+
+  const handleSetName = (placeName: string) => {
+    console.log(placeName);
+    setName(placeName);
+  };
+
+  useEffect(() => {
+    if (name) {
+      setLocationAndLngLatArray([{ locationName: name, longitude: initialCenter.longitude, latitude: initialCenter.latitude}]);
+    }
+  }, [name]);
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -80,76 +101,96 @@ const SearchPlace: React.FC = () => {
   };
 
   return (
-    <div className="w-full h-[90%] flex">
-      <div className="w-3/5 2xl:w-1/2 h-full">
-        <div className="h-[10%] w-full">
-          <i
-            className="absolute backArrow cursor-pointer h-[10%] w-[5%]"
-            onClick={naviBack}
-          ></i>
-          <div className="w-full flex justify-center h-[10%]">
-            <div className="w-5/6">
-              <SearchBar curr={'main'} />
+      <div className="w-full h-[90%] flex">
+        <div className="w-3/5 2xl:w-1/2 h-full">
+          <div className="h-[10%] w-full">
+            <i
+                className="absolute backArrow cursor-pointer h-[10%] w-[5%]"
+                onClick={naviBack}
+            ></i>
+            <div className="w-full flex justify-center h-[10%]">
+              <div className="w-5/6">
+                <SearchBar curr={'main'} />
+              </div>
             </div>
           </div>
-        </div>
-        <div className="h-[8%] w-full flex justify-center">
-          <div className="flex max-w-2xl mx-5 pt-4 w-[80%]">
-            <div
-              className={`mx-auto justify-center py-2 text-center w-1/2 border-main-red-color font-BMJUA text-2xl cursor-pointer ${
-                activeTab === '장소 보기'
-                  ? 'border-x-2 border-t-2 rounded-t-lg text-main-red-color'
-                  : 'border-b-2'
-              }`}
-              onClick={() => handleTabClick('장소 보기')}
-            >
-              장소 보기
-            </div>
-            <div
-              className={`mx-auto justify-center py-2 text-center w-1/2 border-main-red-color font-BMJUA text-2xl cursor-pointer ${
-                activeTab === '일정 보기'
-                  ? 'border-x-2 border-t-2 rounded-t-lg text-main-red-color'
-                  : 'border-b-2'
-              }`}
-              onClick={() => handleTabClick('일정 보기')}
-            >
-              일정 보기
+          <div className="h-[8%] w-full flex justify-center">
+            <div className="flex max-w-2xl mx-5 pt-4 w-[80%]">
+              <div
+                  className={`mx-auto justify-center py-2 text-center w-1/2 border-main-red-color font-BMJUA text-2xl cursor-pointer ${
+                      activeTab === '장소 보기'
+                          ? 'border-x-2 border-t-2 rounded-t-lg text-main-red-color'
+                          : 'border-b-2'
+                  }`}
+                  onClick={() => handleTabClick('장소 보기')}
+              >
+                장소 보기
+              </div>
+              <div
+                  className={`mx-auto justify-center py-2 text-center w-1/2 border-main-red-color font-BMJUA text-2xl cursor-pointer ${
+                      activeTab === '일정 보기'
+                          ? 'border-x-2 border-t-2 rounded-t-lg text-main-red-color'
+                          : 'border-b-2'
+                  }`}
+                  onClick={() => handleTabClick('일정 보기')}
+              >
+                일정 보기
+              </div>
             </div>
           </div>
-        </div>
-        <div className="tab-content h-[100%] justify-between ">
-          <div
-            id="active-white-bg"
-            className={activeTab === '장소 보기' ? 'active h-full w-full' : ''}
-          >
-            {activeTab === '장소 보기' && (
-              <div className="flex flex-col justify-center">
-                <div className="w-full whitespace-nowrap overflow-x-auto no-scrollbar flex justify-start xl:justify-center">
-                  {(Object.keys(divisions) as Array<keyof DivisionsType>).map(
-                    (division) => (
-                      <button
-                        key={division}
-                        className={`py-1 px-2 m-1 border rounded-full ${
-                          activeDivision === division
-                            ? 'bg-main-red-color text-white'
-                            : 'bg-white text-main-red-color'
-                        }`}
-                        onClick={() => handleDivisionClick(division)}
+          <div className="tab-content h-[100%] justify-between ">
+            <div
+                id="active-white-bg"
+                className={activeTab === '장소 보기' ? 'active h-full w-full' : ''}
+            >
+              {activeTab === '장소 보기' && (
+                  <div className="flex flex-col justify-center">
+                    <div className="w-full whitespace-nowrap overflow-x-auto no-scrollbar flex justify-start xl:justify-center">
+                      {(Object.keys(divisions) as Array<keyof DivisionsType>).map(
+                          (division) => (
+                              <button
+                                  key={division}
+                                  className={`py-1 px-2 m-1 border rounded-full ${
+                                      activeDivision === division
+                                          ? 'bg-main-red-color text-white'
+                                          : 'bg-white text-main-red-color'
+                                  }`}
+                                  onClick={() => handleDivisionClick(division)}
+                              >
+                                {division}
+                              </button>
+                          ),
+                      )}
+                    </div>
+                    <div className="flex max-w-4xl justify-end w-full px-20 mb-3">
+                      <Link
+                          to="/addplaceform"
+                          className="py-1 px-2 m-1 border rounded-full border-main-green-color text-sm text-main-green-color font-[Nanum Gothic]"
                       >
-                        {division}
-                      </button>
-                    ),
-                  )}
-                </div>
-                <div className="flex max-w-4xl justify-end w-full px-20 mb-3">
-                  <Link
-                    to="/addplaceform"
-                    className="py-1 px-2 m-1 border rounded-full border-main-green-color text-sm text-main-green-color font-[Nanum Gothic]"
-                  >
-                    장소 직접 추가하기
-                  </Link>
-                </div>
-                <div className="flex-grow w-full h-[60vh]">
+                        장소 직접 추가하기
+                      </Link>
+                    </div>
+                    <div className="flex-grow w-full h-[60vh]">
+                      <SearchResults
+                          tab={activeTab}
+                          onResultsUpdate={handleResultsUpdate}
+                          activeDivision={activeDivision}
+                          divisions={divisions}
+                          setDivisions={setDivisions}
+                          setActiveDivision={setActiveDivision}
+                          setInitialCenter={setInitialCenter}
+                          setName={handleSetName}
+                      />
+                    </div>
+                  </div>
+              )}
+            </div>
+            <div
+                id="active-white-bg"
+                className={activeTab === '일정 보기' ? 'active h-full w-full' : ''}
+            >
+              {activeTab === '일정 보기' && (
+                  <div className="h-[80%]">
                     <SearchResults
                         tab={activeTab}
                         onResultsUpdate={handleResultsUpdate}
@@ -157,40 +198,22 @@ const SearchPlace: React.FC = () => {
                         divisions={divisions}
                         setDivisions={setDivisions}
                         setActiveDivision={setActiveDivision}
-                        setInitialCenter={setInitialCenter} 
+                        setInitialCenter={setInitialCenter}
+                        setName={handleSetName}
                     />
                   </div>
-              </div>
-            )}
-          </div>
-          <div
-            id="active-white-bg"
-            className={activeTab === '일정 보기' ? 'active h-full w-full' : ''}
-          >
-            {activeTab === '일정 보기' && (
-              <div className="h-[80%]">
-                <SearchResults
-                  tab={activeTab}
-                  onResultsUpdate={handleResultsUpdate}
-                  activeDivision={activeDivision}
-                  divisions={divisions}
-                  setDivisions={setDivisions}
-                  setActiveDivision={setActiveDivision}
-                  setInitialCenter={setInitialCenter} 
-                />
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
+        <MapProvider
+            key={`${JSON.stringify(initialMarkers)}-${JSON.stringify(initialCenter)}`}
+            initialCenter={initialCenter}
+            initialMarkers={initialMarkers}
+        >
+          <Map key={`${JSON.stringify(initialCenter)}`} isLine={false} isClicked={false} isSearch={true} searchData={LocationAndLngLatArray}/>
+        </MapProvider>
       </div>
-      <MapProvider
-        key={`${JSON.stringify(initialMarkers)}-${JSON.stringify(initialCenter)}`}
-        initialCenter={initialCenter}
-        initialMarkers={initialMarkers}
-      >
-        <Map isLine={false} isClicked={false}/>
-      </MapProvider>
-    </div>
   );
 };
 

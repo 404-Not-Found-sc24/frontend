@@ -31,7 +31,7 @@ interface Props {
   divisions: DivisionsType;
   setDivisions: React.Dispatch<React.SetStateAction<DivisionsType>>;
   setInitialCenter: React.Dispatch<React.SetStateAction<{ latitude: number; longitude: number }>>; // Add this line
-
+  setName: (placeName: string) => void;
 }
 
 const SearchResults: React.FC<Props> = ({
@@ -41,7 +41,8 @@ const SearchResults: React.FC<Props> = ({
   setActiveDivision,
   divisions,
   setDivisions,
-  setInitialCenter
+  setInitialCenter,
+  setName
 }) => {
   const [planSearchResults, setPlanSearchResults] = useState<PlanData[]>([]);
   const [lastPlaceIdx, setLastPlaceIdx] = useState<
@@ -63,7 +64,6 @@ const SearchResults: React.FC<Props> = ({
   const queryParams = new URLSearchParams(location.search);
   const searchTerm = queryParams.get('q') || '';
   const city = queryParams.get('city') || '';
-
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -226,12 +226,14 @@ const SearchResults: React.FC<Props> = ({
 
   const handleMarker = (
     e: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    name: string,
     latitude: number,
     longitude: number
   ) => {
     e.preventDefault();
-    e.stopPropagation(); 
-    console.log("lat", latitude, "long", longitude);
+    e.stopPropagation();
+    setName(name);
+    console.log(name, "lat", latitude, "long", longitude);
     setInitialCenter({latitude: latitude, longitude: longitude});
   };
 
@@ -279,7 +281,7 @@ const SearchResults: React.FC<Props> = ({
                 <div>
                   <img src="location.svg" 
                   alt="location logo" 
-                  onClick={(e) => handleMarker(e, place.latitude, place.longitude)}
+                  onClick={(e) => handleMarker(e, place.name, place.latitude, place.longitude)}
                   className="w-10 h-10" />
                 </div>
               </div>
