@@ -74,7 +74,7 @@ const DiaryDetail: React.FC = () => {
 
   return (
     <div className="flex w-full h-[90%]">
-      <div className="w-1/2 h-full">
+      <div className="x-3/5 2xl:w-1/2 h-full">
         <div className="flex w-full h-[10%]">
           <i
             className="backArrow ml-2 cursor-pointer w-[10%]"

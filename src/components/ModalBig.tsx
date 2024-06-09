@@ -7,9 +7,11 @@ interface ModalProps {
 
 const ModalBig: React.FC<ModalProps> = ({ onClose, children }) => {
     return (
-        <div className="modal">
-            <div className="bpopup popBig w-4/5">
-                {children}
+        <div className="modal h-full">
+            <div className="bpopup popBig w-4/5 h-[90%]">
+                <div className="">
+                    {children}
+                </div>
                 <button className="popClose" onClick={onClose}></button>
             </div>
         </div>

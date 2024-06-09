@@ -23,7 +23,6 @@ const PlaceInfo: React.FC = () => {
   const [diariesRes, setDiariesRes] = useState<DiariesData[]>([]);
   const place = location.state.place;
   const curr = 'main';
-  console.log(place);
 
   useEffect(() => {
     getData();

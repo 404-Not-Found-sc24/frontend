@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import '../index.css';
 import PlaceBox from '../components/PlaceBox';
@@ -10,6 +10,7 @@ import { useAuth } from '../context/AuthContext';
 import { toast, ToastContainer } from 'react-toastify';
 import { MapProvider } from '../context/MapContext';
 import Map from '../components/Map';
+import DetailInMakePlan from '../pages/DetailInMakePlan';
 
 interface State {
   center: {
@@ -67,6 +68,17 @@ const MakePlan = () => {
   const city = queryParams.get('city') || '';
   const isLoading = useRef<boolean>(false);
   const [times, setTimes] = useState<string[][]>([[], [], []]);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [place, setPlace] = useState<Place>({
+    locationId: 0,
+    placeId: 0,
+    name: '',
+    address: '',
+    imageUrl: '',
+    latitude: 0,
+    longitude: 0,
+    time: '00:00',
+  });
   const [state, setState] = useState<State>({
     center: {
       lat: 37.2795,
@@ -114,10 +126,10 @@ const MakePlan = () => {
   const activePlaces = selectedPlaces[activeTab - 1] || [];
 
   const locationAndTimeArray: LocationAndTime[] = selectedPlaces.flatMap(placeGroup =>
-      placeGroup.map(place => ({
-        locationName: place.name,
-        time: place.time,
-      }))
+    placeGroup.map(place => ({
+      locationName: place.name,
+      time: place.time,
+    }))
   );
   useEffect(() => {
     if (navigator.geolocation) {
@@ -195,7 +207,7 @@ const MakePlan = () => {
     });
   };
 
-  useEffect(() => {}, [times]);
+  useEffect(() => { }, [times]);
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -530,6 +542,12 @@ const MakePlan = () => {
     setKey(JSON.stringify(initialMarkers));
   }, [selectedPlaces, activeTab]);
 
+
+
+  const handleCloseModal = useCallback(() => {
+    setIsOpen(false);
+  }, []);
+
   return (
     <div className="w-full h-[90%] flex">
       <ToastContainer />
@@ -555,11 +573,10 @@ const MakePlan = () => {
                 (division) => (
                   <button
                     key={division}
-                    className={`py-1 px-2 mx-1 h-[95%] border rounded-full ${
-                      activeDivision === division
-                        ? 'bg-main-red-color text-white'
-                        : 'bg-white text-main-red-color'
-                    }`}
+                    className={`py-1 px-2 mx-1 h-[95%] border rounded-full ${activeDivision === division
+                      ? 'bg-main-red-color text-white'
+                      : 'bg-white text-main-red-color'
+                      }`}
                     onClick={() => handleDivisionClick(division)}
                   >
                     {division}
@@ -576,6 +593,8 @@ const MakePlan = () => {
                   key={index}
                   place={place}
                   addSelectedPlace={() => addSelectedPlace(place, activeTab)}
+                  setIsOpen={setIsOpen}
+                  setPlace={setPlace}
                 />
               ))}
               <div ref={placeLoadMoreRef}></div>
@@ -598,9 +617,8 @@ const MakePlan = () => {
                 <div
                   key={tabIndex + 1}
                   id={`content${tabIndex + 1}`}
-                  className={`content ${
-                    activeTab === tabIndex + 1 ? 'active' : ''
-                  }`}
+                  className={`content ${activeTab === tabIndex + 1 ? 'active' : ''
+                    }`}
                 >
                   <div className="contentBox">
                     {selectedPlaces[activeTab - 1] && (
@@ -641,8 +659,13 @@ const MakePlan = () => {
         initialCenter={initialCenter}
         initialMarkers={initialMarkers}
       >
-        <Map isLine={true} isClicked={false} mapData={locationAndTimeArray}/>
+        <Map isLine={true} isClicked={false} mapData={locationAndTimeArray} />
       </MapProvider>
+      <DetailInMakePlan
+        isOpen={isOpen}
+        place={place}
+        handleCloseModal={handleCloseModal}
+      />
     </div>
   );
 };

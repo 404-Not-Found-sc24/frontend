@@ -233,7 +233,6 @@ const SearchResults: React.FC<Props> = ({
     e.preventDefault();
     e.stopPropagation();
     setName(name);
-    console.log(name, "lat", latitude, "long", longitude);
     setInitialCenter({latitude: latitude, longitude: longitude});
   };
 
