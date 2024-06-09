@@ -34,13 +34,15 @@ type DivisionsType = {
 const MakePlan = () => {
   const location = useLocation();
   const tripInfo = { ...location.state };
-  console.log(tripInfo);
-  if (Object.keys(tripInfo).length === 0) {
-    throw new Error('Trip info is missing');
-  }
   tripInfo.startDate = new Date(tripInfo.startDate);
   tripInfo.endDate = new Date(tripInfo.endDate);
   const tripdataRef = useRef(tripInfo);
+  if (
+    isNaN(tripdataRef.current.startDate.getTime()) ||
+    isNaN(tripdataRef.current.endDate.getTime())
+  ) {
+    throw new Error('Invalid start or end date');
+  }
   const navigate = useNavigate();
   const [tripDays, setTripDays] = useState<number>(0);
   const [keyword, setKeyword] = useState('');
@@ -191,7 +193,6 @@ const MakePlan = () => {
   }, [timeoutId]);
 
   const fetchPlaceDataOnScroll = async (division: keyof DivisionsType) => {
-    console.log('hel');
     if (!isLoading.current) {
       isLoading.current = true;
       try {
@@ -200,7 +201,6 @@ const MakePlan = () => {
           `/tour/locations?city=${city}&keyword=${searchTerm}&lastIdx=${lastPlaceIdx[division]}&division=${currDivision}`,
         );
 
-        console.log('res', placeResponse.data);
         setRes([...divisions[division], ...placeResponse.data]);
         setLastIdx((prevLastIdx) => prevLastIdx + placeResponse.data.length);
 
@@ -228,7 +228,6 @@ const MakePlan = () => {
   };
 
   const getData = async (division: keyof DivisionsType) => {
-    console.log('get');
     try {
       const currDivision = division === '전체' ? '' : division;
       const response = await axios.get(
@@ -239,7 +238,7 @@ const MakePlan = () => {
           },
         },
       );
-      console.log('res', response.data);
+
       setRes([...divisions[division], ...response.data]);
       setLastIdx((prevLastIdx) => prevLastIdx + response.data.length);
       const newLastPlaceIdx =
@@ -440,12 +439,10 @@ const MakePlan = () => {
 
     const placeCallback: IntersectionObserverCallback = (entries) => {
       entries.forEach((entry) => {
-        console.log('act', entry.isIntersecting);
         if (entry.isIntersecting) {
           if (searchTerm) {
             fetchPlaceDataOnScroll(activeDivision);
           } else {
-            console.log('act', activeDivision);
             getData(activeDivision);
           }
         }
@@ -475,7 +472,6 @@ const MakePlan = () => {
     if (searchTerm) {
       fetchPlaceDataOnScroll(activeDivision);
     } else {
-      console.log('act', activeDivision);
       getData(activeDivision);
     }
   }, [activeDivision]);

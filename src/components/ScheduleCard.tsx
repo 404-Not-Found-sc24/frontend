@@ -122,7 +122,7 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({
   };
 
   const handleBackgroundClick = (
-      e: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
   ) => {
     e.stopPropagation();
     setShowDeletePopup(false);
@@ -144,7 +144,9 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({
         },
       );
       setShare(newShareValue);
-      toast.success('공유 설정이 변경되었습니다.');
+      toast.success('공유 설정이 변경되었습니다.', {
+        position: 'top-center',
+      });
     } catch (error) {
       if (
         (error as AxiosError).response &&
@@ -158,7 +160,9 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({
         }
       } else {
         console.error('공유 설정 변경 중 오류 발생:', error);
-        toast.error('공유 설정 변경에 실패했습니다.');
+        toast.error('공유 설정 변경에 실패했습니다.', {
+          position: 'top-center',
+        });
       }
     }
   };
@@ -173,7 +177,10 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({
           {imageUrl !== null ? (
             <img src={imageUrl} alt="" className="h-full w-full"></img>
           ) : (
-            <img src={process.env.PUBLIC_URL + '/image/logo.png'} className='h-full w-full'></img>
+            <img
+              src={process.env.PUBLIC_URL + '/image/logo.png'}
+              className="h-full w-full"
+            ></img>
           )}
         </div>
         <div className="flex flex-col w-full">
@@ -183,13 +190,13 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({
                 (differenceInDays === 0
                   ? 'D-Day'
                   : `D${differenceInDays > 0 ? '+' : '-'}${Math.abs(
-                    differenceInDays,
-                  )}`)}
+                      differenceInDays,
+                    )}`)}
             </div>
 
             <div className="text-xl flex-grow font-['BMJUA'] ">{location}</div>
             <div className="text-xl w-20 font-['BMJUA'] ">
-              <button onClick={handleShare} className='hover:font-bold'>
+              <button onClick={handleShare} className="hover:font-bold">
                 {share == 1 ? 'PUBLIC' : 'PRIVATE'}
               </button>
             </div>
@@ -213,27 +220,33 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({
         </div>
       </div>
       {showDeletePopup && (
-          <div className="fixed inset-0 bg-black/50 flex justify-center items-center" onClick={handleBackgroundClick}>
-            <div className="bg-white rounded w-fit h-fit px-20 py-10 flex flex-col items-center" onClick={(e) => e.stopPropagation()}>
-              <div className="h-24 flex items-center font-[BMJUA] text-2xl">
-                일정을 삭제하시겠습니까?
-              </div>
-              <div>
-                <button
-                    onClick={handlePopupClose}
-                    className="w-16 text-white bg-main-red-color py-0.5 px-3 mr-3 font-[BMJUA] text-xl"
-                >
-                  취소
-                </button>
-                <button
-                    onClick={handleConfirmClick}
-                    className="w-16 text-white bg-main-red-color py-0.5 px-3 font-[BMJUA] text-xl"
-                >
-                  확인
-                </button>
-              </div>
+        <div
+          className="fixed inset-0 bg-black/50 flex justify-center items-center"
+          onClick={handleBackgroundClick}
+        >
+          <div
+            className="bg-white rounded w-fit h-fit px-20 py-10 flex flex-col items-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="h-24 flex items-center font-[BMJUA] text-2xl">
+              일정을 삭제하시겠습니까?
+            </div>
+            <div>
+              <button
+                onClick={handlePopupClose}
+                className="w-16 text-white bg-main-red-color py-0.5 px-3 mr-3 font-[BMJUA] text-xl"
+              >
+                취소
+              </button>
+              <button
+                onClick={handleConfirmClick}
+                className="w-16 text-white bg-main-red-color py-0.5 px-3 font-[BMJUA] text-xl"
+              >
+                확인
+              </button>
             </div>
           </div>
+        </div>
       )}
     </div>
   );
