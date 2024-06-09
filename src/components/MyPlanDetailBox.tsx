@@ -34,7 +34,7 @@ const MyPlanDetailBox: React.FC<PlanDetailBoxProps> = ({
   const { time, locationName, title, content, imageUrl } = scheduleData;
 
   return (
-    <div className="w-full h-[15%] p-5 flex rounded-md shadow-xl mb-5">
+    <div className="w-full h-32 p-5 flex rounded-md shadow-xl mb-5">
       <div className="w-full flex items-center gap-4">
         <img
           src="icon-pencil.png"
@@ -50,7 +50,7 @@ const MyPlanDetailBox: React.FC<PlanDetailBoxProps> = ({
               : locationName}
           </span>
         </div>
-        <div className="w-full flex flex-1 font-['Nanum Gothic'] pr-2">
+        <div className="w-full h-full flex flex-1 font-['Nanum Gothic'] pr-2 overflow-y-auto">
           {content}
         </div>
         <div className="w-[25%] flex justify-center">

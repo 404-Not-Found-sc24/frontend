@@ -1,10 +1,12 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, {useState, useEffect, useMemo, useCallback} from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { MapProvider } from '../context/MapContext';
 import Map from '../components/Map';
 import axios, { AxiosError } from 'axios';
 import MyPlanDetailBox from '../components/MyPlanDetailBox';
+import EditPlan from "./EditPlan";
+import {ToastContainer} from "react-toastify";
 
 interface PlanData {
   placeId: number;
@@ -35,11 +37,23 @@ const MyPlanPage: React.FC = () => {
   const timeDiff = Math.abs(endDate.getTime() - startDate.getTime());
   const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1;
   const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState<string>('');
+  const [isOpen, setIsOpen] = useState(false);
 
+  console.log(plan);
+  console.log(planData);
   const handleTabClick = (tab: number) => {
     setActiveTab(tab);
     setDropdownVisible(false); // 드롭다운 닫기
   };
+
+  const handleOpenModal = useCallback(() => {
+    setIsOpen(true);
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    setIsOpen(false);
+  }, []);
 
   const generateTabs = () => {
     const tabs = [];
@@ -47,8 +61,9 @@ const MyPlanPage: React.FC = () => {
       tabs.push(
         <button
           key={i}
-          className={`w-16 h-full bg-[#FF9A9A] rounded-2xl text-white font-['BMJUA'] text-sm mr-2 ${activeTab === i ? 'opacity-100' : 'opacity-50'
-            }`}
+          className={`w-16 h-full bg-[#FF9A9A] rounded-2xl text-white font-['BMJUA'] text-sm mr-2 ${
+            activeTab === i ? 'opacity-100' : 'opacity-50'
+          }`}
           onClick={() => handleTabClick(i)}
         >
           {`${i}일차`}
@@ -59,8 +74,9 @@ const MyPlanPage: React.FC = () => {
       tabs.push(
         <div key="more" className="relative w-16 h-full">
           <button
-            className={`w-16 h-full bg-[#FF9A9A] rounded-2xl text-white font-['BMJUA'] text-sm mr-2 ${activeTab > 5 ? 'opacity-100' : 'opacity-50'
-              }`}
+            className={`w-16 h-full bg-[#FF9A9A] rounded-2xl text-white font-['BMJUA'] text-sm mr-2 ${
+              activeTab > 5 ? 'opacity-100' : 'opacity-50'
+            }`}
             onClick={() => setDropdownVisible(!dropdownVisible)}
           >
             {activeTab > 5 ? `${activeTab}일차` : '...'}
@@ -71,8 +87,9 @@ const MyPlanPage: React.FC = () => {
                 (day) => (
                   <button
                     key={day}
-                    className={`block w-full my-1 px-4 py-2 bg-[#FF9A9A] rounded-2xl text-white font-['BMJUA'] text-sm ${activeTab === day ? 'opacity-100' : 'opacity-50'
-                      } hover:opacity-100`}
+                    className={`block w-full my-1 px-4 py-2 bg-[#FF9A9A] rounded-2xl text-white font-['BMJUA'] text-sm ${
+                      activeTab === day ? 'opacity-100' : 'opacity-50'
+                    } hover:opacity-100`}
                     onClick={() => {
                       handleTabClick(day);
                       setDropdownVisible(false);
@@ -170,30 +187,47 @@ const MyPlanPage: React.FC = () => {
     window.history.back();
   };
 
+  if (errorMessage) {
+    return (
+      <div className="text-red-600 text-center p-4">
+        <p>{errorMessage}</p>
+      </div>
+    );
+  }
+
   if (loading) {
     return <div>Loading...</div>; // 데이터 로드 중일 때 로딩 표시
   }
 
   return (
     <div className="flex w-full h-[90%] overflow-hidden">
-      <div className=" w-3/5 2xl:w-1/2 h-full overflow-auto">
-        <div className="flex w-full">
+      <ToastContainer />
+      <div className=" w-3/5 2xl:w-1/2 h-full flex flex-col overflow-hidden">
+        <div className="flex w-full min-h-20">
           <i
             className="backArrow ml-2 cursor-pointer w-[10%]"
             onClick={naviBack}
           ></i>
-          <div className="flex flex-col ml-2">
-            <div className="font-['BMJUA'] text-3xl text-black flex items-center">
-              {plan.name}
+          <div className="flex items-center w-[90%] justify-between">
+            <div className="flex flex-col">
+              <div className="font-['BMJUA'] text-3xl text-black ml-2 flex items-center">
+                {plan.name}
+              </div>
+              <div className="font-['BMJUA'] text-xl text-[#ED661A] ml-2 flex items-center">
+                {plan.startDate} ~ {plan.endDate}
+              </div>
             </div>
-            <div className="font-['BMJUA'] text-xl text-[#ED661A] flex items-center">
-              {plan.startDate} ~ {plan.endDate}
-            </div>
+            <img
+                src="icon-pencil.png"
+                alt="일정 수정"
+                className="h-5 w-5 cursor-pointer mr-10"
+                onClick={() => handleOpenModal()}
+            />
           </div>
         </div>
-        <div className="w-full flex justify-center overflow-hidden">
-          <div className="w-11/12 h-full pt-3 pb-5 flex flex-col overflow-auto">
-            <div className="flex justify-between h-7">
+        <div className="w-full flex justify-center overflow-hidden flex-grow">
+          <div className="w-11/12 h-full pt-3 pb-5 flex flex-col overflow-hidden">
+            <div className="flex justify-between h-7 mb-3">
               <div className="flex items-center">{generateTabs()}</div>
               <button
                 onClick={navieditplan}
@@ -203,9 +237,9 @@ const MyPlanPage: React.FC = () => {
               </button>
             </div>
             {Array.from({ length: diffDays }, (_, index) => (
-              <div key={index} className="overflow-auto">
+              <div key={index} className="flex flex-grow overflow-hidden">
                 {activeTab === index + 1 && (
-                  <div className="overflow-auto">
+                  <div className="flex-col flex-1 overflow-y-auto h-full">
                     {planData
                       .filter(
                         (data) =>
@@ -232,13 +266,19 @@ const MyPlanPage: React.FC = () => {
             ))}
           </div>
         </div>
+        <EditPlan
+            isOpen={isOpen}
+            scheduleId={scheduleId}
+            location={plan.location}
+            handleCloseModal={handleCloseModal}
+        />
       </div>
       <MapProvider
         key={JSON.stringify(initialMarkers)}
         initialCenter={initialCenter}
         initialMarkers={initialMarkers}
       >
-        <Map isLine={true} />
+        <Map isLine={true} isClicked={false}/>
       </MapProvider>
     </div>
   );
