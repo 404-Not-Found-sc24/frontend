@@ -245,7 +245,7 @@ const MyPlanPage: React.FC = () => {
               </button>
             </div>
             {Array.from({ length: diffDays }, (_, index) => (
-              <div key={index} className="flex flex-grow overflow-hidden">
+              <div key={index} className="flex overflow-hidden">
                 {activeTab === index + 1 && (
                   <div className="flex-col flex-1 overflow-y-auto h-full">
                     {planData

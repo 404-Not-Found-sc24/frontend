@@ -34,7 +34,7 @@ const ResultDiary: React.FC<PlanBoxProps> = (props) => {
                     {userName}
                 </div>
                 <div className="font-['Nanum Gothic'] text-black text-sm mt-2 overflow-y-auto w-full h-full">
-                    {content.split('\n').map((line: string, index: number) => (
+                    {content && content.split('\n').map((line: string, index: number) => (
                         <div key={index}>{line}</div>
                     ))}
                 </div>
