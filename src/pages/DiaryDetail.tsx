@@ -126,7 +126,7 @@ const DiaryDetail: React.FC = () => {
                     </div>
                   </div>
                   <div className="font-['Nanum Gothic'] mt-3 overflow-y-auto flex-grow">
-                    {Diary.content.split('\n').map((line: string, index: number) => (
+                    {Diary.content && Diary.content.split('\n').map((line: string, index: number) => (
                       <div key={index}>{line}</div>
                     ))}
                   </div>

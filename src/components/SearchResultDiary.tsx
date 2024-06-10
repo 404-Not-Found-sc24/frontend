@@ -44,10 +44,10 @@ const SearchResultDiary: React.FC<PlanBoxProps> = (props) => {
           {userName}
         </div>
         <div className="font-['Nanum Gothic'] text-black text-sm mt-2">
-          {content.split('\n').slice(0, 5).map((line: string, index: number) => (
+          {content && content.split('\n').slice(0, 5).map((line: string, index: number) => (
             <div key={index}>{line}</div>
           ))}
-          {(content.split('\n').length > 5 || content.length > 100) && <div>...</div>}
+          {(content && content.split('\n').length > 5 || content.length > 100) && <div>...</div>}
 
         </div>
       </div>
