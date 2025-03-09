@@ -34,6 +34,6 @@
 
 
 
-## 서비스 URL
+## 서비스 URL(배포 중단)
 https://nadueli.com
 <br/><br/>
